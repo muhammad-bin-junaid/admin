@@ -3,18 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakerAPK - Electronics Delivered to Your Campus</title>
+    <title>Makera PK - Electronics Delivered to Your Campus</title>
     <link rel="icon" type="image/png" href="iconmark.png">
     <link rel="stylesheet" href="styles.css">
-    <meta name="description" content="MakerAPK - Student-led maker community. Arduino, tools & components delivered FREE to your campus in Karachi.">
+    <meta name="description" content="Makera PK - Student-led maker community. Arduino, tools & components delivered FREE to your campus in Karachi.">
     <meta name="theme-color" content="#0f172a">
+    <meta property="og:title" content="Makera PK - Electronics Delivered to Your Campus">
+    <meta property="og:description" content="Student-led maker community. Arduino, tools & components delivered FREE to your campus in Karachi.">
+    <meta property="og:url" content="https://makerapk.vercel.app">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://makerapk.vercel.app/iconmark.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Makera PK - Electronics Delivered to Your Campus">
+    <meta name="twitter:description" content="Student-led maker community. Arduino, tools & components delivered FREE to your campus in Karachi.">
+    <meta name="twitter:image" content="https://makerapk.vercel.app/iconmark.png">
+    <link rel="canonical" href="https://makerapk.vercel.app">
 </head>
 <body>
     <nav class="navbar">
         <div class="container nav-content">
             <a href="#" class="logo">
-                <img src="iconmark.png" alt="MakerAPK" class="logo-icon">
-                <img src="wordmark.png" alt="MakerAPK" class="logo-wordmark">
+                <img src="iconmark.png" alt="Makera PK" class="logo-icon">
+                <img src="wordmark.png" alt="Makera PK" class="logo-wordmark">
             </a>
             <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
                 <span></span><span></span><span></span>
@@ -22,7 +32,7 @@
             <ul class="nav-links" id="navLinks">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#products">Products</a></li>
-                <li><a href="#community">Community</a></li>
+                <li><a href="community.html">Community</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
                 <li><a href="#" class="cart-btn" onclick="openCart(); return false;">Cart (<span id="cartCount">0</span>)</a></li>
@@ -33,12 +43,12 @@
     <header id="home" class="hero">
         <div class="hero-bg"></div>
         <div class="container hero-content">
-            <img src="wordmark.png" alt="MakerAPK" class="hero-logo">
+            <img src="wordmark.png" alt="Makera PK" class="hero-logo">
             <p class="hero-tagline">Student-Led Maker Community</p>
             <p class="hero-sub">Components & tools delivered FREE to your campus</p>
             <div class="hero-actions">
                 <a href="#products" class="btn btn-primary">Shop Now</a>
-                <a href="#community" class="btn btn-outline">Project Ideas</a>
+                <a href="community.html" class="btn btn-outline">Project Ideas</a>
             </div>
         </div>
     </header>
@@ -47,7 +57,7 @@
         <div class="container">
             <div class="banner-inner">
                 <span class="banner-badge">FREE DELIVERY</span>
-                <span>Free delivery to <strong>Bahria University</strong> karachi campus</span>
+                <span>Free delivery to <strong>Bahria University</strong> Karachi campus</span>
             </div>
         </div>
     </section>
@@ -187,7 +197,7 @@
                     </div>
                     <div class="product-info">
                         <h3>Soldering Iron</h3>
-                        <p class="product-desc">60W adjustable temperature with stand</p>
+                        <p class="product-desc">Soldering iron for electronics projects</p>
                         <div class="product-footer">
                             <span class="price">Rs. 449</span>
                             <button class="btn btn-sm add-to-cart" onclick="addToCart(8)">Add to Cart</button>
@@ -201,7 +211,7 @@
                     </div>
                     <div class="product-info">
                         <h3>Soldering Iron Pro</h3>
-                        <p class="product-desc">Professional kit with extra tips</p>
+                        <p class="product-desc">Soldering iron — pro version</p>
                         <div class="product-footer">
                             <span class="price">Rs. 699</span>
                             <button class="btn btn-sm add-to-cart" onclick="addToCart(9)">Add to Cart</button>
@@ -215,7 +225,7 @@
                     </div>
                     <div class="product-info">
                         <h3>Soldering Wire (50g)</h3>
-                        <p class="product-desc">Lead-free soldering wire, 50g spool</p>
+                        <p class="product-desc">Soldering wire, 50g spool</p>
                         <div class="product-footer">
                             <span class="price">Rs. 160</span>
                             <button class="btn btn-sm add-to-cart" onclick="addToCart(10)">Add to Cart</button>
@@ -229,7 +239,7 @@
                     </div>
                     <div class="product-info">
                         <h3>Soldering Wire Premium (50g)</h3>
-                        <p class="product-desc">Premium rosin core solder wire</p>
+                        <p class="product-desc">Soldering wire, 50g spool</p>
                         <div class="product-footer">
                             <span class="price">Rs. 200</span>
                             <button class="btn btn-sm add-to-cart" onclick="addToCart(11)">Add to Cart</button>
@@ -241,190 +251,9 @@
         </div>
     </section>
 
-    <section id="community" class="community">
-        <div class="container">
-            <h2 class="section-title">Community</h2>
-            <p class="section-sub">Blogs, project ideas & builds from our makers</p>
-
-            <div class="community-tabs">
-                <button class="tab-btn active" onclick="showTab('projects')">Project Ideas</button>
-                <button class="tab-btn" onclick="showTab('blogs')">Blogs</button>
-            </div>
-
-            <div class="tab-content active" id="tab-projects">
-                <div class="project-grid">
-
-                    <div class="project-card">
-                        <div class="project-thumb">
-                            <span class="project-emoji">🤖</span>
-                            <span class="difficulty easy">Beginner</span>
-                        </div>
-                        <div class="project-info">
-                            <h3>Line Following Robot</h3>
-                            <p>Build an autonomous robot that follows a black line using IR sensors and Arduino Nano.</p>
-                            <div class="project-meta">
-                                <span>⏱ 2-3 hours</span>
-                                <span>💰 ~Rs. 800</span>
-                            </div>
-                            <div class="project-parts">
-                                <strong>Parts needed:</strong>
-                                <span>Arduino Nano</span><span>IR Sensors</span><span>Motor Driver</span><span>Chassis</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="project-thumb">
-                            <span class="project-emoji">🌡️</span>
-                            <span class="difficulty easy">Beginner</span>
-                        </div>
-                        <div class="project-info">
-                            <h3>Temperature Monitor</h3>
-                            <p>Real-time temperature display using LCD and sensors. Great first project for electronics beginners.</p>
-                            <div class="project-meta">
-                                <span>⏱ 1-2 hours</span>
-                                <span>💰 ~Rs. 400</span>
-                            </div>
-                            <div class="project-parts">
-                                <strong>Parts needed:</strong>
-                                <span>Arduino Nano</span><span>LCD Display</span><span>DHT11 Sensor</span><span>Breadboard</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="project-thumb">
-                            <span class="project-emoji">💡</span>
-                            <span class="difficulty med">Intermediate</span>
-                        </div>
-                        <div class="project-info">
-                            <h3>Smart Home Automation</h3>
-                            <p>Control lights and fans via Bluetooth using your phone. Relays + Arduino = smart home on a budget.</p>
-                            <div class="project-meta">
-                                <span>⏱ 4-5 hours</span>
-                                <span>💰 ~Rs. 1,200</span>
-                            </div>
-                            <div class="project-parts">
-                                <strong>Parts needed:</strong>
-                                <span>Arduino Nano</span><span>Bluetooth Module</span><span>Relay Module</span><span>Jumper Wires</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="project-thumb">
-                            <span class="project-emoji">📡</span>
-                            <span class="difficulty med">Intermediate</span>
-                        </div>
-                        <div class="project-info">
-                            <h3>IoT Weather Station</h3>
-                            <p>Log temperature, humidity & pressure to the cloud. Display data on a dashboard you build.</p>
-                            <div class="project-meta">
-                                <span>⏱ 5-6 hours</span>
-                                <span>💰 ~Rs. 1,800</span>
-                            </div>
-                            <div class="project-parts">
-                                <strong>Parts needed:</strong>
-                                <span>Arduino Nano</span><span>BME280</span><span>WiFi Module</span><span>OLED Display</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="project-thumb">
-                            <span class="project-emoji">🔊</span>
-                            <span class="difficulty easy">Beginner</span>
-                        </div>
-                        <div class="project-info">
-                            <h3>Ultrasonic Distance Meter</h3>
-                            <p>Measure distance using HC-SR04 sensor and display on LCD. Perfect for learning sonar basics.</p>
-                            <div class="project-meta">
-                                <span>⏱ 1-2 hours</span>
-                                <span>💰 ~Rs. 350</span>
-                            </div>
-                            <div class="project-parts">
-                                <strong>Parts needed:</strong>
-                                <span>Arduino Nano</span><span>HC-SR04</span><span>LCD Display</span><span>Breadboard</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="project-thumb">
-                            <span class="project-emoji">🏎️</span>
-                            <span class="difficulty hard">Advanced</span>
-                        </div>
-                        <div class="project-info">
-                            <h3>Bluetooth RC Car</h3>
-                            <p>Full remote-controlled car via Bluetooth. Control direction, speed & LED headlights from your phone.</p>
-                            <div class="project-meta">
-                                <span>⏱ 6-8 hours</span>
-                                <span>💰 ~Rs. 2,500</span>
-                            </div>
-                            <div class="project-parts">
-                                <strong>Parts needed:</strong>
-                                <span>Arduino Nano</span><span>HC-05</span><span>L298N Driver</span><span>DC Motors</span><span>Chassis</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-blogs">
-                <div class="blog-grid">
-
-                    <div class="blog-card">
-                        <div class="blog-date">Sep 2026</div>
-                        <h3>Getting Started with Arduino as a Pakistani Student</h3>
-                        <p>Everything you need to know about buying your first Arduino board, installing the IDE, and uploading your first sketch. Written for students in Karachi.</p>
-                        <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="blog-link">Read more &rarr;</a>
-                    </div>
-
-                    <div class="blog-card">
-                        <div class="blog-date">Sep 2026</div>
-                        <h3>Top 5 Projects for Your FYP (Final Year Project)</h3>
-                        <p>Struggling to pick a project? Here are 5 impressive yet achievable FYP ideas using Arduino that will impress your supervisors.</p>
-                        <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="blog-link">Read more &rarr;</a>
-                    </div>
-
-                    <div class="blog-card">
-                        <div class="blog-date">Aug 2026</div>
-                        <h3>Soldering 101: Tips Every Beginner Should Know</h3>
-                        <p>Learn proper soldering techniques, common mistakes to avoid, and how to get clean joints every time. Includes a video tutorial.</p>
-                        <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="blog-link">Read more &rarr;</a>
-                    </div>
-
-                    <div class="blog-card">
-                        <div class="blog-date">Aug 2026</div>
-                        <h3>How We Built MakerAPK: A Student Community Story</h3>
-                        <p>From a WhatsApp group of 5 people to 22+ campuses — the story of how MakerAPK started and where we're headed.</p>
-                        <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="blog-link">Read more &rarr;</a>
-                    </div>
-
-                    <div class="blog-card">
-                        <div class="blog-date">Jul 2026</div>
-                        <h3>Multimeter Guide: How to Actually Use One</h3>
-                        <p>Stop staring at your multimeter. This guide walks you through voltage, current, resistance, and continuity testing.</p>
-                        <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="blog-link">Read more &rarr;</a>
-                    </div>
-
-                    <div class="blog-card">
-                        <div class="blog-date">Jul 2026</div>
-                        <h3>ESP32 vs Arduino Nano: Which Should You Buy?</h3>
-                        <p>A honest comparison for students on a budget. Spoiler: it depends on your project.</p>
-                        <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="blog-link">Read more &rarr;</a>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    </section>
-
     <section id="about" class="about">
         <div class="container about-content">
-            <h2 class="section-title">About MakerAPK</h2>
+            <h2 class="section-title">About Makera PK</h2>
             <p>We're a <strong>student-led community</strong> of makers, engineers, and builders. We believe every student should have access to affordable electronics — no matter which campus you're on.</p>
             <p>We deliver components directly to your campus so you can focus on building, not hunting for parts.</p>
             <ul class="about-features">
@@ -442,15 +271,15 @@
         <div class="container contact-content">
             <h2 class="section-title">Get in Touch</h2>
             <p>Questions? Need help with an order? Just want to say hi?</p>
-            <a href="https://wa.me/923330034535?text=Hi%20MakerAPK!%20I%20have%20a%20question" class="btn btn-primary btn-lg" target="_blank" rel="noopener">Chat on WhatsApp</a>
+            <a href="https://wa.me/923330034535?text=Hi%20Makera%20PK!%20I%20have%20a%20question" class="btn btn-primary btn-lg" target="_blank" rel="noopener">Chat on WhatsApp</a>
         </div>
     </section>
 
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-logo">
-                <img src="iconmark.png" alt="MakerAPK" class="footer-icon">
-                <span>MakerAPK</span>
+                <img src="iconmark.png" alt="Makera PK" class="footer-icon">
+                <span>Makera PK</span>
             </div>
             <div class="social-links">
                 <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
@@ -462,11 +291,11 @@
                     <span>WhatsApp</span>
                 </a>
             </div>
-            <p class="footer-text">Student-led maker community &copy; 2026 MakerAPK. All rights reserved.</p>
+            <p class="footer-text">Student-led maker community &copy; 2026 Makera PK. All rights reserved.</p>
             <div class="footer-links">
                 <a href="#home">Home</a>
                 <a href="#products">Products</a>
-                <a href="#community">Community</a>
+                <a href="community.html">Community</a>
                 <a href="#about">About</a>
                 <a href="#contact">Contact</a>
             </div>
@@ -504,36 +333,59 @@
                 <button class="modal-close" onclick="closeCheckout()">&times;</button>
             </div>
             <form id="checkoutForm" onsubmit="submitOrder(event)">
-                <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
-                <input type="hidden" name="subject" value="New MakerAPK Order">
-                <input type="hidden" name="from_name" value="MakerAPK Store">
+                <input type="hidden" name="access_key" value="e890b603-e53e-4785-ad90-488a009ceac5">
+                <input type="hidden" name="subject" value="New Makera PK Order">
+                <input type="hidden" name="from_name" value="Makera PK Store">
                 <input type="hidden" name="order_details" id="orderDetails">
+                <input type="checkbox" name="botcheck" style="display:none">
 
                 <div class="form-group">
                     <label for="studentName">Full Name *</label>
-                    <input type="text" id="studentName" name="student_name" placeholder="Your full name" required>
+                    <input type="text" id="studentName" name="name" placeholder="Your full name" required>
                 </div>
                 <div class="form-group">
                     <label for="studentEmail">Email *</label>
-                    <input type="email" id="studentEmail" name="student_email" placeholder="you@university.edu.pk" required>
+                    <input type="email" id="studentEmail" name="email" placeholder="you@university.edu.pk" required>
                 </div>
                 <div class="form-group">
                     <label for="studentPhone">WhatsApp Number *</label>
-                    <input type="tel" id="studentPhone" name="student_phone" placeholder="03XX XXXXXXX" required>
+                    <input type="tel" id="studentPhone" name="phone" placeholder="03XX XXXXXXX" required>
                 </div>
                 <div class="form-group">
                     <label for="studentCampus">Campus *</label>
-                    <select id="studentCampus" name="student_campus" required>
+                    <select id="studentCampus" name="campus" required>
                         <option value="">Select your campus</option>
+                        <option value="Bahria University" selected>Bahria University (FREE)</option>
+                        <option value="NED University">NED University</option>
+                        <option value="IBA Karachi">IBA Karachi</option>
+                        <option value="FAST-NUCES">FAST-NUCES</option>
+                        <option value="NUST">NUST</option>
+                        <option value="KIET">KIET</option>
+                        <option value="DHA Suffa University">DHA Suffa University</option>
+                        <option value="Szabist">Szabist</option>
+                        <option value="IoBM">IoBM</option>
+                        <option value="CBM Karachi">CBM Karachi</option>
+                        <option value="UET Karachi">UET Karachi</option>
+                        <option value="University of Karachi">University of Karachi</option>
+                        <option value="Jinnah University">Jinnah University</option>
+                        <option value="Hamdard University">Hamdard University</option>
+                        <option value="Indus University">Indus University</option>
+                        <option value="Benazir Bhutto Shaheed University">BBSCED</option>
+                        <option value="Precinct University">Precinct University</option>
+                        <option value="Aga Khan University">Aga Khan University</option>
+                        <option value="Sir Syed University">Sir Syed University</option>
+                        <option value="Federal Urdu University">Federal Urdu University</option>
+                        <option value="KASB University">KASB University</option>
+                        <option value="Preston University">Preston University</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="studentDept">Department / Roll No.</label>
-                    <input type="text" id="studentDept" name="student_dept" placeholder="e.g. CS / BCS-21-001">
+                    <input type="text" id="studentDept" name="dept" placeholder="e.g. CS / BCS-21-001">
                 </div>
                 <div class="form-group">
                     <label for="orderNote">Order Notes</label>
-                    <textarea id="orderNote" name="order_note" rows="3" placeholder="Any special instructions..."></textarea>
+                    <textarea id="orderNote" name="note" rows="3" placeholder="Any special instructions..."></textarea>
                 </div>
 
                 <div class="checkout-summary" id="checkoutSummary"></div>
