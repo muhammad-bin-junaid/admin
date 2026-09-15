@@ -252,3 +252,11 @@ const observer = new IntersectionObserver(entries => {
     });
 }, { threshold: 0.1 });
 document.querySelectorAll('.product-card, .about, .contact-content, .campus-card').forEach(el => observer.observe(el));
+
+// Community Tabs
+function showTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    event.target.classList.add('active');
+}
