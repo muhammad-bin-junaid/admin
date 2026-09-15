@@ -43,6 +43,7 @@ function addToCart(productId) {
         cart.push({ ...product, qty: 1 });
     }
     updateCartUI();
+    showAddedToast(product.name);
     openCart();
 }
 
@@ -185,7 +186,7 @@ TOTAL: Rs. ${total.toLocaleString()}
 
     document.getElementById('orderDetails').value = orderDetails;
 
-    submitBtn.textContent = 'Sending...';
+    submitBtn.textContent = 'Placing Order...';
     submitBtn.disabled = true;
 
     const formData = new FormData(form);
@@ -199,13 +200,13 @@ TOTAL: Rs. ${total.toLocaleString()}
             sendWhatsApp(orderDetails);
             showSuccess();
         } else {
-            alert('Something went wrong. Try again or order via WhatsApp.');
+            alert('Something went wrong. Try again.');
+            submitBtn.textContent = 'Place Order';
+            submitBtn.disabled = false;
         }
     }).catch(() => {
-        sendWhatsApp(orderDetails);
-        showSuccess();
-    }).finally(() => {
-        submitBtn.textContent = 'Place Order via WhatsApp';
+        alert('Something went wrong. Try again.');
+        submitBtn.textContent = 'Place Order';
         submitBtn.disabled = false;
     });
 }
@@ -244,3 +245,22 @@ const observer = new IntersectionObserver(entries => {
     });
 }, { threshold: 0.1 });
 document.querySelectorAll('.product-card, .about, .contact-content').forEach(el => observer.observe(el));
+
+// Toast notification
+function showAddedToast(name) {
+    let toast = document.getElementById('toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:12px 24px;border-radius:10px;font-weight:600;font-size:.9rem;z-index:9999;transition:opacity .3s,transform .3s;opacity:0;pointer-events:none;font-family:inherit;';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = name + ' added to cart ✓';
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(10px)';
+    }, 1500);
+}

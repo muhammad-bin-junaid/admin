@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How We Built Makera PK: A Student Community Story - Makera PK</title>
+    <link rel="icon" type="image/png" href="iconmark.png">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="description" content="From a WhatsApp group of 5 students to 22+ university campuses — the story of how Makera PK started and where we're headed.">
+    <meta name="theme-color" content="#0f172a">
+    <meta property="og:title" content="How We Built Makera PK: A Student Community Story">
+    <meta property="og:description" content="From a WhatsApp group of 5 students to 22+ university campuses across Sindh and Punjab.">
+    <meta property="og:url" content="https://makerapk.vercel.app/blog-makerapk-story.html">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://makerapk.vercel.app/iconmark.png">
+    <style>
+        .blog-article { padding: 60px 0 80px; }
+        .blog-article .container { max-width: 740px; }
+        .article-category { display: inline-block; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); background: rgba(34,211,238,.1); padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
+        .article-date { color: var(--text-muted); font-size: .85rem; margin-bottom: 24px; }
+        .article-body h2 { font-size: 1.5rem; font-weight: 700; margin: 36px 0 16px; color: var(--text); padding-top: 12px; border-top: 1px solid rgba(255,255,255,.06); }
+        .article-body h2:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+        .article-body p { color: var(--text-muted); font-size: 1rem; line-height: 1.8; margin-bottom: 16px; }
+        .article-body ul { color: var(--text-muted); font-size: 1rem; line-height: 1.8; margin-bottom: 16px; padding-left: 24px; }
+        .article-body ul li { margin-bottom: 8px; }
+        .article-body ul li::marker { color: var(--accent); }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 600; font-size: .9rem; transition: color .2s; margin-top: 40px; }
+        .back-link:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <img src="iconmark.png" alt="Makera PK" class="logo-icon">
+                <img src="wordmark.png" alt="Makera PK" class="logo-wordmark">
+            </a>
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#products">Products</a></li>
+                <li><a href="community.html" class="active">Community</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="container">
+            <span class="article-category">Community Story</span>
+            <h1 class="page-title">How We Built Makera PK: A Student Community Story</h1>
+            <p class="page-subtitle">August 2026</p>
+        </div>
+    </header>
+
+    <section class="blog-article">
+        <div class="container">
+            <div class="article-body">
+
+                <h2>Origins</h2>
+                <p>Makera PK started in early 2025 as nothing more than a WhatsApp group between five students at a local Karachi university. We were all studying different engineering and CS disciplines, but we shared one thing in common: we loved building hardware. The problem was, none of us could find affordable components, reliable project guidance, or even a decent soldering station on campus.</p>
+                <p>So we pooled our resources. One person had a multimeter, another had a soldering iron, and a third had a collection of old Arduino boards. We started meeting in the university cafeteria every Friday, sharing parts, debugging code, and brainstorming project ideas. What began as five friends helping each other quickly turned into something much bigger.</p>
+                <p>Within two months, word spread. Students from other departments started showing up. By the end of the semester, we had over 30 active members — all sharing components, knowledge, and a passion for hands-on making. That was the moment we realized this wasn't just a hobby group. It was the foundation of a real community.</p>
+
+                <h2>The Student Hardware Problem</h2>
+                <p>If you're a Pakistani student trying to learn electronics or robotics, you're up against three major obstacles:</p>
+                <ul>
+                    <li><strong>High local prices:</strong> Components that cost $1 abroad get marked up 3x-5x when sold locally. A simple Arduino Nano kit that should cost PKR 400 is often listed for PKR 900+ from resellers who don't even guarantee genuine parts.</li>
+                    <li><strong>Lack of practical lab access:</strong> Most university labs are locked to specific departments, have limited hours, or simply don't have the tools students need. Want to practice soldering? Good luck finding an available station.</li>
+                    <li><strong>Isolated student projects:</strong> Every student is reinventing the wheel. One person builds a line follower, another builds the same thing a semester later — both struggling with the same beginner mistakes because there's no shared knowledge base.</li>
+                </ul>
+                <p>These aren't minor inconveniences. They're the reason most student hardware projects die before they ever leave the breadboard. We built Makera PK to fix all three.</p>
+
+                <h2>Growth and Expansion</h2>
+                <p>By mid-2025, we had expanded beyond our original Karachi university. We started connecting with student groups at universities in Hyderabad, Sukkur, and Lahore. The model was simple: find one passionate student on each campus, empower them with resources and a community framework, and let them build their own local chapter.</p>
+                <p>Today, Makera PK operates across 22+ university campuses in Sindh and Punjab. Here's what that looks like in practice:</p>
+                <ul>
+                    <li><strong>Component swaps:</strong> Instead of everyone buying their own HC-SR04 ultrasonic sensors, campuses maintain shared lending pools. Need a sensor for a week? Borrow it. Done? Return it for the next student.</li>
+                    <li><strong>Hardware hackathons:</strong> Monthly 24-hour build challenges where teams compete to solve real campus problems — from automated attendance systems to smart waste bins.</li>
+                    <li><strong>Peer mentorship sessions:</strong> Senior students who've already completed their FYPs mentor juniors on everything from PCB design to embedded C programming.</li>
+                </ul>
+                <p>The growth has been organic. We've never spent a single rupee on marketing. Every new member has joined because a friend told them, or because they saw a project one of our members built.</p>
+
+                <h2>Core Pillars</h2>
+                <p>Everything we do at Makera PK rests on three pillars that we believe are essential for any student maker community:</p>
+                <ul>
+                    <li><strong>Open hardware project documentation:</strong> Every project built within our community gets documented — schematics, code, BOM (bill of materials), and lessons learned. This knowledge is shared freely across all campuses so no student has to start from scratch.</li>
+                    <li><strong>Peer-to-peer component lending pools:</strong> Each campus maintains a shared inventory of common components, tools, and development boards. Members can borrow what they need for their projects and return it when they're done. This dramatically lowers the cost of experimentation.</li>
+                    <li><strong>FYP technical support groups:</strong> Final Year Projects are stressful enough without technical roadblocks. Our experienced members form ad-hoc support teams to help students debug hardware, optimize code, and prepare for their final presentations.</li>
+                </ul>
+                <p>These aren't just ideas on paper. They're running right now, across dozens of campuses, helping thousands of students build things they never thought possible on a student budget.</p>
+
+                <h2>Join the Movement</h2>
+                <p>We're currently accepting applications for our Campus Ambassador Program. If you're a student at a Pakistani university and you want to bring a Makera PK chapter to your campus, we want to hear from you.</p>
+                <p>As a Campus Ambassador, you'll receive:</p>
+                <ul>
+                    <li>Starter component kits for your campus lending pool</li>
+                    <li>Access to our project documentation library</li>
+                    <li>Mentorship from experienced makers across the network</li>
+                    <li>Support for organizing your first hardware hackathon</li>
+                    <li>A community of 500+ student makers across Pakistan</li>
+                </ul>
+                <p>Apply through our WhatsApp at <a href="https://wa.me/923330034535" target="_blank" rel="noopener" style="color:var(--accent)">+92 333 0034535</a> or DM us on <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" style="color:var(--accent)">Instagram</a>. We review applications on a rolling basis.</p>
+                <p>The future of Pakistani tech isn't in importing finished products. It's in empowering students to build their own. Join us.</p>
+
+            </div>
+            <a href="community.html" class="back-link">&larr; Back to Community</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <img src="iconmark.png" alt="Makera PK" class="footer-icon">
+                <span>Makera PK</span>
+            </div>
+            <div class="social-links">
+                <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    <span>Instagram</span>
+                </a>
+                <a href="https://wa.me/923330034535" target="_blank" rel="noopener" class="social-link" aria-label="WhatsApp">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <span>WhatsApp</span>
+                </a>
+            </div>
+            <p class="footer-text">Student-led maker community &copy; 2026 Makera PK. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#products">Products</a>
+                <a href="community.html">Community</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#contact">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

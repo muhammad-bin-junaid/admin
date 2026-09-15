@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultrasonic Distance Meter - Makera PK</title>
+    <link rel="icon" type="image/png" href="iconmark.png">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="description" content="Build an Ultrasonic Distance Meter using Arduino Nano and HC-SR04. Measure real-time distance with LCD display and audio alert. Full guide with code, BOM & pin mapping.">
+    <meta name="theme-color" content="#0f172a">
+    <meta property="og:title" content="Ultrasonic Distance Meter - Makera PK">
+    <meta property="og:description" content="Build an Ultrasonic Distance Meter using Arduino Nano and HC-SR04. Full guide with code, BOM & pin mapping.">
+    <meta property="og:url" content="https://makerapk.vercel.app/project-ultrasonic.html">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://makerapk.vercel.app/project%202%20img.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ultrasonic Distance Meter - Makera PK">
+    <meta name="twitter:description" content="Build an Ultrasonic Distance Meter using Arduino Nano and HC-SR04. Full guide with code, BOM & pin mapping.">
+    <meta name="twitter:image" content="https://makerapk.vercel.app/project%202%20img.jpg">
+    <link rel="canonical" href="https://makerapk.vercel.app/project-ultrasonic.html">
+    <style>
+        .project-hero{position:relative;width:100%;max-height:420px;overflow:hidden;margin-top:64px}
+        .project-hero img{width:100%;height:420px;object-fit:cover;display:block}
+        .project-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(15,23,42,.3) 0%,rgba(15,23,42,.85) 100%)}
+        .project-hero-content{position:absolute;bottom:0;left:0;right:0;padding:40px 0}
+        .project-hero-content h1{font-size:2.4rem;font-weight:800;margin-bottom:12px;line-height:1.2}
+        .project-badges{display:flex;flex-wrap:wrap;gap:10px}
+        .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:600;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12)}
+        .badge-label{color:var(--text-muted);font-weight:400}
+        .badge-value{color:var(--text)}
+
+        .project-body{padding:60px 0 80px}
+        .project-body .container{max-width:860px}
+        .project-section{margin-bottom:48px}
+        .project-section h2{font-size:1.5rem;font-weight:700;margin-bottom:16px;color:var(--text);display:flex;align-items:center;gap:10px}
+        .project-section h2 .section-icon{color:var(--accent);font-size:1.2rem}
+        .project-section p{color:var(--text-muted);font-size:1rem;line-height:1.7;margin-bottom:12px}
+
+        .bom-table{width:100%;border-collapse:collapse;margin-top:8px}
+        .bom-table th,.bom-table td{padding:14px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);font-size:.9rem}
+        .bom-table th{color:var(--text-muted);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;background:var(--bg-light)}
+        .bom-table tr:hover{background:rgba(99,102,241,.06)}
+        .bom-table td:first-child{font-weight:600;color:var(--text)}
+        .bom-table .cost{color:var(--accent);font-weight:600}
+        .bom-pin{margin-top:6px;font-size:.8rem;color:var(--text-muted)}
+        .bom-pin code{background:var(--surface);padding:2px 8px;border-radius:4px;font-size:.78rem;color:var(--accent);margin:0 2px}
+
+        .formula-box{background:var(--bg-light);border:1px solid rgba(34,211,238,.2);border-radius:var(--radius);padding:28px 32px;text-align:center}
+        .formula-box p{color:var(--text-muted);margin-bottom:12px;font-size:.9rem}
+        .formula{font-size:1.3rem;font-weight:700;color:var(--accent);font-family:'Courier New',monospace;letter-spacing:.5px}
+        .formula-note{font-size:.85rem;color:var(--text-muted);margin-top:12px}
+
+        .code-block{position:relative;background:var(--bg-light);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);overflow:hidden}
+        .code-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.06)}
+        .code-header span{font-size:.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+        .copy-btn{background:var(--surface);border:1px solid rgba(255,255,255,.1);color:var(--text-muted);padding:6px 14px;border-radius:6px;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:inherit}
+        .copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+        .code-block pre{padding:24px;overflow-x:auto;margin:0}
+        .code-block code{font-family:'Courier New',monospace;font-size:.85rem;line-height:1.7;color:#e2e8f0}
+
+        .tips-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+        .tips-list li{display:flex;gap:12px;padding:16px 20px;background:var(--bg-light);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);font-size:.9rem;color:var(--text-muted);line-height:1.6}
+        .tips-list li .tip-icon{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:rgba(234,179,8,.15);color:#eab308;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+        .tips-list code{background:var(--surface);padding:1px 6px;border-radius:3px;font-size:.82rem;color:var(--accent)}
+
+        @media(max-width:768px){
+            .project-hero img{height:280px}
+            .project-hero-content h1{font-size:1.6rem}
+            .project-badges{gap:8px}
+            .badge{padding:5px 10px;font-size:.75rem}
+            .bom-table{font-size:.82rem}
+            .bom-table th,.bom-table td{padding:10px 12px}
+            .formula{font-size:1rem}
+            .code-block pre{padding:16px}
+            .code-block code{font-size:.78rem}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <img src="iconmark.png" alt="Makera PK" class="logo-icon">
+                <img src="wordmark.png" alt="Makera PK" class="logo-wordmark">
+            </a>
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#products">Products</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="project-hero">
+        <img src="project 2 img.jpg" alt="Ultrasonic Distance Meter Project">
+        <div class="project-hero-overlay"></div>
+        <div class="project-hero-content">
+            <div class="container">
+                <h1>Ultrasonic Distance Meter</h1>
+                <div class="project-badges">
+                    <span class="badge"><span class="badge-label">Category</span> <span class="badge-value">Sensors &amp; Display Instrumentation</span></span>
+                    <span class="badge"><span class="badge-label">Difficulty</span> <span class="badge-value">Beginner</span></span>
+                    <span class="badge"><span class="badge-label">Time</span> <span class="badge-value">1.5 Hours</span></span>
+                    <span class="badge"><span class="badge-label">Cost</span> <span class="badge-value">Rs. 850 PKR</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="project-body">
+        <div class="container">
+
+            <div class="project-section">
+                <h2><span class="section-icon">&#9670;</span> Overview</h2>
+                <p>This project measures physical distance to an obstacle using high-frequency ultrasonic sound pulses (40 kHz). The system calculates the time-of-flight between signal transmission and echo reception, converting duration into centimeters displayed in real time on an I2C-enabled 16x2 LCD screen with an audio alert.</p>
+            </div>
+
+            <div class="project-section">
+                <h2><span class="section-icon">&#9670;</span> Bill of Materials &amp; Pin Mapping</h2>
+                <table class="bom-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Component</th>
+                            <th>Qty</th>
+                            <th>Est. Cost</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Arduino Nano (V3.0)</td>
+                            <td>1</td>
+                            <td class="cost">Rs. 450</td>
+                            <td>Central Controller</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>HC-SR04 Ultrasonic Sensor</td>
+                            <td>1</td>
+                            <td class="cost">Rs. 160</td>
+                            <td>
+                                <div class="bom-pin">VCC <code>5V</code> &middot; GND <code>GND</code></div>
+                                <div class="bom-pin">Trig <code>Pin D9</code> &middot; Echo <code>Pin D10</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>16x2 LCD with I2C Backpack</td>
+                            <td>1</td>
+                            <td class="cost">Rs. 180</td>
+                            <td>
+                                <div class="bom-pin">VCC <code>5V</code> &middot; GND <code>GND</code></div>
+                                <div class="bom-pin">SDA <code>Pin A4</code> &middot; SCL <code>Pin A5</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>5V Active Buzzer</td>
+                            <td>1</td>
+                            <td class="cost">Rs. 20</td>
+                            <td>
+                                <div class="bom-pin">Positive <code>Pin D11</code> &middot; Negative <code>GND</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Breadboard &amp; Jumper Cables</td>
+                            <td>1</td>
+                            <td class="cost">Rs. 40</td>
+                            <td>&mdash;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="project-section">
+                <h2><span class="section-icon">&#9670;</span> Calculation Formula</h2>
+                <div class="formula-box">
+                    <p>Distance (cm) = (Echo Duration in microseconds &times; 0.0343) / 2</p>
+                    <div class="formula">Distance = (duration &times; 0.0343) / 2</div>
+                    <p class="formula-note">Sound travels at ~343 m/s (0.0343 cm/&micro;s). Divide by 2 because the pulse travels to the obstacle and back.</p>
+                </div>
+            </div>
+
+            <div class="project-section">
+                <h2><span class="section-icon">&#9670;</span> Core Control Code (C++)</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Arduino Sketch &middot; C++</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                    </div>
+                    <pre><code>#include &lt;Wire.h&gt;
+#include &lt;LiquidCrystal_I2C.h&gt;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+const int trigPin = 9;
+const int echoPin = 10;
+const int buzzerPin = 11;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+  lcd.init();
+  lcd.backlight();
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  long duration = pulseIn(echoPin, HIGH);
+  float distance = duration * 0.0343 / 2;
+
+  lcd.setCursor(0, 0);
+  lcd.print("Distance Metric:");
+  lcd.setCursor(0, 1);
+  lcd.print(distance);
+  lcd.print(" cm    ");
+
+  if (distance &gt; 0 &amp;&amp; distance &lt; 10) {
+    digitalWrite(buzzerPin, HIGH);
+  } else {
+    digitalWrite(buzzerPin, LOW);
+  }
+  delay(100);
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="project-section">
+                <h2><span class="section-icon">&#9670;</span> Troubleshooting &amp; Assembly Tips</h2>
+                <ul class="tips-list">
+                    <li>
+                        <span class="tip-icon">!</span>
+                        <span>If LCD lights up but shows no text, turn the blue potentiometer on the back of the I2C module to adjust display contrast.</span>
+                    </li>
+                    <li>
+                        <span class="tip-icon">!</span>
+                        <span>Ensure I2C address is correctly set to <code>0x27</code> or <code>0x3F</code> in code depending on your PCF8574 chip variant.</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <img src="iconmark.png" alt="Makera PK" class="footer-icon">
+                <span>Makera PK</span>
+            </div>
+            <div class="social-links">
+                <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    <span>Instagram</span>
+                </a>
+                <a href="https://wa.me/923330034535" target="_blank" rel="noopener" class="social-link" aria-label="WhatsApp">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <span>WhatsApp</span>
+                </a>
+            </div>
+            <p class="footer-text">Student-led maker community &copy; 2026 Makera PK. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#products">Products</a>
+                <a href="community.html">Community</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#contact">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = 'Copy Code'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

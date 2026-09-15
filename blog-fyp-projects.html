@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 5 Projects for Your FYP (Final Year Project) | Makera PK</title>
+    <meta name="description" content="Explore the top 5 Final Year Project ideas for engineering students in Pakistan, balancing academic rigor with realistic component budgets.">
+    <meta property="og:title" content="Top 5 Projects for Your FYP (Final Year Project)">
+    <meta property="og:description" content="Top 5 FYP project ideas with core tech stacks and real-world applications for Pakistani engineering students.">
+    <meta property="og:url" content="https://makerapk.vercel.app/blog-fyp-projects.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Makera PK">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --bg-light: #1e293b;
+            --accent: #22d3ee;
+            --text: #f1f5f9;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        a { color: var(--accent); text-decoration: none; transition: color 0.3s; }
+        a:hover { color: var(--primary); }
+        nav {
+            background: var(--bg-light);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(99,102,241,0.2);
+        }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-links a { color: var(--text); font-weight: 500; }
+        .nav-links a.active, .nav-links a:hover { color: var(--accent); }
+        .hamburger { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text); background: none; border: none; }
+        .page-header {
+            background: linear-gradient(135deg, var(--primary), #4338ca);
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+        .page-header h1 { font-size: 2.2rem; margin-bottom: 0.75rem; }
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 0.3rem 1rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .date { opacity: 0.8; font-size: 0.9rem; }
+        .article {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .article h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin: 2.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(34,211,238,0.2);
+        }
+        .article h3 { color: var(--primary); font-size: 1.2rem; margin: 1.5rem 0 0.75rem; }
+        .article p { margin-bottom: 1rem; color: #cbd5e1; }
+        .article ul, .article ol { margin: 1rem 0 1rem 1.5rem; color: #cbd5e1; }
+        .article li { margin-bottom: 0.5rem; }
+        .article strong { color: var(--text); }
+        .project-card {
+            background: var(--bg-light);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .project-card h3 { margin-top: 0; }
+        .tech-tag {
+            display: inline-block;
+            background: rgba(34,211,238,0.15);
+            color: var(--accent);
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin: 0.2rem;
+        }
+        .back-link {
+            display: inline-block;
+            margin: 2rem 0;
+            padding: 0.6rem 1.5rem;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            color: var(--accent);
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .back-link:hover { background: var(--accent); color: var(--bg); }
+        footer {
+            background: var(--bg-light);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(99,102,241,0.2);
+            margin-top: 3rem;
+        }
+        footer .social-links { margin-bottom: 1rem; }
+        footer .social-links a { margin: 0 1rem; font-weight: 600; }
+        footer p { opacity: 0.7; font-size: 0.9rem; }
+        @media (max-width: 768px) {
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-light); padding: 1rem 2rem; }
+            .nav-links.open { display: flex; }
+            .hamburger { display: block; }
+            .page-header h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Makera PK</div>
+        <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#products">Products</a></li>
+            <li><a href="community.html" class="active">Community</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <header class="page-header">
+        <span class="badge">Career & Academics</span>
+        <h1>Top 5 Projects for Your FYP (Final Year Project)</h1>
+        <p class="date">Published: Sep 2026</p>
+    </header>
+
+    <article class="article">
+        <h2>Introduction</h2>
+        <p>Choosing an FYP that balances academic rigor with realistic component procurement budgets is the biggest challenge for Pakistani engineering students. The projects below are designed to score high marks while using components you can actually source locally without overseas shipping delays or exorbitant costs.</p>
+
+        <div class="project-card">
+            <h3>Project 1: Smart Grid & IoT Energy Monitoring System</h3>
+            <p><strong>Focus:</strong> Addressing local power distribution and load monitoring</p>
+            <p><strong>Core Tech:</strong></p>
+            <div>
+                <span class="tech-tag">ACS712 Current Sensor</span>
+                <span class="tech-tag">ZMPT101B Voltage Module</span>
+                <span class="tech-tag">ESP32</span>
+            </div>
+            <p style="margin-top:1rem;">This project monitors real-time energy consumption at the household level, pushing data to an IoT dashboard. It's directly relevant to Pakistan's power distribution challenges and load-shedding monitoring.</p>
+        </div>
+
+        <div class="project-card">
+            <h3>Project 2: Autonomous Agricultural Soil Health Analyzer</h3>
+            <p><strong>Focus:</strong> Smart farming applications for regional agriculture</p>
+            <p><strong>Core Tech:</strong></p>
+            <div>
+                <span class="tech-tag">NPK Soil Sensor</span>
+                <span class="tech-tag">Moisture Sensor</span>
+                <span class="tech-tag">OLED Display</span>
+                <span class="tech-tag">LoRa/GSM Module</span>
+            </div>
+            <p style="margin-top:1rem;">Designed for Pakistan's agricultural backbone, this system analyzes soil nutrient levels (Nitrogen, Phosphorus, Potassium) and moisture content, transmitting data wirelessly to farmer dashboards via LoRa or GSM networks.</p>
+        </div>
+
+        <div class="project-card">
+            <h3>Project 3: Remote Patient Vital Signs Telemetry System</h3>
+            <p><strong>Focus:</strong> Low-cost healthcare telemetry for rural clinics</p>
+            <p><strong>Core Tech:</strong></p>
+            <div>
+                <span class="tech-tag">MAX30102 Pulse Oximeter</span>
+                <span class="tech-tag">AD8232 ECG Sensor</span>
+                <span class="tech-tag">MQTT Cloud Dashboard</span>
+            </div>
+            <p style="margin-top:1rem;">This system tracks heart rate, SpO2, and ECG data in real-time, transmitting to a cloud dashboard via MQTT. It's built for remote rural clinics where specialist doctors aren't physically present.</p>
+        </div>
+
+        <div class="project-card">
+            <h3>Project 4: OpenCV Computer Vision Automated Conveyor Belt</h3>
+            <p><strong>Focus:</strong> Industrial quality control and material handling automation</p>
+            <p><strong>Core Tech:</strong></p>
+            <div>
+                <span class="tech-tag">Python/OpenCV Camera</span>
+                <span class="tech-tag">Arduino Motor Driver</span>
+                <span class="tech-tag">Servo Sorting Arms</span>
+            </div>
+            <p style="margin-top:1rem;">A vision-guided conveyor belt system that uses OpenCV for object detection and classification, triggering servo-based sorting arms to separate items by color, shape, or defect — ideal for textile and manufacturing industries.</p>
+        </div>
+
+        <div class="project-card">
+            <h3>Project 5: Municipal Water Quality & Flow Management Node</h3>
+            <p><strong>Focus:</strong> Automated urban utility monitoring</p>
+            <p><strong>Core Tech:</strong></p>
+            <div>
+                <span class="tech-tag">pH Sensor</span>
+                <span class="tech-tag">Turbidity Sensor</span>
+                <span class="tech-tag">YF-S201 Flow Meter</span>
+                <span class="tech-tag">ESP8266</span>
+            </div>
+            <p style="margin-top:1rem;">This node monitors municipal water quality parameters including pH, turbidity, and flow rate in real-time. Data is uploaded to a cloud dashboard for automated alerts on contamination or leaks — directly applicable to Karachi's water supply challenges.</p>
+        </div>
+
+        <a href="community.html" class="back-link">&larr; Back to Community</a>
+    </article>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://www.instagram.com/makera.pk/" target="_blank">Instagram</a>
+            <a href="https://wa.me/923330034535" target="_blank">WhatsApp</a>
+        </div>
+        <p>&copy; 2026 Makera PK. All rights reserved.</p>
+    </footer>
+</body>
+</html>
