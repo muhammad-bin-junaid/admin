@@ -185,27 +185,27 @@ TOTAL: Rs. ${total.toLocaleString()}
     `.trim();
 
     document.getElementById('orderDetails').value = orderDetails;
+    document.getElementById('orderMessage').value = orderDetails;
 
     submitBtn.textContent = 'Placing Order...';
     submitBtn.disabled = true;
 
     const formData = new FormData(form);
-    formData.append('access_key', 'e890b603-e53e-4785-ad90-488a009ceac5');
 
-    fetch('https://api.web3forms.com/submit', {
+    fetch('https://formspree.io/f/xrpgnvnj', {
         method: 'POST',
-        body: formData
-    }).then(res => res.json()).then(data => {
-        if (data.success) {
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+    }).then(res => {
+        if (res.ok) {
             sendWhatsApp(orderDetails);
             showSuccess();
         } else {
-            alert('Something went wrong. Try again.');
-            submitBtn.textContent = 'Place Order';
-            submitBtn.disabled = false;
+            return res.json().then(data => { throw new Error(data.error || 'Submission failed'); });
         }
-    }).catch(() => {
-        alert('Something went wrong. Try again.');
+    }).catch(err => {
+        console.error('Formspree error:', err);
+        alert('Error: ' + err.message);
         submitBtn.textContent = 'Place Order';
         submitBtn.disabled = false;
     });

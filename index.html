@@ -332,12 +332,12 @@
                 <h3>Checkout</h3>
                 <button class="modal-close" onclick="closeCheckout()">&times;</button>
             </div>
-            <form id="checkoutForm" onsubmit="submitOrder(event)">
-                <input type="hidden" name="access_key" value="e890b603-e53e-4785-ad90-488a009ceac5">
-                <input type="hidden" name="subject" value="New Makera PK Order">
-                <input type="hidden" name="from_name" value="Makera PK Store">
+            <form id="checkoutForm" action="https://formspree.io/f/xrpgnvnj" method="POST">
+                <input type="hidden" name="_subject" value="New Makera PK Order">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="text" name="_gotcha" style="display:none">
                 <input type="hidden" name="order_details" id="orderDetails">
-                <input type="checkbox" name="botcheck" style="display:none">
+                <textarea name="message" id="orderMessage" style="display:none;"></textarea>
 
                 <div class="form-group">
                     <label for="studentName">Full Name *</label>
@@ -386,6 +386,9 @@
                 <div class="form-group">
                     <label for="orderNote">Order Notes</label>
                     <textarea id="orderNote" name="note" rows="3" placeholder="Any special instructions..."></textarea>
+                </div>
+                <div class="form-group">
+                    <textarea name="message" id="orderMessage" style="display:none;"></textarea>
                 </div>
 
                 <div class="checkout-summary" id="checkoutSummary"></div>
