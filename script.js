@@ -8,11 +8,12 @@ const products = {
     3: { id: 3, name: 'Digital Multimeter', price: 599, img: 'all product images/digital multimetar 599rs.jpeg' },
     4: { id: 4, name: 'Digital Multimeter Pro', price: 950, img: 'all product images/digital multimetar 950rs.jpeg' },
     5: { id: 5, name: 'Arduino Nano', price: 450, img: 'all product images/arduino nano 450rs.jpeg' },
-    6: { id: 6, name: 'Arduino Nano V2', price: 450, img: 'all product images/arduino nano 450rs img2.jpeg' },
-    7: { id: 7, name: 'Soldering Iron', price: 449, img: 'all product images/soldering iron 449rs.png' },
-    8: { id: 8, name: 'Soldering Iron Pro', price: 699, img: 'all product images/soldering iron 699rs.jpeg' },
-    9: { id: 9, name: 'Soldering Wire (50g)', price: 160, img: 'all product images/soldering wire 160rs 50g.jpeg' },
-    10: { id: 10, name: 'Soldering Wire Premium (50g)', price: 200, img: 'all product images/soldering wire 200rs 50g.jpeg' }
+    6: { id: 6, name: 'LM555 Astable & Monostable Kit', price: 85, img: '' },
+    7: { id: 7, name: 'Transistor Flip Flop Kit', price: 150, img: '' },
+    8: { id: 8, name: 'Soldering Iron', price: 449, img: 'all product images/soldering iron 449rs.png' },
+    9: { id: 9, name: 'Soldering Iron Pro', price: 699, img: 'all product images/soldering iron 699rs.jpeg' },
+    10: { id: 10, name: 'Soldering Wire (50g)', price: 160, img: 'all product images/soldering wire 160rs 50g.jpeg' },
+    11: { id: 11, name: 'Soldering Wire Premium (50g)', price: 200, img: 'all product images/soldering wire 200rs 50g.jpeg' }
 };
 
 // Campus selection
@@ -92,9 +93,13 @@ function updateCartUI() {
     }
 
     footerEl.style.display = 'block';
-    itemsEl.innerHTML = cart.map(item => `
+    itemsEl.innerHTML = cart.map(item => {
+        const imgHtml = item.img
+            ? `<div class="cart-item-img"><img src="${item.img}" alt="${item.name}"></div>`
+            : `<div class="cart-item-img" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🔧</div>`;
+        return `
         <div class="cart-item">
-            <div class="cart-item-img"><img src="${item.img}" alt="${item.name}"></div>
+            ${imgHtml}
             <div class="cart-item-info">
                 <h4>${item.name}</h4>
                 <span class="cart-item-price">Rs. ${(item.price * item.qty).toLocaleString()}</span>
@@ -105,8 +110,8 @@ function updateCartUI() {
                     <button class="cart-item-remove" onclick="removeFromCart(${item.id})">Remove</button>
                 </div>
             </div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 
     totalEl.textContent = 'Rs. ' + getCartTotal().toLocaleString();
 }
@@ -218,7 +223,7 @@ TOTAL: Rs. ${total.toLocaleString()}
 
 function sendWhatsApp(orderText) {
     const msg = encodeURIComponent('New order from MakerAPK:\n\n' + orderText);
-    window.open('https://wa.me/923001234567?text=' + msg, '_blank');
+    window.open('https://wa.me/923330034535?text=' + msg, '_blank');
 }
 
 function showSuccess() {
