@@ -2,15 +2,15 @@ let cart = [];
 let selectedCampus = 'Bahria University';
 
 const products = {
-    1: { id: 1, name: '1599 Multimeter', price: 1599, img: 'all product images/1599 multimeter.jpeg' },
+    1: { id: 1, name: '1599 Multimeter', price: 1600, img: 'all product images/1599 multimeter.jpeg' },
     2: { id: 2, name: 'Advanced Multimeter', price: 2050, img: 'all product images/multimeter 2050rs.jpeg' },
-    3: { id: 3, name: 'Digital Multimeter', price: 599, img: 'all product images/digital multimetar 599rs.jpeg' },
+    3: { id: 3, name: 'Digital Multimeter', price: 600, img: 'all product images/digital multimetar 599rs.jpeg' },
     4: { id: 4, name: 'Digital Multimeter Pro', price: 950, img: 'all product images/digital multimetar 950rs.jpeg' },
     5: { id: 5, name: 'Arduino Nano', price: 450, img: 'all product images/arduino nano 450rs.jpeg' },
     6: { id: 6, name: 'LM555 Astable & Monostable Kit', price: 85, img: '' },
     7: { id: 7, name: 'Transistor Flip Flop Kit', price: 150, img: '' },
-    8: { id: 8, name: 'Soldering Iron', price: 449, img: 'all product images/soldering iron 449rs.png' },
-    9: { id: 9, name: 'Soldering Iron Pro', price: 699, img: 'all product images/soldering iron 699rs.jpeg' },
+    8: { id: 8, name: 'Soldering Iron', price: 450, img: 'all product images/soldering iron 449rs.png' },
+    9: { id: 9, name: 'Soldering Iron Pro', price: 700, img: 'all product images/soldering iron 699rs.jpeg' },
     10: { id: 10, name: 'Soldering Wire (50g)', price: 160, img: 'all product images/soldering wire 160rs 50g.jpeg' },
     11: { id: 11, name: 'Soldering Wire Premium (50g)', price: 200, img: 'all product images/soldering wire 200rs 50g.jpeg' }
 };
@@ -190,7 +190,6 @@ TOTAL: Rs. ${total.toLocaleString()}
     submitBtn.disabled = true;
 
     const formData = new FormData(form);
-    formData.append('access_key', 'e890b603-e53e-4785-ad90-488a009ceac5');
     formData.append('message', orderDetails);
 
     fetch('https://api.web3forms.com/submit', {
