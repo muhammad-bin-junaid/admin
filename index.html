@@ -150,7 +150,7 @@
                         <p class="product-desc">Everything you need to build timer circuits on a veroboard</p>
                         <div class="kit-parts">
                             <span>LM555 IC x2</span>
-                            <span>8-pin IC Base x10</span>
+                            <span>8-pin IC Base x20</span>
                             <span>LED x2</span>
                             <span>100µF Capacitor x2</span>
                             <span>Resistors x2</span>
@@ -332,12 +332,12 @@
                 <h3>Checkout</h3>
                 <button class="modal-close" onclick="closeCheckout()">&times;</button>
             </div>
-            <form id="checkoutForm" action="https://formspree.io/f/xrpgnvnj" method="POST">
-                <input type="hidden" name="_subject" value="New Makera PK Order">
-                <input type="hidden" name="_captcha" value="false">
-                <input type="text" name="_gotcha" style="display:none">
+            <form id="checkoutForm" onsubmit="submitOrder(event)">
+                <input type="hidden" name="access_key" value="e890b603-e53e-4785-ad90-488a009ceac5">
+                <input type="hidden" name="subject" value="New Makera PK Order">
+                <input type="hidden" name="from_name" value="Makera PK Store">
                 <input type="hidden" name="order_details" id="orderDetails">
-                <textarea name="message" id="orderMessage" style="display:none;"></textarea>
+                <input type="checkbox" name="botcheck" style="display:none">
 
                 <div class="form-group">
                     <label for="studentName">Full Name *</label>
