@@ -1,6 +1,6 @@
 # Generate a clean, well-formatted text file containing the content for 2 project pages and 6 blog pages
 content = """================================================================================
-MAKERAPK WEBSITE CONTENT REFERENCE MANUAL
+MAKERSERA WEBSITE CONTENT REFERENCE MANUAL
 2 FULL HARDWARE PROJECT PAGES & 6 BLOG ARTICLES
 ================================================================================
 
@@ -301,10 +301,10 @@ Safety First:
 
 Fume ventilation, eye protection, avoiding lead exposure.
 
-BLOG 4: HOW WE BUILT MAKERAPK: A STUDENT COMMUNITY STORY
+BLOG 4: HOW WE BUILT MAKERSERA: A STUDENT COMMUNITY STORY
 Date: Aug 2026
 Category: Community Story
-Target Audience: MakerAPK Members & Campus Ambassadors
+Target Audience: MakersEra Members & Campus Ambassadors
 
 CONTENT OUTLINE:
 
@@ -433,7 +433,7 @@ Blog 2 (Top 5 FYP Projects): Detailed project concepts (Smart Grid, Agricultural
 
 Blog 3 (Soldering 101): Iron temperature selection, 4-step tinning & joint technique, visual breakdown of good vs. bad joints, and safety steps.
 
-Blog 4 (MakerAPK Community Story): The origin story scaling from 5 students in Karachi to 22+ university campuses, ambassador programs, and open hardware pools.
+Blog 4 (MakersEra Community Story): The origin story scaling from 5 students in Karachi to 22+ university campuses, ambassador programs, and open hardware pools.
 
 Blog 5 (Multimeter Guide): Probe placements, testing continuity, voltage, resistance, in-series current measurement, and avoiding blown fuses.
 
