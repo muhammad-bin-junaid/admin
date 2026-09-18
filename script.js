@@ -185,19 +185,20 @@ TOTAL: Rs. ${total.toLocaleString()}
     `.trim();
 
     document.getElementById('orderDetails').value = orderDetails;
+    document.getElementById('orderMessage').value = orderDetails;
 
     submitBtn.textContent = 'Placing Order...';
     submitBtn.disabled = true;
 
     const formData = new FormData(form);
-    formData.append('message', orderDetails);
 
     fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData
     }).then(res => res.json()).then(data => {
         if (data.success) {
-            showSuccess();
+            sendWhatsApp(orderDetails);
+            showSuccess(orderDetails);
         } else {
             console.error('Web3Forms error:', data);
             alert('Error: ' + (data.message || 'Something went wrong.'));
@@ -217,8 +218,11 @@ function sendWhatsApp(orderText) {
     window.open('https://wa.me/923330034535?text=' + msg, '_blank');
 }
 
-function showSuccess() {
+function showSuccess(orderText) {
     closeCheckout();
+    if (orderText) {
+        document.getElementById('orderSuccessDetails').textContent = orderText;
+    }
     document.getElementById('successModal').classList.add('open');
     cart = [];
     updateCartUI();
