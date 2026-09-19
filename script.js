@@ -197,7 +197,6 @@ TOTAL: Rs. ${total.toLocaleString()}
         body: formData
     }).then(res => res.json()).then(data => {
         if (data.success) {
-            sendWhatsApp(orderDetails);
             showSuccess(orderDetails);
         } else {
             console.error('Web3Forms error:', data);
@@ -215,11 +214,14 @@ TOTAL: Rs. ${total.toLocaleString()}
 
 function sendWhatsApp(orderText) {
     const msg = encodeURIComponent('New order from Makers Era:\n\n' + orderText);
-    window.open('https://wa.me/923330034535?text=' + msg, '_blank');
+    window.open('https://wa.me/923373786628?text=' + msg, '_blank');
 }
+
+let lastOrderDetails = '';
 
 function showSuccess(orderText) {
     closeCheckout();
+    lastOrderDetails = orderText || '';
     if (orderText) {
         document.getElementById('orderSuccessDetails').textContent = orderText;
     }
@@ -231,6 +233,13 @@ function showSuccess(orderText) {
 function closeSuccess() {
     document.getElementById('successModal').classList.remove('open');
     document.body.style.overflow = '';
+    lastOrderDetails = '';
+}
+
+function sendPaymentScreenshot() {
+    const bankInfo = 'BANK PAYMENT DETAILS:\nAccount Title: Muhammad Bin Junaid\nAccount No: 0333 0034535\nIBAN: PK77JSBL9999903330034535\nBank: JS Bank / Zindagi\n\nPlease attach your payment screenshot after sending this message.';
+    const msg = encodeURIComponent(lastOrderDetails + '\n\n' + bankInfo);
+    window.open('https://wa.me/923373786628?text=' + msg, '_blank');
 }
 
 function toggleMenu() {

@@ -4,175 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Getting Started with Arduino as a Pakistani Student | Makers Era</title>
+    <link rel="icon" type="image/svg+xml" href="makers era-01.svg">
+    <link rel="stylesheet" href="styles.css">
     <meta name="description" content="A complete beginner guide to Arduino for Pakistani students. Learn component sourcing in Karachi, software setup, and upload your first sketch.">
+    <meta name="theme-color" content="#0f172a">
     <meta property="og:title" content="Getting Started with Arduino as a Pakistani Student">
     <meta property="og:description" content="A complete beginner guide to Arduino for Pakistani students covering sourcing, setup, and first projects.">
     <meta property="og:url" content="https://makerapk.vercel.app/blog-getting-started-arduino.html">
     <meta property="og:type" content="article">
+    <meta property="og:image" content="https://makerapk.vercel.app/makers era-01.svg">
     <meta property="og:site_name" content="Makers Era">
     <style>
-        :root {
-            --primary: #6366f1;
-            --bg: #0f172a;
-            --bg-light: #1e293b;
-            --accent: #22d3ee;
-            --text: #f1f5f9;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-        }
-        a { color: var(--accent); text-decoration: none; transition: color 0.3s; }
-        a:hover { color: var(--primary); }
-        nav {
-            background: var(--bg-light);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(99,102,241,0.2);
-        }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-        .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-        .nav-links a { color: var(--text); font-weight: 500; }
-        .nav-links a.active, .nav-links a:hover { color: var(--accent); }
-        .hamburger { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text); background: none; border: none; }
-        .page-header {
-            background: linear-gradient(135deg, var(--primary), #4338ca);
-            padding: 4rem 2rem 3rem;
-            text-align: center;
-        }
-        .page-header h1 { font-size: 2.2rem; margin-bottom: 0.75rem; }
-        .badge {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--bg);
-            padding: 0.3rem 1rem;
-            border-radius: 999px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        .date { opacity: 0.8; font-size: 0.9rem; }
-        .article {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-        .article h2 {
-            color: var(--accent);
-            font-size: 1.5rem;
-            margin: 2.5rem 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid rgba(34,211,238,0.2);
-        }
-        .article h3 { color: var(--primary); font-size: 1.2rem; margin: 1.5rem 0 0.75rem; }
-        .article p { margin-bottom: 1rem; color: #cbd5e1; }
-        .article ul, .article ol { margin: 1rem 0 1rem 1.5rem; color: #cbd5e1; }
-        .article li { margin-bottom: 0.5rem; }
-        .article strong { color: var(--text); }
-        .back-link {
-            display: inline-block;
-            margin: 2rem 0;
-            padding: 0.6rem 1.5rem;
-            border: 2px solid var(--accent);
-            border-radius: 8px;
-            color: var(--accent);
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        .back-link:hover { background: var(--accent); color: var(--bg); }
-        footer {
-            background: var(--bg-light);
-            padding: 2rem;
-            text-align: center;
-            border-top: 1px solid rgba(99,102,241,0.2);
-            margin-top: 3rem;
-        }
-        footer .social-links { margin-bottom: 1rem; }
-        footer .social-links a { margin: 0 1rem; font-weight: 600; }
-        footer p { opacity: 0.7; font-size: 0.9rem; }
-        @media (max-width: 768px) {
-            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-light); padding: 1rem 2rem; }
-            .nav-links.open { display: flex; }
-            .hamburger { display: block; }
-            .page-header h1 { font-size: 1.6rem; }
-        }
+        .blog-article { padding: 60px 0 80px; }
+        .blog-article .container { max-width: 740px; }
+        .article-category { display: inline-block; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); background: rgba(34,211,238,.1); padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
+        .article-date { color: var(--text-muted); font-size: .85rem; margin-bottom: 24px; }
+        .article-body h2 { font-size: 1.5rem; font-weight: 700; margin: 36px 0 16px; color: var(--text); padding-top: 12px; border-top: 1px solid rgba(255,255,255,.06); }
+        .article-body h2:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+        .article-body h3 { font-size: 1.15rem; font-weight: 600; margin: 24px 0 12px; color: var(--accent); }
+        .article-body p { color: var(--text-muted); font-size: 1rem; line-height: 1.8; margin-bottom: 16px; }
+        .article-body ul, .article-body ol { color: var(--text-muted); font-size: 1rem; line-height: 1.8; margin-bottom: 16px; padding-left: 24px; }
+        .article-body ul li, .article-body ol li { margin-bottom: 8px; }
+        .article-body ul li::marker { color: var(--accent); }
+        .article-body ol li::marker { color: var(--accent); font-weight: 700; }
+        .article-body strong { color: var(--text); }
+        .article-body code { background: rgba(34,211,238,.1); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: .9em; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 600; font-size: .9rem; transition: color .2s; margin-top: 40px; }
+        .back-link:hover { color: var(--primary); }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="logo">Makers Era</div>
-        <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
-        <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="index.html#products">Products</a></li>
-            <li><a href="community.html" class="active">Community</a></li>
-            <li><a href="index.html#about">About</a></li>
-            <li><a href="index.html#contact">Contact</a></li>
-        </ul>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <img src="makers era-01.svg" alt="Makers Era" class="logo-icon">
+            </a>
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#products">Products</a></li>
+                <li><a href="community.html" class="active">Community</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
     </nav>
 
     <header class="page-header">
-        <span class="badge">Beginner Guide</span>
-        <h1>Getting Started with Arduino as a Pakistani Student</h1>
-        <p class="date">Published: Sep 2026</p>
+        <div class="container">
+            <span class="article-category">Beginner Guide</span>
+            <h1 class="page-title">Getting Started with Arduino as a Pakistani Student</h1>
+            <p class="page-subtitle">September 2026</p>
+        </div>
     </header>
 
-    <article class="article">
-        <h2>Introduction</h2>
-        <p>Arduino is the ideal gateway into embedded systems and hardware programming for students across Pakistan. With a low barrier to entry, a vast open-source library ecosystem, and cheap local availability, it remains the most accessible microcontroller platform for beginners. Whether you're from Karachi, Lahore, or Islamabad, you can get started without breaking the bank.</p>
+    <section class="blog-article">
+        <div class="container">
+            <div class="article-body">
 
-        <h2>Component Sourcing in Karachi</h2>
-        <p>Finding the right board at the right price is the first real challenge. Here's what you need to know:</p>
-        <ul>
-            <li><strong>Arduino Uno R3 (SMD/DIP) vs Arduino Nano:</strong> The Uno is larger and easier to handle for beginners, while the Nano saves space and money. Both are great for student budgets.</li>
-            <li><strong>Physical Market Guide:</strong> Head to <strong>Regal Chowk / Saddar Electronics Market</strong> in Karachi for the best deals. Bargaining is expected — start at 60% of the asking price.</li>
-            <li><strong>Online Alternatives:</strong> Local Pakistani hobbyist vendors like <strong>Robotronics</strong> and <strong>HallRoad.org</strong> offer reliable shipping and student-friendly pricing.</li>
-            <li><strong>Starter Kit Budget Breakdown:</strong> Expect to spend approximately <strong>PKR 2,000 - 3,500</strong> total for a board, USB cable, breadboard, LEDs, resistors, and jumper wires.</li>
-        </ul>
+                <h2>Introduction</h2>
+                <p>Arduino is the ideal gateway into embedded systems and hardware programming for students across Pakistan. With a low barrier to entry, a vast open-source library ecosystem, and cheap local availability, it remains the most accessible microcontroller platform for beginners. Whether you're from Karachi, Lahore, or Islamabad, you can get started without breaking the bank.</p>
 
-        <h2>Software Setup & Drivers</h2>
-        <p>Before you can upload code, you need the right software installed:</p>
-        <ul>
-            <li>Download <strong>Arduino IDE 2.x</strong> from the official Arduino website — it's free and works on Windows, macOS, and Linux.</li>
-            <li>Install the <strong>CH340G</strong> or <strong>CP2102</strong> USB drivers — these are required for budget clone boards commonly sold in local markets.</li>
-            <li>Connect your board via USB and verify the correct COM port appears in Tools > Port.</li>
-        </ul>
-
-        <h2>Uploading Your First Sketch (Blink LED)</h2>
-        <p>Let's make an LED blink — the "Hello World" of hardware:</p>
-        <ol>
-            <li><strong>Connecting board over USB:</strong> Plug your Arduino into your laptop or PC using the provided USB cable.</li>
-            <li><strong>Understanding setup() and loop():</strong> <code>setup()</code> runs once when the board powers on. <code>loop()</code> runs repeatedly after setup completes.</li>
-            <li><strong>Code walk-through:</strong>
+                <h2>Component Sourcing in Karachi</h2>
+                <p>Finding the right board at the right price is the first real challenge. Here's what you need to know:</p>
                 <ul>
-                    <li><code>pinMode(13, OUTPUT)</code> — Configures pin 13 as an output.</li>
-                    <li><code>digitalWrite(13, HIGH)</code> — Sends power to the pin, turning the LED on.</li>
-                    <li><code>delay(1000)</code> — Pauses execution for 1000 milliseconds (1 second).</li>
-                    <li><code>digitalWrite(13, LOW)</code> — Cuts power, turning the LED off.</li>
+                    <li><strong>Arduino Uno R3 (SMD/DIP) vs Arduino Nano:</strong> The Uno is larger and easier to handle for beginners, while the Nano saves space and money. Both are great for student budgets.</li>
+                    <li><strong>Physical Market Guide:</strong> Head to <strong>Regal Chowk / Saddar Electronics Market</strong> in Karachi for the best deals. Bargaining is expected — start at 60% of the asking price.</li>
+                    <li><strong>Online Alternatives:</strong> Local Pakistani hobbyist vendors like <strong>Robotronics</strong> and <strong>HallRoad.org</strong> offer reliable shipping and student-friendly pricing.</li>
+                    <li><strong>Starter Kit Budget Breakdown:</strong> Expect to spend approximately <strong>PKR 2,000 - 3,500</strong> total for a board, USB cable, breadboard, LEDs, resistors, and jumper wires.</li>
                 </ul>
-            </li>
-        </ol>
 
-        <h2>Local Pro-Tips</h2>
-        <p><strong>Handling Load Shedding:</strong> Power outages are a reality in Pakistan. Keep a <strong>9V battery snap</strong> or a <strong>5V power bank</strong> handy for uninterrupted bench testing. This ensures your prototyping sessions aren't cut short by K-Electric or LESCO's schedule.</p>
+                <h2>Software Setup & Drivers</h2>
+                <p>Before you can upload code, you need the right software installed:</p>
+                <ul>
+                    <li>Download <strong>Arduino IDE 2.x</strong> from the official Arduino website — it's free and works on Windows, macOS, and Linux.</li>
+                    <li>Install the <strong>CH340G</strong> or <strong>CP2102</strong> USB drivers — these are required for budget clone boards commonly sold in local markets.</li>
+                    <li>Connect your board via USB and verify the correct COM port appears in Tools > Port.</li>
+                </ul>
 
-        <a href="community.html" class="back-link">&larr; Back to Community</a>
-    </article>
+                <h2>Uploading Your First Sketch (Blink LED)</h2>
+                <p>Let's make an LED blink — the "Hello World" of hardware:</p>
+                <ol>
+                    <li><strong>Connecting board over USB:</strong> Plug your Arduino into your laptop or PC using the provided USB cable.</li>
+                    <li><strong>Understanding setup() and loop():</strong> <code>setup()</code> runs once when the board powers on. <code>loop()</code> runs repeatedly after setup completes.</li>
+                    <li><strong>Code walk-through:</strong>
+                        <ul>
+                            <li><code>pinMode(13, OUTPUT)</code> — Configures pin 13 as an output.</li>
+                            <li><code>digitalWrite(13, HIGH)</code> — Sends power to the pin, turning the LED on.</li>
+                            <li><code>delay(1000)</code> — Pauses execution for 1000 milliseconds (1 second).</li>
+                            <li><code>digitalWrite(13, LOW)</code> — Cuts power, turning the LED off.</li>
+                        </ul>
+                    </li>
+                </ol>
 
-    <footer>
-        <div class="social-links">
-            <a href="https://www.instagram.com/makera.pk/" target="_blank">Instagram</a>
-            <a href="https://wa.me/923330034535" target="_blank">WhatsApp</a>
+                <h2>Local Pro-Tips</h2>
+                <p><strong>Handling Load Shedding:</strong> Power outages are a reality in Pakistan. Keep a <strong>9V battery snap</strong> or a <strong>5V power bank</strong> handy for uninterrupted bench testing. This ensures your prototyping sessions aren't cut short by K-Electric or LESCO's schedule.</p>
+
+            </div>
+            <a href="community.html" class="back-link">&larr; Back to Community</a>
         </div>
-        <p>&copy; 2026 Makers Era. All rights reserved.</p>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <img src="makers era-01.svg" alt="Makers Era" class="footer-icon">
+                <span>Makers Era</span>
+            </div>
+            <div class="social-links">
+                <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    <span>Instagram</span>
+                </a>
+                <a href="https://wa.me/923373786628" target="_blank" rel="noopener" class="social-link" aria-label="WhatsApp">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <span>WhatsApp</span>
+                </a>
+            </div>
+            <p class="footer-text">Student-led maker community &copy; 2026 Makers Era. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#products">Products</a>
+                <a href="community.html">Community</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#contact">Contact</a>
+            </div>
+        </div>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+    </script>
 </body>
 </html>

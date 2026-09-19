@@ -4,232 +4,174 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soldering 101: Tips Every Beginner Should Know | Makers Era</title>
+    <link rel="icon" type="image/svg+xml" href="makers era-01.svg">
+    <link rel="stylesheet" href="styles.css">
     <meta name="description" content="Master the fundamentals of soldering for hardware prototyping. Learn essential tools, step-by-step technique, joint identification, and safety.">
+    <meta name="theme-color" content="#0f172a">
     <meta property="og:title" content="Soldering 101: Tips Every Beginner Should Know">
     <meta property="og:description" content="A complete beginner guide to soldering — tools, technique, joint quality, and safety for Pakistani students.">
     <meta property="og:url" content="https://makerapk.vercel.app/blog-soldering-101.html">
     <meta property="og:type" content="article">
+    <meta property="og:image" content="https://makerapk.vercel.app/makers era-01.svg">
     <meta property="og:site_name" content="Makers Era">
     <style>
-        :root {
-            --primary: #6366f1;
-            --bg: #0f172a;
-            --bg-light: #1e293b;
-            --accent: #22d3ee;
-            --text: #f1f5f9;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-        }
-        a { color: var(--accent); text-decoration: none; transition: color 0.3s; }
-        a:hover { color: var(--primary); }
-        nav {
-            background: var(--bg-light);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(99,102,241,0.2);
-        }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-        .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-        .nav-links a { color: var(--text); font-weight: 500; }
-        .nav-links a.active, .nav-links a:hover { color: var(--accent); }
-        .hamburger { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text); background: none; border: none; }
-        .page-header {
-            background: linear-gradient(135deg, var(--primary), #4338ca);
-            padding: 4rem 2rem 3rem;
-            text-align: center;
-        }
-        .page-header h1 { font-size: 2.2rem; margin-bottom: 0.75rem; }
-        .badge {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--bg);
-            padding: 0.3rem 1rem;
-            border-radius: 999px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        .date { opacity: 0.8; font-size: 0.9rem; }
-        .article {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-        .article h2 {
-            color: var(--accent);
-            font-size: 1.5rem;
-            margin: 2.5rem 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid rgba(34,211,238,0.2);
-        }
-        .article h3 { color: var(--primary); font-size: 1.2rem; margin: 1.5rem 0 0.75rem; }
-        .article p { margin-bottom: 1rem; color: #cbd5e1; }
-        .article ul, .article ol { margin: 1rem 0 1rem 1.5rem; color: #cbd5e1; }
-        .article li { margin-bottom: 0.5rem; }
-        .article strong { color: var(--text); }
-        .step-box {
-            background: var(--bg-light);
-            border-left: 4px solid var(--accent);
-            padding: 1rem 1.25rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
-        }
+        .blog-article { padding: 60px 0 80px; }
+        .blog-article .container { max-width: 740px; }
+        .article-category { display: inline-block; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); background: rgba(34,211,238,.1); padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
+        .article-date { color: var(--text-muted); font-size: .85rem; margin-bottom: 24px; }
+        .article-body h2 { font-size: 1.5rem; font-weight: 700; margin: 36px 0 16px; color: var(--text); padding-top: 12px; border-top: 1px solid rgba(255,255,255,.06); }
+        .article-body h2:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+        .article-body h3 { font-size: 1.15rem; font-weight: 600; margin: 24px 0 12px; color: var(--accent); }
+        .article-body p { color: var(--text-muted); font-size: 1rem; line-height: 1.8; margin-bottom: 16px; }
+        .article-body ul, .article-body ol { color: var(--text-muted); font-size: 1rem; line-height: 1.8; margin-bottom: 16px; padding-left: 24px; }
+        .article-body ul li, .article-body ol li { margin-bottom: 8px; }
+        .article-body ul li::marker { color: var(--accent); }
+        .article-body ol li::marker { color: var(--accent); font-weight: 700; }
+        .article-body strong { color: var(--text); }
+        .step-box { background: var(--bg-light); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
         .step-box strong { color: var(--accent); }
-        .joint-card {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-        .joint-item {
-            background: var(--bg-light);
-            border-radius: 10px;
-            padding: 1.25rem;
-            border: 1px solid rgba(99,102,241,0.3);
-        }
-        .joint-item h4 { margin-bottom: 0.5rem; }
+        .joint-card { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+        .joint-item { background: var(--bg-light); border-radius: 10px; padding: 16px; border: 1px solid rgba(99,102,241,.3); }
+        .joint-item h4 { margin-bottom: 8px; }
         .joint-item.good { border-color: #22c55e; }
         .joint-item.good h4 { color: #22c55e; }
         .joint-item.bad { border-color: #ef4444; }
         .joint-item.bad h4 { color: #ef4444; }
         .joint-item.danger { border-color: #f59e0b; }
         .joint-item.danger h4 { color: #f59e0b; }
-        .safety-box {
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-        }
+        .safety-box { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); border-radius: 10px; padding: 20px; margin: 20px 0; }
         .safety-box h3 { color: #ef4444; margin-top: 0; }
-        .back-link {
-            display: inline-block;
-            margin: 2rem 0;
-            padding: 0.6rem 1.5rem;
-            border: 2px solid var(--accent);
-            border-radius: 8px;
-            color: var(--accent);
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        .back-link:hover { background: var(--accent); color: var(--bg); }
-        footer {
-            background: var(--bg-light);
-            padding: 2rem;
-            text-align: center;
-            border-top: 1px solid rgba(99,102,241,0.2);
-            margin-top: 3rem;
-        }
-        footer .social-links { margin-bottom: 1rem; }
-        footer .social-links a { margin: 0 1rem; font-weight: 600; }
-        footer p { opacity: 0.7; font-size: 0.9rem; }
-        @media (max-width: 768px) {
-            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-light); padding: 1rem 2rem; }
-            .nav-links.open { display: flex; }
-            .hamburger { display: block; }
-            .page-header h1 { font-size: 1.6rem; }
-        }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 600; font-size: .9rem; transition: color .2s; margin-top: 40px; }
+        .back-link:hover { color: var(--primary); }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="logo">Makers Era</div>
-        <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
-        <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="index.html#products">Products</a></li>
-            <li><a href="community.html" class="active">Community</a></li>
-            <li><a href="index.html#about">About</a></li>
-            <li><a href="index.html#contact">Contact</a></li>
-        </ul>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <img src="makers era-01.svg" alt="Makers Era" class="logo-icon">
+            </a>
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#products">Products</a></li>
+                <li><a href="community.html" class="active">Community</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
     </nav>
 
     <header class="page-header">
-        <span class="badge">Hands-On Skills</span>
-        <h1>Soldering 101: Tips Every Beginner Should Know</h1>
-        <p class="date">Published: Aug 2026</p>
+        <div class="container">
+            <span class="article-category">Hands-On Skills</span>
+            <h1 class="page-title">Soldering 101: Tips Every Beginner Should Know</h1>
+            <p class="page-subtitle">August 2026</p>
+        </div>
     </header>
 
-    <article class="article">
-        <h2>Introduction</h2>
-        <p>Reliable soldering is the difference between a prototype that works flawlessly and one that fails intermittently on the bench. Whether you're assembling a breakout board or building a custom PCB for your FYP, mastering soldering fundamentals will save you hours of frustrating debugging.</p>
+    <section class="blog-article">
+        <div class="container">
+            <div class="article-body">
 
-        <h2>Essential Budget Tools</h2>
-        <p>You don't need expensive equipment to get started. Here's the minimum kit every beginner should have:</p>
-        <ul>
-            <li><strong>60W Adjustable Temperature Soldering Iron</strong> — PKR 1,200 - 2,000 from local electronics markets. Adjustable temperature is key for working with different solder types and component sensitivities.</li>
-            <li><strong>Rosin-core 60/40 solder wire</strong> — The standard ratio for electronics work. Rosin core eliminates the need for separate flux in most cases.</li>
-            <li><strong>Soldering paste/flux</strong> — For rework and stubborn joints where additional flux helps solder flow properly.</li>
-            <li><strong>Brass wire tip cleaner</strong> — Superior to wet sponges. Keeps the tip hot and clean without thermal shock.</li>
-            <li><strong>Heat shrink sleeves</strong> — For insulating exposed connections and professional-looking wire joints.</li>
-        </ul>
+                <h2>Introduction</h2>
+                <p>Reliable soldering is the difference between a prototype that works flawlessly and one that fails intermittently on the bench. Whether you're assembling a breakout board or building a custom PCB for your FYP, mastering soldering fundamentals will save you hours of frustrating debugging.</p>
 
-        <h2>Step-by-Step Soldering Method</h2>
+                <h2>Essential Budget Tools</h2>
+                <p>You don't need expensive equipment to get started. Here's the minimum kit every beginner should have:</p>
+                <ul>
+                    <li><strong>60W Adjustable Temperature Soldering Iron</strong> — PKR 1,200 - 2,000 from local electronics markets. Adjustable temperature is key for working with different solder types and component sensitivities.</li>
+                    <li><strong>Rosin-core 60/40 solder wire</strong> — The standard ratio for electronics work. Rosin core eliminates the need for separate flux in most cases.</li>
+                    <li><strong>Soldering paste/flux</strong> — For rework and stubborn joints where additional flux helps solder flow properly.</li>
+                    <li><strong>Brass wire tip cleaner</strong> — Superior to wet sponges. Keeps the tip hot and clean without thermal shock.</li>
+                    <li><strong>Heat shrink sleeves</strong> — For insulating exposed connections and professional-looking wire joints.</li>
+                </ul>
 
-        <div class="step-box">
-            <strong>Step 1: Tinning the Tip</strong>
-            <p>Apply fresh solder to the clean tip before every joint. This thin layer of solder (called tinning) dramatically improves heat transfer and prevents oxidation.</p>
-        </div>
+                <h2>Step-by-Step Soldering Method</h2>
 
-        <div class="step-box">
-            <strong>Step 2: Heating the Joint</strong>
-            <p>Place the iron tip so it touches <strong>both</strong> the component leg and the PCB pad simultaneously. Hold for 2-3 seconds to bring both surfaces to soldering temperature.</p>
-        </div>
+                <div class="step-box">
+                    <strong>Step 1: Tinning the Tip</strong>
+                    <p>Apply fresh solder to the clean tip before every joint. This thin layer of solder (called tinning) dramatically improves heat transfer and prevents oxidation.</p>
+                </div>
 
-        <div class="step-box">
-            <strong>Step 3: Feeding the Solder</strong>
-            <p>Feed the solder wire directly into the joint (not onto the iron). The molten solder will flow evenly across the heated pad and component lead.</p>
-        </div>
+                <div class="step-box">
+                    <strong>Step 2: Heating the Joint</strong>
+                    <p>Place the iron tip so it touches <strong>both</strong> the component leg and the PCB pad simultaneously. Hold for 2-3 seconds to bring both surfaces to soldering temperature.</p>
+                </div>
 
-        <div class="step-box">
-            <strong>Step 4: Removing in Order</strong>
-            <p>Remove the solder wire first, then lift the iron away. Allow the joint to cool naturally — don't blow on it or move the component during cooling.</p>
-        </div>
+                <div class="step-box">
+                    <strong>Step 3: Feeding the Solder</strong>
+                    <p>Feed the solder wire directly into the joint (not onto the iron). The molten solder will flow evenly across the heated pad and component lead.</p>
+                </div>
 
-        <h2>Identifying Joints</h2>
-        <div class="joint-card">
-            <div class="joint-item good">
-                <h4>Good Joint</h4>
-                <p>Shiny, concave cone shape resembling a small "volcano." The solder fillet smoothly transitions from pad to component lead.</p>
+                <div class="step-box">
+                    <strong>Step 4: Removing in Order</strong>
+                    <p>Remove the solder wire first, then lift the iron away. Allow the joint to cool naturally — don't blow on it or move the component during cooling.</p>
+                </div>
+
+                <h2>Identifying Joints</h2>
+                <div class="joint-card">
+                    <div class="joint-item good">
+                        <h4>Good Joint</h4>
+                        <p>Shiny, concave cone shape resembling a small "volcano." The solder fillet smoothly transitions from pad to component lead.</p>
+                    </div>
+                    <div class="joint-item bad">
+                        <h4>Cold Joint</h4>
+                        <p>Dull, grainy, non-conductive blob. Usually caused by insufficient heat or moving the joint during cooling. Must be reworked.</p>
+                    </div>
+                    <div class="joint-item danger">
+                        <h4>Solder Bridge</h4>
+                        <p>Accidental short circuit across adjacent pads. Use solder wick or a desoldering pump to remove excess and separate the pads.</p>
+                    </div>
+                </div>
+
+                <div class="safety-box">
+                    <h3>Safety First</h3>
+                    <ul>
+                        <li><strong>Fume ventilation:</strong> Always work in a well-ventilated area or use a fume extractor. Solder fumes contain rosin particulates that irritate lungs over time.</li>
+                        <li><strong>Eye protection:</strong> Solder splashes and clipped leads can fly unexpectedly. Safety glasses are non-negotiable.</li>
+                        <li><strong>Avoiding lead exposure:</strong> If using leaded solder (60/40), wash hands thoroughly after every session. Never eat or drink at your soldering station. Consider lead-free solder for sensitive projects.</li>
+                    </ul>
+                </div>
+
             </div>
-            <div class="joint-item bad">
-                <h4>Cold Joint</h4>
-                <p>Dull, grainy, non-conductive blob. Usually caused by insufficient heat or moving the joint during cooling. Must be reworked.</p>
+            <a href="community.html" class="back-link">&larr; Back to Community</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <img src="makers era-01.svg" alt="Makers Era" class="footer-icon">
+                <span>Makers Era</span>
             </div>
-            <div class="joint-item danger">
-                <h4>Solder Bridge</h4>
-                <p>Accidental short circuit across adjacent pads. Use solder wick or a desoldering pump to remove excess and separate the pads.</p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/makera.pk/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    <span>Instagram</span>
+                </a>
+                <a href="https://wa.me/923373786628" target="_blank" rel="noopener" class="social-link" aria-label="WhatsApp">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <span>WhatsApp</span>
+                </a>
+            </div>
+            <p class="footer-text">Student-led maker community &copy; 2026 Makers Era. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#products">Products</a>
+                <a href="community.html">Community</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#contact">Contact</a>
             </div>
         </div>
-
-        <div class="safety-box">
-            <h3>Safety First</h3>
-            <ul>
-                <li><strong>Fume ventilation:</strong> Always work in a well-ventilated area or use a fume extractor. Solder fumes contain rosin particulates that irritate lungs over time.</li>
-                <li><strong>Eye protection:</strong> Solder splashes and clipped leads can fly unexpectedly. Safety glasses are non-negotiable.</li>
-                <li><strong>Avoiding lead exposure:</strong> If using leaded solder (60/40), wash hands thoroughly after every session. Never eat or drink at your soldering station. Consider lead-free solder for sensitive projects.</li>
-            </ul>
-        </div>
-
-        <a href="community.html" class="back-link">&larr; Back to Community</a>
-    </article>
-
-    <footer>
-        <div class="social-links">
-            <a href="https://www.instagram.com/makera.pk/" target="_blank">Instagram</a>
-            <a href="https://wa.me/923330034535" target="_blank">WhatsApp</a>
-        </div>
-        <p>&copy; 2026 Makers Era. All rights reserved.</p>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+    </script>
 </body>
 </html>
