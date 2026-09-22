@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multimeter Guide: How to Actually Use One - Makers Era</title>
     <link rel="icon" type="image/svg+xml" href="makers era-01.svg">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <meta name="description" content="Stop staring at your multimeter. This guide walks you through voltage, current, resistance, and continuity testing step by step.">
     <meta name="theme-color" content="#0f172a">
     <meta property="og:title" content="Multimeter Guide: How to Actually Use One">
@@ -37,7 +37,7 @@
     <nav class="navbar">
         <div class="container nav-content">
             <a href="index.html" class="logo">
-                <img src="makers era-01.svg" alt="Makers Era" class="logo-icon">
+                <img src="../img/makers era-01.svg" alt="Makers Era" class="logo-icon">
             </a>
             <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
                 <span></span><span></span><span></span>
@@ -65,7 +65,7 @@
             <div class="article-body">
 
                 <h2>Introduction</h2>
-                <p>If you own exactly one test instrument, it should be a digital multimeter. This handheld device can measure voltage, current, resistance, and continuity — covering about 90% of the diagnostic work you'll ever do on a workbench. Whether you're debugging a dead Arduino or checking if a wire is broken, the multimeter is your first stop.</p>
+                <p>If you own exactly one test instrument, it should be a digital multimeter. This handheld device can measure voltage, current, resistance, and continuity Ã¢â‚¬â€ covering about 90% of the diagnostic work you'll ever do on a workbench. Whether you're debugging a dead Arduino or checking if a wire is broken, the multimeter is your first stop.</p>
                 <p>Yet most students buy one, stare at the dial, and never really learn how to use it properly. This guide changes that. We'll walk through the layout, the four essential tests, and the common mistakes that can blow your meter's fuse or give you misleading readings.</p>
 
                 <h2>Multimeter Layout and Selector Switch</h2>
@@ -82,9 +82,9 @@
                 <p>The selector switch in the center of the meter lets you choose what you're measuring:</p>
                 <ul>
                     <li><strong>DC Voltage (V=):</strong> Measuring batteries, power rails, and most electronics circuits. This is the mode you'll use most often.</li>
-                    <li><strong>AC Voltage (V~):</strong> Measuring wall outlets and AC power supplies. Use with extreme caution — mains voltage is dangerous.</li>
+                    <li><strong>AC Voltage (V~):</strong> Measuring wall outlets and AC power supplies. Use with extreme caution Ã¢â‚¬â€ mains voltage is dangerous.</li>
                     <li><strong>Resistance (&Omega;):</strong> Measuring resistor values and checking for open circuits. The meter sends a tiny current through the component to calculate resistance.</li>
-                    <li><strong>Current (mA/A):</strong> Measuring how much current a circuit draws. This requires the meter to be wired in series — more on this below.</li>
+                    <li><strong>Current (mA/A):</strong> Measuring how much current a circuit draws. This requires the meter to be wired in series Ã¢â‚¬â€ more on this below.</li>
                     <li><strong>Continuity (buzzer icon):</strong> A quick test that beeps when there's a complete electrical path between the probes. Essential for checking wires and connections.</li>
                 </ul>
 
@@ -92,7 +92,7 @@
                 <p>Master these four tests and you can diagnose almost any basic electronics problem.</p>
 
                 <h3>1. Continuity Test</h3>
-                <p>This is the test you'll use most often. Set your multimeter to the continuity mode (the buzzer/sound icon). Touch the two probes to each end of a wire, trace, or connection. If the meter beeps, the path is complete and the connection is good. If it stays silent, you have an open circuit — a broken wire, a cold solder joint, or a blown trace.</p>
+                <p>This is the test you'll use most often. Set your multimeter to the continuity mode (the buzzer/sound icon). Touch the two probes to each end of a wire, trace, or connection. If the meter beeps, the path is complete and the connection is good. If it stays silent, you have an open circuit Ã¢â‚¬â€ a broken wire, a cold solder joint, or a blown trace.</p>
                 <p>Pro tip: Use this to quickly verify your breadboard connections before powering up a circuit. Ten seconds of continuity testing can save you thirty minutes of debugging.</p>
 
                 <h3>2. DC Voltage Test</h3>
@@ -100,21 +100,21 @@
                 <p>Common use cases:</p>
                 <ul>
                     <li>Checking if your Arduino's 5V or 3.3V rail is actually delivering the correct voltage</li>
-                    <li>Measuring battery levels — a "dead" 9V battery might still read 7V, which is enough for some circuits</li>
+                    <li>Measuring battery levels Ã¢â‚¬â€ a "dead" 9V battery might still read 7V, which is enough for some circuits</li>
                     <li>Verifying voltage dividers and sensor output voltages</li>
                 </ul>
 
                 <h3>3. Resistance Test</h3>
-                <p>Set the dial to the Ohm (&Omega;) setting. Make sure the component you're measuring is not powered — resistance measurements require the component to be isolated from any voltage source. Touch the probes across the component and read the value.</p>
+                <p>Set the dial to the Ohm (&Omega;) setting. Make sure the component you're measuring is not powered Ã¢â‚¬â€ resistance measurements require the component to be isolated from any voltage source. Touch the probes across the component and read the value.</p>
                 <p>This is useful for:</p>
                 <ul>
-                    <li>Identifying unmarked resistors — that color code strip is hard to read, but your meter doesn't care</li>
+                    <li>Identifying unmarked resistors Ã¢â‚¬â€ that color code strip is hard to read, but your meter doesn't care</li>
                     <li>Checking if a resistor has burned out (reads OL/open when it shouldn't)</li>
                     <li>Measuring sensor output variance across temperature or light conditions</li>
                 </ul>
 
                 <h3>4. Current Measurement</h3>
-                <p>This is the test that confuses most beginners because it requires a different wiring approach. To measure current, you must wire the multimeter in series with the circuit — meaning you break the circuit, insert the meter, and let all the current flow through it.</p>
+                <p>This is the test that confuses most beginners because it requires a different wiring approach. To measure current, you must wire the multimeter in series with the circuit Ã¢â‚¬â€ meaning you break the circuit, insert the meter, and let all the current flow through it.</p>
                 <p>Set the dial to mA, move the red probe to the mA port if needed, disconnect the positive wire where you want to measure, and bridge the gap with your meter probes. The reading tells you exactly how many milliamps the circuit is drawing.</p>
                 <p>This matters because knowing your current draw tells you battery life, whether a component is overloaded, and if your power supply is adequate.</p>
 
@@ -127,7 +127,7 @@
                 <ol>
                     <li><strong>Measuring current in parallel:</strong> This is the #1 fuse-killer. Current mode has extremely low resistance internally. Connect it across a battery and you've created a dead short. Always wire in series.</li>
                     <li><strong>Leaving probes in current mode when measuring voltage:</strong> If you forget to switch back to voltage mode after a current measurement, and then probe a power rail, you'll blow the fuse again. Always check your dial before measuring.</li>
-                    <li><strong>Measuring resistance on a live circuit:</strong> Resistance mode sends its own tiny test current. If the circuit is already powered, you'll get garbage readings — or damage the meter.</li>
+                    <li><strong>Measuring resistance on a live circuit:</strong> Resistance mode sends its own tiny test current. If the circuit is already powered, you'll get garbage readings Ã¢â‚¬â€ or damage the meter.</li>
                     <li><strong>Ignoring the range:</strong> If your meter isn't auto-ranging, start at the highest setting and work down. Forcing a 20V meter to read 200V can damage it.</li>
                 </ol>
                 <p>The multimeter is simple, but it demands respect. Get into the habit of checking your mode, checking your probes, and checking your connections before every measurement. Do that, and this tool will serve you for years.</p>
@@ -140,7 +140,7 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-logo">
-                <img src="makers era-01.svg" alt="Makers Era" class="footer-icon">
+                <img src="../img/makers era-01.svg" alt="Makers Era" class="footer-icon">
                 <span>Makers Era</span>
             </div>
             <div class="social-links">

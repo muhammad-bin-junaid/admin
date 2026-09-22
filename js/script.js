@@ -168,7 +168,7 @@ function submitOrder(e) {
 
     const orderLines = cart.map(item => `• ${item.name} x${item.qty} = Rs. ${(item.price * item.qty).toLocaleString()}`).join('\n');
     const orderDetails = `
-ORDER FROM MAKERS ERA
+Hey I have placed an order from Makers Era
 ━━━━━━━━━━━━━━━━
 Name: ${name}
 Email: ${email}
@@ -237,8 +237,7 @@ function closeSuccess() {
 }
 
 function sendPaymentScreenshot() {
-    const bankInfo = 'BANK PAYMENT DETAILS:\nAccount Title: Muhammad Bin Junaid\nAccount No: 0333 0034535\nIBAN: PK77JSBL9999903330034535\nBank: JS Bank / Zindagi\n\nPlease attach your payment screenshot after sending this message.';
-    const msg = encodeURIComponent(lastOrderDetails + '\n\n' + bankInfo);
+    const msg = encodeURIComponent(lastOrderDetails);
     window.open('https://wa.me/923373786628?text=' + msg, '_blank');
 }
 

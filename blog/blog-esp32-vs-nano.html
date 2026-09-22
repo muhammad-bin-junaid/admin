@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESP32 vs Arduino Nano: Which Should You Buy? - Makers Era</title>
     <link rel="icon" type="image/svg+xml" href="makers era-01.svg">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <meta name="description" content="A honest comparison of ESP32 and Arduino Nano for Pakistani students on a budget. Which board fits your project?">
     <meta name="theme-color" content="#0f172a">
     <meta property="og:title" content="ESP32 vs Arduino Nano: Which Should You Buy?">
@@ -40,7 +40,7 @@
     <nav class="navbar">
         <div class="container nav-content">
             <a href="index.html" class="logo">
-                <img src="makers era-01.svg" alt="Makers Era" class="logo-icon">
+                <img src="../img/makers era-01.svg" alt="Makers Era" class="logo-icon">
             </a>
             <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
                 <span></span><span></span><span></span>
@@ -69,7 +69,7 @@
 
                 <h2>Introduction</h2>
                 <p>Two boards dominate the project kits of Pakistani students: the Arduino Nano and the ESP32. Both are available locally under PKR 1,500, both have massive online communities, and both can power impressive projects. But they solve fundamentally different problems.</p>
-                <p>This guide breaks down exactly where each board shines, where it falls short, and how to decide which one fits your next project — without wasting money on specs you don't need.</p>
+                <p>This guide breaks down exactly where each board shines, where it falls short, and how to decide which one fits your next project Ã¢â‚¬â€ without wasting money on specs you don't need.</p>
 
                 <h2>Spec Comparison</h2>
                 <table class="spec-table">
@@ -83,8 +83,8 @@
                     <tbody>
                         <tr>
                             <td><strong>Processor</strong></td>
-                            <td>ATmega328P — 16 MHz, 8-bit</td>
-                            <td class="highlight">Dual-Core Xtensa — 240 MHz, 32-bit</td>
+                            <td>ATmega328P Ã¢â‚¬â€ 16 MHz, 8-bit</td>
+                            <td class="highlight">Dual-Core Xtensa Ã¢â‚¬â€ 240 MHz, 32-bit</td>
                         </tr>
                         <tr>
                             <td><strong>Connectivity</strong></td>
@@ -118,8 +118,8 @@
                         </tr>
                         <tr>
                             <td><strong>Local Price</strong></td>
-                            <td class="highlight">~PKR 500–750</td>
-                            <td>~PKR 1,100–1,500</td>
+                            <td class="highlight">~PKR 500Ã¢â‚¬â€œ750</td>
+                            <td>~PKR 1,100Ã¢â‚¬â€œ1,500</td>
                         </tr>
                     </tbody>
                 </table>
@@ -130,15 +130,15 @@
                 <ul>
                     <li><strong>Simple offline robotics:</strong> Line followers, obstacle avoiders, and basic motor control. The Nano's 5V logic plays nicely with most motor drivers and sensor modules without needing level shifters.</li>
                     <li><strong>5V sensor interface:</strong> Many common sensors (HC-SR04, PIR modules, basic IR sensors) operate at 5V. The Nano reads them directly. With the ESP32, you'd need a voltage divider or logic level shifter for every 5V signal.</li>
-                    <li><strong>Simple motor control:</strong> Driving servos, DC motors via L298N, or stepper motors with A4988 drivers — the Nano handles these cleanly without Wi-Fi overhead eating into your processing budget.</li>
+                    <li><strong>Simple motor control:</strong> Driving servos, DC motors via L298N, or stepper motors with A4988 drivers Ã¢â‚¬â€ the Nano handles these cleanly without Wi-Fi overhead eating into your processing budget.</li>
                     <li><strong>Lower power draw:</strong> In deep sleep, the Nano draws significantly less current than the ESP32 with Wi-Fi enabled. For battery-powered projects that only wake occasionally, the Nano can last weeks longer.</li>
-                    <li><strong>Learning the basics:</strong> If this is your first microcontroller, the Nano's simplicity is a feature. No Wi-Fi stacks, no Bluetooth pairing, no dual-core scheduling — just straightforward digital I/O and analog reads.</li>
+                    <li><strong>Learning the basics:</strong> If this is your first microcontroller, the Nano's simplicity is a feature. No Wi-Fi stacks, no Bluetooth pairing, no dual-core scheduling Ã¢â‚¬â€ just straightforward digital I/O and analog reads.</li>
                 </ul>
 
                 <h2>When to Pick ESP32</h2>
                 <p>The ESP32 is the clear winner when your project needs wireless communication, significant processing power, or more memory:</p>
                 <ul>
-                    <li><strong>IoT web servers:</strong> Host a complete web dashboard on the ESP32 that displays sensor data, controls relays, and logs history — all without any external server. The Nano physically cannot do this.</li>
+                    <li><strong>IoT web servers:</strong> Host a complete web dashboard on the ESP32 that displays sensor data, controls relays, and logs history Ã¢â‚¬â€ all without any external server. The Nano physically cannot do this.</li>
                     <li><strong>Wireless data logging:</strong> Read sensors and transmit readings to a cloud service (ThingSpeak, Blynk, Firebase) over Wi-Fi. Perfect for environmental monitoring, agricultural projects, or campus weather stations.</li>
                     <li><strong>Bluetooth app communication:</strong> Build a phone-controlled robot, a wireless sensor display, or a BLE beacon. The ESP32's Bluetooth 4.2/BLE support opens up an entire category of projects the Nano simply can't touch.</li>
                     <li><strong>Camera and AI edge tasks:</strong> The ESP32-CAM variant can serve live video streams, run basic image recognition, and handle QR code scanning. This is edge computing on a PKR 1,200 board.</li>
@@ -160,7 +160,7 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-logo">
-                <img src="makers era-01.svg" alt="Makers Era" class="footer-icon">
+                <img src="../img/makers era-01.svg" alt="Makers Era" class="footer-icon">
                 <span>Makers Era</span>
             </div>
             <div class="social-links">
