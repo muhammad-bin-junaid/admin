@@ -246,6 +246,82 @@
                     </div>
                 </div>
 
+                <div class="product-card" data-id="12" data-name="Breadboard Small" data-price="200">
+                    <div class="product-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1581092160607-ee22621ae7eb?w=400&h=400&fit=crop" alt="Breadboard Small" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <h3>Breadboard Small</h3>
+                        <p class="product-desc">Solderless breadboard for prototyping circuits</p>
+                        <div class="product-footer">
+                            <span class="price">Rs. 200</span>
+                            <button class="btn btn-sm add-to-cart" onclick="addToCart(12)">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card" data-id="13" data-name="Breadboard Large" data-price="360">
+                    <div class="product-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1581092160607-ee22621ae7eb?w=400&h=400&fit=crop" alt="Breadboard Large" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <h3>Breadboard Large</h3>
+                        <p class="product-desc">Large solderless breadboard for bigger builds</p>
+                        <div class="product-footer">
+                            <span class="price">Rs. 360</span>
+                            <button class="btn btn-sm add-to-cart" onclick="addToCart(13)">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card" data-id="14" data-name="Lithium Battery 2200mAh" data-price="230">
+                    <div class="product-img-wrap kit-img">
+                        <div class="kit-placeholder">
+                            <span class="kit-icon">&#128267;</span>
+                            <span class="kit-label">2200mAh</span>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Lithium Battery 2200mAh</h3>
+                        <p class="product-desc">Rechargeable lithium battery, 2200mAh capacity</p>
+                        <div class="product-footer">
+                            <span class="price">Rs. 230</span>
+                            <button class="btn btn-sm add-to-cart" onclick="addToCart(14)">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card" data-id="15" data-name="Digital Temp Control Soldering Iron" data-price="1150">
+                    <div class="product-img-wrap kit-img">
+                        <div class="kit-placeholder">
+                            <span class="kit-icon">&#128295;</span>
+                            <span class="kit-label">Digital</span>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Digital Temp Control Soldering Iron</h3>
+                        <p class="product-desc">Soldering iron with digital temperature control</p>
+                        <div class="product-footer">
+                            <span class="price">Rs. 1150</span>
+                            <button class="btn btn-sm add-to-cart" onclick="addToCart(15)">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="custom-product-section" style="padding:40px 0;">
+        <div class="container">
+            <div style="max-width:500px;margin:0 auto;text-align:center;">
+                <h3 class="section-title" style="margin-bottom:20px;">Custom Order</h3>
+                <p style="color:var(--text-muted);margin-bottom:20px;">Need something not listed? Enter product name and price below.</p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;">
+                    <input type="text" id="customProductName" placeholder="Product name (e.g. ESP32 Dev Board)" style="flex:1;min-width:200px;padding:12px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:var(--surface);color:var(--text);font-size:.95rem;">
+                    <input type="number" id="customProductPrice" placeholder="Price (Rs.)" min="1" step="1" style="width:120px;padding:12px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:var(--surface);color:var(--text);font-size:.95rem;">
+                </div>
+                <button class="btn btn-primary" onclick="addCustomProduct()" style="width:100%;max-width:300px;">Add Custom Product to Cart</button>
             </div>
         </div>
     </section>
@@ -414,7 +490,9 @@
                     <div class="payment-row"><span>Bank</span><strong>JS Bank / Zindagi</strong></div>
                 </div>
 
-                <button class="btn btn-primary btn-block" onclick="sendPaymentScreenshot()" style="margin-bottom:10px">Send Payment Screenshot on WhatsApp</button>
+                <div id="whatsappActions">
+                    <button class="btn btn-primary btn-block" onclick="sendPaymentScreenshot()" style="margin-bottom:10px">Send Payment Screenshot on WhatsApp</button>
+                </div>
                 <button class="btn btn-outline" onclick="closeSuccess()">Continue Shopping</button>
             </div>
         </div>

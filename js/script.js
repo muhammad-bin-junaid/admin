@@ -9,10 +9,14 @@ const products = {
     5: { id: 5, name: 'Arduino Nano', price: 550, img: 'all product images/arduino nano 450rs.jpeg' },
     6: { id: 6, name: 'LM555 Astable & Monostable Kit', price: 85, img: '' },
     7: { id: 7, name: 'Transistor Flip Flop Kit', price: 80, img: '' },
-    8: { id: 8, name: 'Soldering Iron', price: 420, img: 'all product images/soldering iron 449rs.png' },
-    9: { id: 9, name: 'Soldering Iron Pro', price: 650, img: 'all product images/soldering iron 699rs.jpeg' },
+    8: { id: 8, name: 'Soldering Iron', price: 600, img: 'all product images/soldering iron 449rs.png' },
+    9: { id: 9, name: 'Soldering Iron Pro', price: 750, img: 'all product images/soldering iron 699rs.jpeg' },
     10: { id: 10, name: 'Soldering Wire (50g)', price: 160, img: 'all product images/soldering wire 160rs 50g.jpeg' },
-    11: { id: 11, name: 'Soldering Wire Premium (50g)', price: 200, img: 'all product images/soldering wire 200rs 50g.jpeg' }
+    11: { id: 11, name: 'Soldering Wire Premium (50g)', price: 200, img: 'all product images/soldering wire 200rs 50g.jpeg' },
+    12: { id: 12, name: 'Breadboard Small', price: 200, img: 'https://images.unsplash.com/photo-1581092160607-ee22621ae7eb?w=400&h=400&fit=crop' },
+    13: { id: 13, name: 'Breadboard Large', price: 360, img: 'https://images.unsplash.com/photo-1581092160607-ee22621ae7eb?w=400&h=400&fit=crop' },
+    14: { id: 14, name: 'Lithium Battery 2200mAh', price: 230, img: '' },
+    15: { id: 15, name: 'Digital Temp Control Soldering Iron', price: 1150, img: '' }
 };
 
 // Campus selection from checkout dropdown
@@ -44,6 +48,43 @@ function addToCart(productId) {
     }
     updateCartUI();
     showAddedToast(product.name);
+    openCart();
+}
+
+function addCustomProduct() {
+    const nameInput = document.getElementById('customProductName');
+    const priceInput = document.getElementById('customProductPrice');
+    
+    const name = nameInput.value.trim();
+    const price = parseInt(priceInput.value);
+    
+    if (!name) {
+        alert('Please enter a product name');
+        nameInput.focus();
+        return;
+    }
+    if (!price || price < 1) {
+        alert('Please enter a valid price');
+        priceInput.focus();
+        return;
+    }
+    
+    // Use a high ID for custom products to avoid conflicts
+    const customId = Date.now();
+    const customProduct = { id: customId, name, price, img: '' };
+    
+    const existing = cart.find(item => item.id === customId);
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({ ...customProduct, qty: 1 });
+    }
+    
+    nameInput.value = '';
+    priceInput.value = '';
+    
+    updateCartUI();
+    showAddedToast(name);
     openCart();
 }
 
@@ -151,6 +192,9 @@ function updateCheckoutSummary() {
     `;
 }
 
+// Apps Script Web App URL - SET THIS AFTER DEPLOYING APPS SCRIPT
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9zbFRKyrvpSk53OPRz00MgFpQ3CGCE3T5UyM5MTN5sHSLHSAsRbFBpeuPJg_Mfp8/exec';
+
 function submitOrder(e) {
     e.preventDefault();
     const form = e.target;
@@ -166,7 +210,13 @@ function submitOrder(e) {
     const delivery = getDeliveryFee();
     const total = subtotal + delivery;
 
-    const orderLines = cart.map(item => `• ${item.name} x${item.qty} = Rs. ${(item.price * item.qty).toLocaleString()}`).join('\n');
+    const itemsPayload = cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        qty: item.qty,
+        price: item.price
+    }));
+
     const orderDetails = `
 Hey I have placed an order from Makers Era
 ━━━━━━━━━━━━━━━━
@@ -178,7 +228,7 @@ ${dept ? 'Dept/Roll: ' + dept : ''}
 ${note ? 'Note: ' + note : ''}
 ━━━━━━━━━━━━━━━━
 ITEMS:
-${orderLines}
+${itemsPayload.map(i => `• ${i.name} x${i.qty} = Rs. ${(i.price * i.qty).toLocaleString()}`).join('\n')}
 ━━━━━━━━━━━━━━━━
 Delivery: ${delivery === 0 ? 'FREE (Bahria University)' : 'Rs. ' + delivery}
 TOTAL: Rs. ${total.toLocaleString()}
@@ -190,14 +240,69 @@ TOTAL: Rs. ${total.toLocaleString()}
     submitBtn.textContent = 'Placing Order...';
     submitBtn.disabled = true;
 
-    const formData = new FormData(form);
+    // Try Apps Script backend first
+    const payload = {
+        name,
+        email,
+        phone,
+        campus,
+        dept,
+        note,
+        items: itemsPayload,
+        subtotal,
+        delivery,
+        total
+        // No token sent from frontend - public submission
+    };
 
+    console.log('Submitting to Apps Script:', APPS_SCRIPT_URL, payload);
+
+    // Submit to Apps Script via hidden iframe (stays on page)
+    const iframe = document.createElement('iframe');
+    iframe.name = 'apps_script_target';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    
+    const formEl = document.createElement('form');
+    formEl.method = 'POST';
+    formEl.action = APPS_SCRIPT_URL;
+    formEl.target = 'apps_script_target';
+    formEl.style.display = 'none';
+    
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value = JSON.stringify(payload);
+    formEl.appendChild(input);
+    
+    document.body.appendChild(formEl);
+    formEl.submit();
+    
+    // Also submit to Web3Forms for email
+    submitToWeb3Forms(form, orderDetails, submitBtn);
+    
+    // Show success immediately - customer sees payment details + send screenshot button
+    const customerWhatsAppUrl = `https://wa.me/923373786628?text=${encodeURIComponent(
+        `Hi, I'm ${name}. Here's my payment screenshot for order.\nItems: ${itemsPayload.map(i => `${i.name} x${i.qty}`).join(', ')}\nTotal: Rs.${total}\n\nPlease confirm receipt.`
+    )}`;
+    
+    showSuccess(orderDetails, customerWhatsAppUrl);
+    
+    // Clean up
+    setTimeout(() => {
+        formEl.remove();
+        iframe.remove();
+    }, 1000);
+}
+
+function submitToWeb3Forms(form, orderDetails, submitBtn) {
+    const formData = new FormData(form);
     fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData
     }).then(res => res.json()).then(data => {
         if (data.success) {
-            showSuccess(orderDetails);
+            showSuccess(orderDetails, null, null);
         } else {
             console.error('Web3Forms error:', data);
             alert('Error: ' + (data.message || 'Something went wrong.'));
@@ -218,16 +323,48 @@ function sendWhatsApp(orderText) {
 }
 
 let lastOrderDetails = '';
+let lastCustomerWhatsAppUrl = null;
+let lastOrderId = null;
 
-function showSuccess(orderText) {
+function showSuccess(orderText, customerWhatsAppUrl = null, orderId = null) {
     closeCheckout();
     lastOrderDetails = orderText || '';
+    lastCustomerWhatsAppUrl = customerWhatsAppUrl;
+    lastOrderId = orderId;
+    
     if (orderText) {
         document.getElementById('orderSuccessDetails').textContent = orderText;
     }
+    
+    // Update customer WhatsApp button (send payment screenshot)
+    updateCustomerWhatsAppButton(customerWhatsAppUrl);
+    
     document.getElementById('successModal').classList.add('open');
     cart = [];
     updateCartUI();
+}
+
+function updateCustomerWhatsAppButton(customerWhatsAppUrl) {
+    const container = document.getElementById('whatsappActions');
+    if (!container) return;
+    
+    if (customerWhatsAppUrl) {
+        container.innerHTML = `
+            <button class="btn btn-primary btn-block" onclick="openWhatsApp('${customerWhatsAppUrl}')" style="margin-bottom:10px">
+                Send Payment Screenshot on WhatsApp
+            </button>
+        `;
+    } else {
+        container.innerHTML = `
+            <button class="btn btn-primary btn-block" onclick="sendPaymentScreenshot()" style="margin-bottom:10px">
+                Send Payment Screenshot on WhatsApp
+            </button>
+        `;
+    }
+}
+
+function openWhatsApp(url) {
+    window.open(url, '_blank');
 }
 
 function closeSuccess() {

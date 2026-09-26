@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orders | Makers Era</title>
+<script>(function(){try{var t=localStorage.getItem('sable-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="stylesheet" href="sable.css">
+<script src="sable-script.js"></script>
+<script defer src="alpine.min.js"></script>
+<style>
+.status-select{padding:4px 8px;border-radius:9999px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid;appearance:auto;background:transparent}
+.status-select[data-status="new"],.status-select[data-status="pending"]{background:rgba(234,179,8,.15);border-color:rgba(234,179,8,.35);color:#B45309}
+.status-select[data-status="processing"],.status-select[data-status="failed"]{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.35);color:#1D4ED8}
+.status-select[data-status="shipped"]{background:rgba(14,165,233,.15);border-color:rgba(14,165,233,.35);color:#0369A1}
+.status-select[data-status="delivered"],.status-select[data-status="paid"],.status-select[data-status="confirmed"]{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.35);color:#15803D}
+.status-select[data-status="cancelled"],.status-select[data-status="rejected"]{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.35);color:#B91C1C}
+.dark .status-select[data-status="new"],.dark .status-select[data-status="pending"]{color:#FACC15}
+.dark .status-select[data-status="processing"],.dark .status-select[data-status="failed"]{color:#60A5FA}
+.dark .status-select[data-status="shipped"]{color:#38BDF8}
+.dark .status-select[data-status="delivered"],.dark .status-select[data-status="paid"],.dark .status-select[data-status="confirmed"]{color:#4ADE80}
+.dark .status-select[data-status="cancelled"],.dark .status-select[data-status="rejected"]{color:#F87171}
+.detail-lbl{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#A8A29E;margin-bottom:2px}
+.ms-wrap{position:relative}
+.ms-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #E7E5E2;background:#fff;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;color:#57534E;cursor:pointer;white-space:nowrap}
+.ms-btn:hover{background:#FAFAF9}
+html.dark .ms-btn{border-color:rgba(255,255,255,.09);background:rgba(255,255,255,.04);color:#D6D3D1}
+.ms-btn.on{border-color:#86EFAC;background:#F0FDF4;color:#15803D}
+html.dark .ms-btn.on{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.12);color:#4ADE80}
+.ms-count{background:#22C55E;color:#fff;border-radius:999px;font-size:10px;font-weight:700;padding:1px 6px;display:none}
+.ms-btn.on .ms-count{display:inline-block}
+.ms-panel{position:absolute;top:calc(100% + 6px);left:0;z-index:40;min-width:190px;background:#fff;border:1px solid #E7E5E2;border-radius:10px;box-shadow:0 18px 40px -12px rgba(52,40,28,.25);padding:6px;display:none}
+html.dark .ms-panel{background:#262019;border-color:rgba(255,255,255,.1)}
+.ms-wrap.open .ms-panel{display:block}
+.ms-panel label{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;font-size:13px;cursor:pointer;color:#44403C}
+html.dark .ms-panel label{color:#D6D3D1}
+.ms-panel label:hover{background:#F4F4F3}
+html.dark .ms-panel label:hover{background:rgba(255,255,255,.05)}
+.ms-panel input{accent-color:#22C55E;width:15px;height:15px}
+.cost-input{width:110px;padding:7px 10px;border-radius:8px;border:1px solid #E7E5E2;background:#fff;font-size:13px;font-family:inherit}
+html.dark .cost-input{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#F5F5F4}
+.cost-input:focus{outline:none;border-color:#4ADE80;box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+.nav-tick{display:none}
+.nav-active .nav-tick{display:block}
+.bar-this{fill:#22C55E}
+.bar-prev{fill:#A8A29E}
+html.dark .bar-prev{fill:#57534E}
+.gate-card{border:1px solid #E7E5E2;background:#fff;border-radius:14px;box-shadow:0 18px 44px -22px rgba(52,40,28,.35);padding:26px}
+html.dark .gate-card{border-color:rgba(255,255,255,.07);background:#1F1B16}
+.gate-label{display:block;margin-bottom:5px;font-size:12px;font-weight:600;color:#52525B}
+html.dark .gate-label{color:#A1A1AA}
+.gate-input{width:100%;border:1px solid #E7E5E2;background:#fff;border-radius:9px;padding:10px 12px;font-size:14px;outline:none;font-family:inherit}
+.gate-input:focus{border-color:#4ADE80;box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+html.dark .gate-input{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#F5F5F4}
+.gate-btn{width:100%;border-radius:9px;padding:11px;font-size:14px;font-weight:600;background:#22C55E;color:#fff;cursor:pointer}
+.gate-btn:hover{background:#16A34A}
+.gate-btn:disabled{opacity:.6;cursor:default}
+.gate-err{border-radius:8px;background:#FEF2F2;color:#B91C1C;padding:9px 12px;font-size:13px}
+html.dark .gate-err{background:rgba(239,68,68,.12);color:#FCA5A5}
+.gate-ghost{width:100%;border-radius:9px;padding:10px;font-size:13px;font-weight:500;background:#fff;border:1px solid #E7E5E2;color:#52525B;cursor:pointer}
+html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);color:#A1A1AA}
+</style>
+</head>
+<body class="h-full bg-canvas dark:bg-[#16130F] text-zinc-900 dark:text-zinc-100 font-sans antialiased" x-data="{ sidebarOpen:false }" x-effect="document.body.classList.toggle('overflow-hidden', sidebarOpen)" @keydown.escape.window="sidebarOpen=false">
+<div x-show="sidebarOpen" @click="sidebarOpen=false" x-transition.opacity class="fixed inset-0 z-30 bg-zinc-900/40 backdrop-blur-sm lg:hidden" style="display:none"></div>
+
+<!-- ==================== AUTH GATE (login / forced password change) ==================== -->
+<div id="authGate" class="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-canvas p-4 dark:bg-[#16130F]" style="display:none">
+  <div class="my-auto w-full max-w-md">
+    <div class="mb-5 text-center">
+      <div class="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-accent-500 shadow-sm"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 L9 11 L13 15 L21 6"></path><path d="M15 6h6v6"></path></svg></div>
+      <h1 class="mt-3 font-display text-xl font-semibold text-zinc-900 dark:text-white">Makers Era Admin</h1>
+      <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400" id="gateSubtitle">Sign in with your staff account</p>
+    </div>
+
+    <form id="gateLoginForm" class="gate-card space-y-4" autocomplete="on">
+      <div>
+        <label class="gate-label" for="gateEmail">Email</label>
+        <input class="gate-input" type="email" id="gateEmail" required autocomplete="username" spellcheck="false" placeholder="you@gmail.com">
+      </div>
+      <div>
+        <label class="gate-label" for="gatePassword">Password</label>
+        <div class="relative">
+          <input class="gate-input pr-16" type="password" id="gatePassword" required autocomplete="current-password" placeholder="Your password">
+          <button type="button" id="gatePwVis" class="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-[11px] font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400">Show</button>
+        </div>
+      </div>
+      <p class="gate-err hidden" id="gateError"></p>
+      <button class="gate-btn" type="submit" id="gateSubmit">Sign in</button>
+      <p class="text-center text-[11px] leading-relaxed text-zinc-400">CEO · CFO · COO accounts. Sessions expire after 12 hours of inactivity.</p>
+    </form>
+
+    <form id="gatePwForm" class="gate-card hidden space-y-4">
+      <div>
+        <p class="font-display text-[15px] font-semibold text-zinc-900 dark:text-white">Set a new password</p>
+        <p class="mt-1 text-[13px] text-zinc-500 dark:text-zinc-400">This account still uses its initial password. Choose your own before entering the dashboard.</p>
+      </div>
+      <div>
+        <label class="gate-label" for="pwCurrent">Current password</label>
+        <input class="gate-input" type="password" id="pwCurrent" required autocomplete="current-password">
+      </div>
+      <div>
+        <label class="gate-label" for="pwNew">New password (min 8 characters)</label>
+        <input class="gate-input" type="password" id="pwNew" required autocomplete="new-password">
+      </div>
+      <div>
+        <label class="gate-label" for="pwConfirm">Confirm new password</label>
+        <input class="gate-input" type="password" id="pwConfirm" required autocomplete="new-password">
+      </div>
+      <p class="gate-err hidden" id="pwError"></p>
+      <button class="gate-btn" type="submit" id="pwSubmit">Set password &amp; continue</button>
+      <button class="gate-ghost" type="button" onclick="doLogout(true)">Sign out</button>
+    </form>
+  </div>
+</div>
+
+<div class="flex h-full" id="appRoot" style="display:none">
+<aside x-ref="sidebar" class="sidebar fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-zinc-200 bg-white dark:border-white/[0.06] dark:bg-[#1F1B16] lg:static lg:translate-x-0" :class="sidebarOpen && 'open'">
+<div class="flex h-16 shrink-0 items-center gap-2.5 px-5">
+<div class="grid h-8 w-8 place-items-center rounded-lg bg-accent-500 shadow-sm"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 L9 11 L13 15 L21 6"></path><path d="M15 6h6v6"></path></svg></div>
+<div class="leading-none"><div class="font-display text-[17px] font-semibold tracking-tight text-zinc-900 dark:text-white">Makers Era</div><div class="text-[11px] text-zinc-500 dark:text-zinc-400">Admin</div></div>
+</div>
+<nav class="flex-1 space-y-6 overflow-y-auto px-3 py-3" aria-label="Primary">
+<div>
+<p class="eyebrow px-3 pb-2 text-zinc-500 dark:text-zinc-400">Overview</p>
+<div class="space-y-0.5">
+<a href="#" id="nav-dashboard" onclick="event.preventDefault();showPage('dashboard')" class="nav-active group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>Dashboard</a>
+<a href="#" id="nav-orders" onclick="event.preventDefault();showPage('orders')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>Orders<span class="ml-auto rounded-full bg-accent-500/90 px-1.5 py-0.5 text-[10px] font-semibold text-white" id="navCount">0</span></a>
+<a href="#" id="nav-products" onclick="event.preventDefault();showPage('products')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"></path><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>Products</a>
+</div>
+</div>
+<div>
+<p class="eyebrow px-3 pb-2 text-zinc-500 dark:text-zinc-400">Operations</p>
+<div class="space-y-0.5">
+<a href="#" id="nav-suppliers" onclick="event.preventDefault();showPage('suppliers')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="14" height="10" rx="1"></rect><path d="M15 9h4l3 3v4h-7z"></path><circle cx="6" cy="18" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg>Suppliers</a>
+<a href="#" id="nav-inventory" onclick="event.preventDefault();showPage('inventory')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"></path><path d="M3 7l9 4 9-4"></path><path d="M12 11v10"></path></svg>Inventory</a>
+<a href="#" id="nav-purchases" onclick="event.preventDefault();showPage('purchases')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.5 12h11L21 7H6"></path></svg>Purchases</a>
+<a href="#" id="nav-deliveries" onclick="event.preventDefault();showPage('deliveries')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Deliveries</a>
+</div>
+</div>
+<div>
+<p class="eyebrow px-3 pb-2 text-zinc-500 dark:text-zinc-400">Finance</p>
+<div class="space-y-0.5">
+<a href="#" id="nav-finance" onclick="event.preventDefault();showPage('finance')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path></svg>Finance</a>
+<a href="#" id="nav-expenses" onclick="event.preventDefault();showPage('expenses')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M9 15h6M9 11h2"></path></svg>Expenses</a>
+</div>
+</div>
+<div>
+<p class="eyebrow px-3 pb-2 text-zinc-500 dark:text-zinc-400">System</p>
+<div class="space-y-0.5">
+<a href="#" id="nav-activity" onclick="event.preventDefault();showPage('activity')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>Activity Log</a>
+<a href="#" id="nav-health" onclick="event.preventDefault();showPage('health')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"></path></svg>System Health</a>
+<a href="#" id="nav-settings" onclick="event.preventDefault();showPage('settings')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 6 19.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15H4.5a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 6 8.1L5.9 8A2 2 0 1 1 8.7 5.2l.1.1A1.7 1.7 0 0 0 11 4.6V4.5a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 18 5.9l.1-.1A2 2 0 1 1 20.9 8.7l-.1.1a1.7 1.7 0 0 0-1.2 2.9v.1a2 2 0 1 1 0 4Z"></path></svg>Settings</a>
+</div>
+</div>
+</nav>
+</aside>
+<div class="flex min-w-0 flex-1 flex-col">
+<header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-zinc-200 bg-canvas/80 px-4 backdrop-blur-md dark:border-white/[0.06] dark:bg-[#16130F]/80 sm:px-6">
+<button @click="sidebarOpen=true" class="focusable -ml-1 rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/[0.05] lg:hidden" aria-label="Open menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+<div class="hidden sm:block"><h1 class="font-display text-[15px] font-semibold text-zinc-900 dark:text-white" id="pageTitle">Orders</h1><p class="text-[12px] text-zinc-500 dark:text-zinc-400" id="pageSub"><span id="headCount">0</span> total</p></div>
+<div class="ml-auto flex items-center gap-1.5 sm:gap-1">
+<div class="hidden items-center gap-2 sm:flex" id="userChip" style="display:none">
+<span class="max-w-[220px] truncate rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] text-zinc-600 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-300"><span class="font-semibold" id="chipName"></span> · <span class="font-medium text-accent-600" id="chipRole"></span></span>
+<button onclick="doLogout()" class="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300 dark:hover:bg-white/[0.06]">Sign out</button>
+</div>
+<button onclick="toggleTheme()" class="focusable rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05]" aria-label="Toggle theme">
+<svg class="hidden dark:block" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+<svg class="block dark:hidden" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+</button>
+<button onclick="refreshData()" class="focusable rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05]" aria-label="Refresh"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto">
+<div class="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8">
+
+<!-- ============ DASHBOARD PAGE ============ -->
+<section id="page-dashboard" style="display:none"><div id="view-dashboard"></div></section>
+
+<!-- ============ ORDERS PAGE ============ -->
+<section id="page-orders" style="display:none">
+<div class="mb-5 flex flex-wrap items-end justify-between gap-4">
+<div>
+<p class="eyebrow text-accent-600 dark:text-accent-400">Commerce</p>
+<h2 class="mt-1 font-display text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">Orders</h2>
+<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Manage, filter and reconcile every order.</p>
+</div>
+<button type="button" onclick="exportCsv()" class="focusable inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-sm font-medium text-zinc-600 shadow-sm hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300 dark:hover:bg-white/[0.06]"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>Export CSV</button>
+</div>
+
+<div class="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+<div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/[0.07] dark:bg-[#1F1B16]"><p class="eyebrow text-zinc-500 dark:text-zinc-400">Total Orders</p><p class="mt-1 font-display text-xl font-semibold tracking-tight tnum" id="statTotal">-</p></div>
+<div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/[0.07] dark:bg-[#1F1B16]"><p class="eyebrow text-zinc-500 dark:text-zinc-400">Paid Orders</p><p class="mt-1 font-display text-xl font-semibold tracking-tight text-accent-600 tnum" id="statPaid">-</p></div>
+<div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/[0.07] dark:bg-[#1F1B16]"><p class="eyebrow text-zinc-500 dark:text-zinc-400">Revenue (Paid)</p><p class="mt-1 font-display text-xl font-semibold tracking-tight tnum" id="statRevenue">-</p></div>
+<div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/[0.07] dark:bg-[#1F1B16]"><p class="eyebrow text-zinc-500 dark:text-zinc-400">Profit (Paid)</p><p class="mt-1 font-display text-xl font-semibold tracking-tight text-accent-600 tnum" id="statProfit">-</p></div>
+<div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/[0.07] dark:bg-[#1F1B16]"><p class="eyebrow text-zinc-500 dark:text-zinc-400">Pending Payment</p><p class="mt-1 font-display text-xl font-semibold tracking-tight text-amber-500 tnum" id="statPending">-</p></div>
+<div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/[0.07] dark:bg-[#1F1B16]"><p class="eyebrow text-zinc-500 dark:text-zinc-400">Delivered</p><p class="mt-1 font-display text-xl font-semibold tracking-tight tnum" id="statDelivered">-</p></div>
+</div>
+
+<div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">
+<div class="flex flex-wrap items-center gap-2.5 border-b border-zinc-100 p-3.5 dark:border-white/[0.06]">
+<label class="relative block grow sm:grow-0">
+<span class="sr-only">Search orders</span>
+<span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-zinc-400"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+<input type="search" id="searchInput" placeholder="Search order, name, phone, item…" oninput="debounceSearch()" class="focusable w-full rounded-lg border border-zinc-200 bg-white py-2 pl-9 pr-3 text-sm text-zinc-700 placeholder:text-zinc-500 focus:border-accent-400 focus:outline-none dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-200 dark:placeholder:text-zinc-400 sm:w-72">
+</label>
+<div class="ms-wrap" id="msOrder">
+<button type="button" class="ms-btn" onclick="event.stopPropagation();msToggle('msOrder')">Order Status <span class="ms-count" id="msOrderCount">0</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+<div class="ms-panel">
+<label><input type="checkbox" data-ms="order" value="New" onchange="msChanged()"> New</label>
+<label><input type="checkbox" data-ms="order" value="Processing" onchange="msChanged()"> Processing</label>
+<label><input type="checkbox" data-ms="order" value="Delivered" onchange="msChanged()"> Delivered</label>
+<label><input type="checkbox" data-ms="order" value="Cancelled" onchange="msChanged()"> Cancelled</label>
+</div>
+</div>
+<div class="ms-wrap" id="msPayment">
+<button type="button" class="ms-btn" onclick="event.stopPropagation();msToggle('msPayment')">Payment Status <span class="ms-count" id="msPaymentCount">0</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+<div class="ms-panel">
+<label><input type="checkbox" data-ms="payment" value="Pending" onchange="msChanged()"> Pending</label>
+<label><input type="checkbox" data-ms="payment" value="Paid" onchange="msChanged()"> Paid</label>
+<label><input type="checkbox" data-ms="payment" value="Failed" onchange="msChanged()"> Failed</label>
+</div>
+</div>
+<button type="button" onclick="clearMs()" class="ms-btn" title="Clear all filters">Clear</button>
+<button type="button" onclick="exportFromFilter()" class="focusable ml-auto inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:bg-white/[0.06]"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>Export</button>
+</div>
+
+<div class="hidden sm:block overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="border-b border-zinc-100 dark:border-white/[0.06]">
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"></th>
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Order #</th>
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Customer</th>
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Items</th>
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total</th>
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Profit</th>
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Order</th>
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Payment</th>
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Actions</th>
+</tr>
+</thead>
+<tbody id="ordersBody">
+<tr><td colspan="9" class="px-4 py-8 text-center text-zinc-500">Loading orders…</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="divide-y divide-zinc-100 sm:hidden dark:divide-white/[0.05]" id="mobileList">
+<p class="px-4 py-6 text-center text-sm text-zinc-500">Loading…</p>
+</div>
+
+<div class="flex items-center justify-center gap-2 p-4" id="pagination"></div>
+</div>
+</section>
+
+<!-- ============ PRODUCTS PAGE ============ -->
+<section id="page-products" style="display:none"><div id="view-products"></div></section>
+
+<!-- ============ SETTINGS PAGE ============ -->
+<section id="page-settings" style="display:none">
+<div class="mb-5">
+<p class="eyebrow text-accent-600 dark:text-accent-400">Account</p>
+<h2 class="mt-1 font-display text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">Settings</h2>
+<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Secret token and connection for this browser.</p>
+</div>
+
+<div class="max-w-2xl space-y-4">
+<div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">
+<h3 class="font-display text-base font-semibold text-zinc-900 dark:text-white">My Account</h3>
+<div class="mt-3 grid grid-cols-1 gap-2 text-sm text-zinc-600 sm:grid-cols-3 dark:text-zinc-300">
+<div><span class="detail-lbl">Name</span><span id="acctName" class="font-medium text-zinc-900 dark:text-white">—</span></div>
+<div><span class="detail-lbl">Email</span><span id="acctEmail" class="break-all font-medium text-zinc-900 dark:text-white">—</span></div>
+<div><span class="detail-lbl">Role</span><span id="acctRole" class="font-semibold text-accent-600">—</span></div>
+</div>
+<p id="acctMustChange" class="mt-1 text-[12px] font-medium text-amber-600"></p>
+
+<div class="mt-4 border-t border-zinc-100 pt-4 dark:border-white/[0.06]">
+<p class="text-[13px] font-semibold text-zinc-800 dark:text-zinc-100">Change password</p>
+<div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
+<input type="password" id="pwSetCurrent" placeholder="Current password" autocomplete="current-password" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/[0.08] dark:bg-white/[0.04]">
+<input type="password" id="pwSetNew" placeholder="New password (min 8)" autocomplete="new-password" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/[0.08] dark:bg-white/[0.04]">
+<input type="password" id="pwSetConfirm" placeholder="Confirm new" autocomplete="new-password" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/[0.08] dark:bg-white/[0.04]">
+</div>
+<div class="mt-3 flex flex-wrap gap-2">
+<button onclick="changeMyPassword()" class="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-600">Update password</button>
+<button onclick="doLogout()" class="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300">Sign out</button>
+</div>
+</div>
+</div>
+
+<div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]" id="settingsUsersCard" style="display:none">
+<h3 class="font-display text-base font-semibold text-zinc-900 dark:text-white">Staff Accounts</h3>
+<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">CEO only — activate or deactivate accounts, require a password change, or reset a password back to the account email.</p>
+<div class="mt-3 overflow-x-auto" id="usersAdminBody"><p class="text-sm text-zinc-500">Loading accounts…</p></div>
+</div>
+
+<div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]" id="settingsTokenCard" style="display:none">
+<h3 class="font-display text-base font-semibold text-zinc-900 dark:text-white">Apps Script Secret Token</h3>
+<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Generated once in Apps Script (run <code class="rounded bg-zinc-100 px-1.5 py-0.5 text-[12px] dark:bg-white/[0.06]">generateToken()</code>), stored only in this browser — never in source code.</p>
+
+<div class="mt-4 flex items-center gap-2">
+<input type="password" id="tokenInput" placeholder="Paste your 32-character token" autocomplete="off" spellcheck="false"
+  class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 font-mono text-sm focus:border-accent-400 focus:outline-none dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-200">
+<button type="button" onclick="toggleTokenVis()" class="shrink-0 rounded-lg border border-zinc-200 px-3 py-2.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:text-zinc-300 dark:hover:bg-white/[0.05]" id="tokenVisBtn">Show</button>
+</div>
+
+<div class="mt-3 flex flex-wrap items-center gap-2">
+<button onclick="saveAndVerifyToken()" class="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-600">Save &amp; Verify</button>
+<button onclick="verifySavedToken()" class="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300">Test saved token</button>
+<button onclick="clearToken()" class="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">Remove token</button>
+</div>
+
+<div class="mt-3 flex items-center gap-2 text-sm" id="tokenStatus">
+<span class="h-2.5 w-2.5 rounded-full bg-zinc-300 dark:bg-zinc-600" id="tokenDot"></span>
+<span class="text-zinc-500 dark:text-zinc-400" id="tokenStatusText">No token saved in this browser</span>
+</div>
+</div>
+
+<div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">
+<h3 class="font-display text-base font-semibold text-zinc-900 dark:text-white">Apps Script Endpoint</h3>
+<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">The deployed Web App URL this dashboard talks to.</p>
+<div class="mt-3 flex items-center gap-2">
+<input type="text" id="endpointInput" placeholder="https://script.google.com/macros/s/…/exec" spellcheck="false" autocomplete="off"
+  class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 font-mono text-[12px] focus:border-accent-400 focus:outline-none dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-200">
+</div>
+<div class="mt-3 flex flex-wrap gap-2">
+<button onclick="saveEndpoint()" class="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-600">Save endpoint</button>
+<button onclick="resetEndpoint()" class="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300">Reset to default</button>
+<button onclick="testConnection()" class="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300">Test connection</button>
+</div>
+<div class="mt-3 flex items-center gap-2 text-sm" id="connStatus">
+<span class="h-2.5 w-2.5 rounded-full bg-zinc-300 dark:bg-zinc-600" id="connDot"></span>
+<span class="text-zinc-500 dark:text-zinc-400" id="connStatusText">Not tested this session</span>
+</div>
+<div class="mt-3 text-[12px] text-zinc-400">Stored in this browser only (<code class="rounded bg-zinc-100 px-1.5 py-0.5 dark:bg-white/[0.06]">me_endpoint</code>). Default: <span class="font-mono break-all" id="backendUrl"></span></div>
+</div>
+
+<div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">
+<h3 class="font-display text-base font-semibold text-zinc-900 dark:text-white">Storage</h3>
+<div class="mt-3 space-y-2 text-sm text-zinc-500 dark:text-zinc-400">
+<p>Session: localStorage (<code class="rounded bg-zinc-100 px-1.5 py-0.5 text-[12px] dark:bg-white/[0.06]">me_auth</code>) · Endpoint: <code class="rounded bg-zinc-100 px-1.5 py-0.5 text-[12px] dark:bg-white/[0.06]">me_endpoint</code> · Health log: <code class="rounded bg-zinc-100 px-1.5 py-0.5 text-[12px] dark:bg-white/[0.06]">me_health</code></p>
+<p class="text-[12px] text-zinc-400">Sessions are validated server-side (Google Sheets) and expire after 12 hours of inactivity. Passwords are stored only as salted SHA-256 hashes.</p>
+<p class="text-[12px] text-zinc-400">Business config (single admin for now): WhatsApp messaging and payment details come from the Apps Script templates — edit them in <code class="rounded bg-zinc-100 px-1.5 py-0.5 dark:bg-white/[0.06]">apps-script/Code.gs</code>.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="page-suppliers" style="display:none"><div id="view-suppliers"></div></section>
+<section id="page-inventory" style="display:none"><div id="view-inventory"></div></section>
+<section id="page-purchases" style="display:none"><div id="view-purchases"></div></section>
+<section id="page-deliveries" style="display:none"><div id="view-deliveries"></div></section>
+<section id="page-finance" style="display:none"><div id="view-finance"></div></section>
+<section id="page-expenses" style="display:none"><div id="view-expenses"></div></section>
+<section id="page-activity" style="display:none"><div id="view-activity"></div></section>
+<section id="page-health" style="display:none"><div id="view-health"></div></section>
+
+</div>
+</main>
+</div>
+</div>
+
+<div class="hidden" id="toast" role="status"></div>
+
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" id="costModal" style="display:none">
+<div class="w-full max-w-md rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]">
+<div class="flex items-center justify-between border-b border-zinc-100 px-5 py-4 dark:border-white/[0.06]">
+<h3 class="font-display text-base font-semibold">Edit Cost Price</h3>
+<button onclick="closeCostModal()" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-xl leading-none">&times;</button>
+</div>
+<div class="space-y-3 px-5 py-4 text-sm">
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Order ID</label><input type="text" id="costOrderId" readonly class="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">New Cost (Rs.)</label><input type="number" id="costNew" min="0" step="1" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 focus:border-accent-400 focus:outline-none dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div class="flex gap-4 text-[12px] text-zinc-500">
+<span>Total: <strong id="costOrderTotal"></strong></span>
+<span>Profit: <strong id="costProfit" class="text-accent-600"></strong></span>
+</div>
+</div>
+<div class="flex justify-end gap-2 border-t border-zinc-100 px-5 py-3 dark:border-white/[0.06]">
+<button onclick="closeCostModal()" class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300">Cancel</button>
+<button onclick="saveCostPrice()" class="rounded-lg bg-accent-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-accent-600">Save</button>
+</div>
+</div>
+</div>
+
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" id="productModal" style="display:none">
+<div class="w-full max-w-lg rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]">
+<div class="flex items-center justify-between border-b border-zinc-100 px-5 py-4 dark:border-white/[0.06]">
+<h3 class="font-display text-base font-semibold" id="prodModalTitle">Add Product</h3>
+<button onclick="closeProductModal()" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-xl leading-none">&times;</button>
+</div>
+<div class="space-y-3 px-5 py-4 text-sm">
+<div class="grid grid-cols-2 gap-3">
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Product ID</label><input type="number" id="prodId" min="1" step="1" placeholder="auto" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Unit</label><input type="text" id="prodUnit" placeholder="pcs" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+</div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Product Name</label><input type="text" id="prodName" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div class="grid grid-cols-3 gap-3">
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Selling Price</label><input type="number" id="prodPrice" min="0" step="1" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Cost Price</label><input type="number" id="prodCost" min="0" step="1" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Reorder Level</label><input type="number" id="prodReorder" min="0" step="1" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Inventory</label><input type="number" id="prodInventory" min="0" step="1" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Status</label><select id="prodActive" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+</div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Description</label><textarea id="prodDesc" rows="2" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></textarea></div>
+<p class="text-[12px] text-zinc-500">Changing cost price affects <strong>new orders only</strong> — historical order profits are never rewritten.</p>
+</div>
+<div class="flex justify-end gap-2 border-t border-zinc-100 px-5 py-3 dark:border-white/[0.06]">
+<button onclick="closeProductModal()" class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300">Cancel</button>
+<button onclick="saveProductForm()" class="rounded-lg bg-accent-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-accent-600">Save</button>
+</div>
+</div>
+</div>
+
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" id="deliverModal" style="display:none">
+<div class="w-full max-w-md rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]">
+<div class="flex items-center justify-between border-b border-zinc-100 px-5 py-4 dark:border-white/[0.06]">
+<h3 class="font-display text-base font-semibold">Mark Delivered</h3>
+<button onclick="closeDeliverModal()" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-xl leading-none">&times;</button>
+</div>
+<div class="space-y-3 px-5 py-4 text-sm">
+<p class="text-[13px] text-zinc-500">Order <strong id="dlvOrderId"></strong> — the tick only applies to this order.</p>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Received by</label><input type="text" id="dlvReceivedBy" placeholder="Customer / rep name" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Signature (typed name)</label><input type="text" id="dlvSignature" placeholder="Person signing" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div class="grid grid-cols-2 gap-3">
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Date</label><input type="date" id="dlvDate" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Time</label><input type="time" id="dlvTime" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+</div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Notes</label><input type="text" id="dlvNotes" placeholder="Optional" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<p class="text-[12px] text-zinc-500">Saves a receipt to the Deliveries sheet, sets the order to Delivered and reduces stock.</p>
+</div>
+<div class="flex justify-end gap-2 border-t border-zinc-100 px-5 py-3 dark:border-white/[0.06]">
+<button onclick="closeDeliverModal()" class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300">Cancel</button>
+<button onclick="confirmDeliver()" class="rounded-lg bg-accent-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-accent-600">Confirm delivered</button>
+</div>
+</div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9zbFRKyrvpSk53OPRz00MgFpQ3CGCE3T5UyM5MTN5sHSLHSAsRbFBpeuPJg_Mfp8/exec';
+let allOrders = [], filteredOrders = [], currentPage = 1, searchTimeout = null, editingCostOrderId = null;
+const pageSize = 20;
+const VALID_STATUSES = { orderStatus: ['New','Processing','Delivered','Cancelled'], paymentStatus: ['Pending','Paid','Failed'] };
+
+// Catalog: id, name, selling price (matches js/script.js)
+const PRODUCTS = [
+  { id:1,  name:'600v Digital Multimeter',            price:1750 },
+  { id:2,  name:'Advanced Multimeter',                price:2050 },
+  { id:3,  name:'Digital Multimeter',                 price:600 },
+  { id:4,  name:'Digital Multimeter Pro',             price:950 },
+  { id:5,  name:'Arduino Nano',                       price:550 },
+  { id:6,  name:'LM555 Astable & Monostable Kit',     price:85 },
+  { id:7,  name:'Transistor Flip Flop Kit',           price:80 },
+  { id:8,  name:'Soldering Iron',                     price:600 },
+  { id:9,  name:'Soldering Iron Pro',                 price:750 },
+  { id:10, name:'Soldering Wire (50g)',               price:160 },
+  { id:11, name:'Soldering Wire Premium (50g)',       price:200 },
+  { id:12, name:'Breadboard Small',                   price:200 },
+  { id:13, name:'Breadboard Large',                   price:360 },
+  { id:14, name:'Lithium Battery 2200mAh',            price:230 },
+  { id:15, name:'Digital Temp Control Soldering Iron', price:1150 }
+];
+// default cost prices (offline fallback only — live costs come from the Products sheet)
+let productCosts = { 1:80, 2:90, 3:90, 4:120, 5:50, 6:70, 7:70, 8:70, 9:100, 10:30, 11:40, 12:160, 13:288, 14:180, 15:850 };
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function num(v){ const n = Number(v); return isNaN(n)?0:n; }
+function rs(v){ return 'Rs. ' + num(v).toLocaleString(); }
+
+// Sheet separates products with ";" only (legacy rows may still use ", ")
+function parseItems(text){
+    const s = String(text==null?'':text).trim();
+    if (!s) return [];
+    if (s.includes(';')) return s.split(';').map(x=>x.trim()).filter(Boolean);
+    if (/^\s*[^,]+\s+x\d+\s*,/.test(s)) return s.split(',').map(x=>x.trim()).filter(Boolean); // legacy rows
+    return [s];
+}
+function effectiveCost(o){
+    const raw = o.costPrice;
+    if (raw !== '' && raw !== null && raw !== undefined && !isNaN(Number(raw))) return Number(raw);
+    // legacy order without a stored cost — calculate from the Products sheet
+    if (typeof productList !== 'function') return 0;
+    const products = productList();
+    let sum = 0;
+    parseItems(o.itemsText).forEach(row => {
+        const m = String(row).trim().match(/^(.*?)\s*[xX]\s*(\d+)$/);
+        const name = (m ? m[1] : String(row).trim()).toLowerCase();
+        const qty = m ? parseInt(m[2], 10) : 1;
+        if (!name || !qty) return;
+        const p = products.find(x => String(x.name).trim().toLowerCase() === name);
+        if (p) sum += num(p.cost) * qty;
+    });
+    return sum;
+}
+function profitOf(o){
+    const c = effectiveCost(o);
+    if (c > 0) return num(o.total) - c;
+    const p = o.profit;
+    if (p !== '' && p !== null && p !== undefined){
+        const n = Number(p);
+        if (!isNaN(n)) return n;
+    }
+    return num(o.total) - c;
+}
+
+// ==================== CORE HELPERS (shared with dash-fin/ops/sys) ====================
+const ME_STORE = {
+    get(k, def){ try { const v = localStorage.getItem('me_'+k); return v==null ? def : JSON.parse(v); } catch(e){ return def; } },
+    set(k, v){ try { localStorage.setItem('me_'+k, JSON.stringify(v)); } catch(e){} },
+    del(k){ try { localStorage.removeItem('me_'+k); } catch(e){} }
+};
+function recordOk(action, ms){
+    const h = ME_STORE.get('health', {api:{}, lastOk:null, errors:[]});
+    h.api[action] = { ok:true, ms:ms, at:new Date().toISOString() };
+    h.lastOk = new Date().toISOString();
+    ME_STORE.set('health', h);
+}
+function recordErr(action, error){
+    const h = ME_STORE.get('health', {api:{}, lastOk:null, errors:[]});
+    h.api[action] = { ok:false, error:String(error), at:new Date().toISOString() };
+    h.errors.unshift({ at:new Date().toISOString(), action:action, error:String(error) });
+    h.errors = h.errors.slice(0, 20);
+    ME_STORE.set('health', h);
+}
+function endpoint(){ const e = ME_STORE.get('endpoint', null); return (e && /^https?:\/\//.test(e)) ? e : APPS_SCRIPT_URL; }
+// ==================== AUTH (frontend) ====================
+const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+// getToken() returns the current SESSION id — every existing "if (!getToken())"
+// guard in dash-*.js therefore checks sign-in state.
+function getToken(){ const a = ME_STORE.get('auth', null); return (a && a.session) ? a.session : null; }
+function getSecretToken(){ const t = localStorage.getItem('makers_era_dash_token'); return t ? t.trim() : null; }
+function currentUserObj(){ const a = ME_STORE.get('auth', null); return (a && a.user) ? a.user : null; }
+function isAuthed(){ return !!getToken(); }
+function currentRole(){ const u = currentUserObj(); return u ? u.role : null; }
+
+// Central permission map — mirrors ACTION_ACCESS in apps-script/Code.gs.
+// The backend enforces these again; this copy only shapes the UI.
+// (Lazy: PAGES is declared later in this file.)
+function rolePages(r){
+    const ops = ['suppliers', 'inventory', 'purchases', 'deliveries'];
+    if (r === 'CEO') return PAGES.slice();
+    if (r === 'CFO') return PAGES.filter(p => ops.indexOf(p) === -1);
+    if (r === 'COO') return PAGES.filter(p => p !== 'finance');
+    return [];
+}
+const ROLE_ACTIONS = {
+    CEO: ['orders.edit','finance.verify','products.write','suppliers.write','purchases.write','deliveries.write','expenses.write','settings.secret','users.manage'],
+    CFO: ['finance.verify','expenses.write'],
+    COO: ['products.write','suppliers.write','purchases.write','deliveries.write','expenses.write']
+};
+function hasPage(p){ const r = currentRole(); if (!r) return false; return rolePages(r).indexOf(p) !== -1; }
+function can(perm){ const r = currentRole(); if (!r) return false; return (ROLE_ACTIONS[r] || []).indexOf(perm) !== -1; }
+function firstAllowedPage(){ const list = rolePages(currentRole()); if (!list.length) return 'dashboard'; return list.indexOf('dashboard') !== -1 ? 'dashboard' : list[0]; }
+
+async function apiGet(action, params, tokenOverride){
+    const session = tokenOverride ? null : getToken();
+    const legacyToken = tokenOverride || null;
+    if (!session && !legacyToken && action !== 'login') throw new Error('Not signed in');
+    const body = Object.assign({ action: action }, params || {});
+    if (session) body.session = session;
+    if (legacyToken) body.token = legacyToken;
+    const t0 = performance.now();
+    try {
+        // text/plain keeps this a CORS "simple request" (Apps Script has no OPTIONS preflight);
+        // passwords/sessions travel in the POST body, never in the URL.
+        const res = await fetch(endpoint(), {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (data && data.success === false){
+            recordErr(action, data.error || 'Backend returned failure');
+            if (data.code === 'AUTH' && action !== 'login') forceLogout(data.error || 'Session expired — sign in again');
+        } else {
+            recordOk(action, Math.round(performance.now() - t0));
+            if (session) refreshSessionExpiry();
+        }
+        return data;
+    } catch(e){ recordErr(action, e.message); throw e; }
+}
+function refreshSessionExpiry(){
+    const a = ME_STORE.get('auth', null);
+    if (a && a.session){ a.exp = Date.now() + SESSION_TTL_MS; ME_STORE.set('auth', a); }
+}
+function setGateError(id, msg){
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!msg){ el.classList.add('hidden'); el.textContent = ''; }
+    else { el.classList.remove('hidden'); el.textContent = msg; }
+}
+function showGate(state, msg){
+    const gate = document.getElementById('authGate');
+    const root = document.getElementById('appRoot');
+    if (!gate || !root) return;
+    gate.style.display = 'flex';
+    root.style.display = 'none';
+    const loginForm = document.getElementById('gateLoginForm');
+    const pwForm = document.getElementById('gatePwForm');
+    setGateError('gateError', null); setGateError('pwError', null);
+    if (state === 'password'){
+        loginForm.classList.add('hidden'); pwForm.classList.remove('hidden');
+        document.getElementById('gateSubtitle').textContent = 'First-time sign-in — password change required';
+        if (msg) setGateError('pwError', msg);
+    } else {
+        pwForm.classList.add('hidden'); loginForm.classList.remove('hidden');
+        document.getElementById('gateSubtitle').textContent = 'Sign in with your staff account';
+        if (msg) setGateError('gateError', msg);
+    }
+}
+function hideGate(){
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('appRoot').style.display = '';
+}
+function forceLogout(msg){
+    ME_STORE.del('auth');
+    allOrders = []; filteredOrders = [];
+    if (typeof allExpenses !== 'undefined') allExpenses = null;
+    showGate('login', msg || 'Session expired — sign in again');
+}
+function applyRoleUI(){
+    const u = currentUserObj();
+    PAGES.forEach(p => { const nav = document.getElementById('nav-' + p); if (nav) nav.style.display = hasPage(p) ? '' : 'none'; });
+    document.querySelectorAll('nav > div').forEach(g => {
+        const links = g.querySelectorAll('a[id^="nav-"]');
+        if (!links.length) return;
+        let any = false;
+        links.forEach(a => { if (a.style.display !== 'none') any = true; });
+        g.style.display = any ? '' : 'none';
+    });
+    const chip = document.getElementById('userChip');
+    if (u){
+        chip.style.display = 'flex';
+        document.getElementById('chipName').textContent = u.name || u.email;
+        document.getElementById('chipRole').textContent = u.role || '';
+    } else chip.style.display = 'none';
+    const tok = document.getElementById('settingsTokenCard');
+    if (tok) tok.style.display = can('settings.secret') ? '' : 'none';
+    const uc = document.getElementById('settingsUsersCard');
+    if (uc){ uc.style.display = can('users.manage') ? '' : 'none'; if (can('users.manage') && typeof loadUsersAdmin === 'function') loadUsersAdmin(); }
+    const t = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    t('acctName', u ? (u.name || '—') : '—');
+    t('acctEmail', u ? u.email : '—');
+    t('acctRole', u ? (u.role || '—') : '—');
+    t('acctMustChange', (u && u.mustChangePassword) ? 'Password change required at next sign-in' : '');
+}
+async function doLogin(e){
+    e.preventDefault();
+    const email = document.getElementById('gateEmail').value.trim().toLowerCase();
+    const password = document.getElementById('gatePassword').value;
+    setGateError('gateError', null);
+    if (!email || !password) return setGateError('gateError', 'Email and password are required');
+    const btn = document.getElementById('gateSubmit');
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    try {
+        const r = await apiGet('login', { email: email, password: password });
+        if (r && r.success && r.session){
+            ME_STORE.set('auth', { session: r.session, user: r.user, exp: Date.now() + SESSION_TTL_MS });
+            document.getElementById('gatePassword').value = '';
+            if (r.user && r.user.mustChangePassword) showGate('password');
+            else await enterApp(r.user);
+        } else {
+            setGateError('gateError', (r && r.error) || 'Sign-in failed');
+        }
+    } catch(err){ setGateError('gateError', 'Cannot reach backend: ' + err.message); }
+    btn.disabled = false; btn.textContent = 'Sign in';
+}
+async function doChangePassword(e){
+    e.preventDefault();
+    const cur = document.getElementById('pwCurrent').value;
+    const nw = document.getElementById('pwNew').value;
+    const cf = document.getElementById('pwConfirm').value;
+    setGateError('pwError', null);
+    if (!cur) return setGateError('pwError', 'Enter your current password');
+    if (nw.length < 8) return setGateError('pwError', 'New password must be at least 8 characters');
+    if (nw !== cf) return setGateError('pwError', 'New password and confirmation do not match');
+    const btn = document.getElementById('pwSubmit');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+        const r = await apiGet('changePassword', { current: cur, next: nw, confirm: cf });
+        if (r && r.success){
+            const a = ME_STORE.get('auth', null) || {};
+            if (r.user){ a.user = r.user; }
+            a.exp = Date.now() + SESSION_TTL_MS;
+            ME_STORE.set('auth', a);
+            ['pwCurrent','pwNew','pwConfirm'].forEach(id => { document.getElementById(id).value = ''; });
+            showToast('Password updated — welcome in', 'success');
+            await enterApp(r.user);
+        } else setGateError('pwError', (r && r.error) || 'Password change failed');
+    } catch(err){ setGateError('pwError', 'Cannot reach backend: ' + err.message); }
+    btn.disabled = false; btn.textContent = 'Set password & continue';
+}
+async function changeMyPassword(){
+    const cur = document.getElementById('pwSetCurrent').value;
+    const nw = document.getElementById('pwSetNew').value;
+    const cf = document.getElementById('pwSetConfirm').value;
+    if (!cur) return showToast('Enter your current password', 'error');
+    if (nw.length < 8) return showToast('New password must be at least 8 characters', 'error');
+    if (nw !== cf) return showToast('New password and confirmation do not match', 'error');
+    try {
+        const r = await apiGet('changePassword', { current: cur, next: nw, confirm: cf });
+        if (r && r.success){
+            const a = ME_STORE.get('auth', null) || {};
+            if (r.user) a.user = r.user;
+            ME_STORE.set('auth', a);
+            ['pwSetCurrent','pwSetNew','pwSetConfirm'].forEach(id => { document.getElementById(id).value = ''; });
+            applyRoleUI();
+            showToast('Password changed — old password no longer works', 'success');
+        } else showToast((r && r.error) || 'Password change failed', 'error');
+    } catch(err){ showToast('Connection error: ' + err.message, 'error'); }
+}
+async function doLogout(silent){
+    const hadSession = !!getToken();
+    if (hadSession){
+        try { await apiGet('logout'); } catch(e){ /* backend may already have dropped it */ }
+    }
+    ME_STORE.del('auth');
+    allOrders = []; filteredOrders = [];
+    if (typeof allExpenses !== 'undefined') allExpenses = null;
+    showGate('login', silent ? null : 'Signed out');
+}
+
+// ==================== SETTINGS: STAFF ACCOUNTS (CEO) ====================
+async function loadUsersAdmin(){
+    const box = document.getElementById('usersAdminBody');
+    if (!box || !can('users.manage')) return;
+    box.innerHTML = '<p class="text-sm text-zinc-500">Loading accounts…</p>';
+    try {
+        const r = await apiGet('users');
+        if (!r || !r.success){
+            box.innerHTML = '<p class="text-sm text-red-600">' + esc((r && r.error) || 'Failed to load accounts') + '</p>';
+            return;
+        }
+        const me = currentUserObj();
+        const rows = (r.users || []).map(u => {
+            const self = me && u.email === me.email;
+            const status = u.active
+                ? '<span class="rounded bg-accent-50 px-2 py-0.5 text-[11px] font-medium text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">Active</span>'
+                : '<span class="rounded bg-red-50 px-2 py-0.5 text-[11px] font-medium text-red-600 dark:bg-red-500/15 dark:text-red-300">Inactive</span>';
+            const flag = u.mustChange ? ' <span class="text-[11px] font-medium text-amber-600">· change required</span>' : '';
+            const last = u.lastLogin ? new Date(u.lastLogin).toLocaleString() : '—';
+            const actions =
+                '<button onclick="adminSetUserActive(\'' + esc(u.email) + '\',' + (u.active ? 'false' : 'true') + ')" class="mr-2 text-[12px] font-medium ' + (u.active ? 'text-red-600 hover:underline' : 'text-accent-600 hover:underline') + '">' + (u.active ? 'Deactivate' : 'Activate') + '</button>'
+                + '<button onclick="adminResetPassword(\'' + esc(u.email) + '\')" class="mr-2 text-[12px] font-medium text-zinc-500 hover:underline" title="Set password back to the account email and force a change">Reset to email</button>'
+                + '<button onclick="adminForceChange(\'' + esc(u.email) + '\')" class="text-[12px] font-medium text-amber-600 hover:underline" title="Require a password change at next sign-in">Require change</button>';
+            return '<tr class="hover:bg-zinc-50 dark:hover:bg-white/[0.03]">'
+                + '<td class="px-4 py-2.5 font-medium text-zinc-900 dark:text-white">' + esc(u.name || '—') + (self ? ' <span class="text-[11px] text-zinc-400">(you)</span>' : '') + '</td>'
+                + '<td class="px-4 py-2.5 text-[13px]">' + esc(u.email) + '</td>'
+                + '<td class="px-4 py-2.5 font-semibold text-accent-600">' + esc(u.role) + '</td>'
+                + '<td class="px-4 py-2.5">' + status + flag + '</td>'
+                + '<td class="px-4 py-2.5 text-[12px] text-zinc-500">' + esc(last) + '</td>'
+                + '<td class="px-4 py-2.5 whitespace-nowrap text-right">' + actions + '</td>'
+                + '</tr>';
+        }).join('');
+        box.innerHTML = uiTable(['Name', 'Email', 'Role', 'Status', 'Last login', ''], rows, 'No accounts found');
+    } catch(e){
+        box.innerHTML = '<p class="text-sm text-red-600">Connection error: ' + esc(e.message) + '</p>';
+    }
+}
+async function adminSetUserActive(email, active){
+    const deactivating = active === false || active === 'false';
+    if (deactivating && !confirm('Deactivate ' + email + '? They will be signed out and cannot log in.')) return;
+    if (!deactivating && !confirm('Activate ' + email + '?')) return;
+    try {
+        const r = await apiGet('setUserActive', { email: email, active: deactivating ? 'false' : 'true' });
+        if (r && r.success){ showToast(deactivating ? 'Account deactivated' : 'Account activated', 'success'); loadUsersAdmin(); }
+        else showToast((r && r.error) || 'Action failed', 'error');
+    } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
+}
+async function adminResetPassword(email){
+    if (!confirm('Reset the password for ' + email + ' back to their account email? They will be signed out and forced to choose a new password.')) return;
+    try {
+        const r = await apiGet('resetUserPassword', { email: email });
+        if (r && r.success){ showToast('Password reset — temp password is the account email', 'success'); loadUsersAdmin(); }
+        else showToast((r && r.error) || 'Action failed', 'error');
+    } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
+}
+async function adminForceChange(email){
+    if (!confirm('Require ' + email + ' to change their password at next sign-in?')) return;
+    try {
+        const r = await apiGet('forcePasswordReset', { email: email });
+        if (r && r.success){ showToast('Password change now required', 'success'); loadUsersAdmin(); }
+        else showToast((r && r.error) || 'Action failed', 'error');
+    } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
+}
+async function enterApp(user){
+    const a = ME_STORE.get('auth', null) || {};
+    if (user) a.user = user;
+    a.exp = Date.now() + SESSION_TTL_MS;
+    ME_STORE.set('auth', a);
+    hideGate();
+    applyRoleUI();
+    const start = validStartPage();
+    showPage(hasPage(start) ? start : firstAllowedPage());
+    await loadOrders();
+    if (typeof loadProducts === 'function') loadProducts();
+}
+function toggleGatePwVis(){
+    const inp = document.getElementById('gatePassword');
+    const btn = document.getElementById('gatePwVis');
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.textContent = show ? 'Hide' : 'Show';
+}
+function logLocal(action, target){
+    const u = currentUserObj();
+    const entries = ME_STORE.get('activity', []);
+    entries.unshift({ ts:new Date().toISOString(), user: u ? (u.name || u.email) + ' · ' + u.role : 'Local', action:String(action||''), target:String(target||'') });
+    ME_STORE.set('activity', entries.slice(0, 300));
+}
+function uiHead(kicker, title, desc){
+    return '<div class="mb-5"><p class="eyebrow">' + esc(kicker) + '</p>'
+        + '<h2 class="mt-1 font-display text-xl font-semibold text-zinc-900 dark:text-white">' + esc(title) + '</h2>'
+        + (desc ? '<p class="mt-1 max-w-2xl text-sm text-zinc-500 dark:text-zinc-400">' + desc + '</p>' : '') + '</div>';
+}
+function uiCard(label, value, cls){
+    return '<div class="rounded-xl border border-zinc-200 bg-white p-4 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">'
+        + '<p class="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">' + esc(label) + '</p>'
+        + '<p class="mt-1 font-display text-xl font-semibold text-zinc-900 dark:text-white ' + (cls||'') + '">' + value + '</p></div>';
+}
+function uiEmpty(msg){
+    return '<div class="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/[0.02] dark:text-zinc-400">' + esc(msg) + '</div>';
+}
+function uiTable(head, rows, emptyMsg){
+    if (!rows.length) return uiEmpty(emptyMsg || 'No data yet');
+    return '<div class="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">'
+        + '<table class="w-full text-left text-sm"><thead><tr class="border-b border-zinc-100 text-[11px] uppercase tracking-wide text-zinc-500 dark:border-white/[0.06] dark:text-zinc-400">'
+        + head.map(h => '<th class="px-4 py-3 font-medium">' + esc(h) + '</th>').join('') + '</tr></thead>'
+        + '<tbody class="divide-y divide-zinc-100 dark:divide-white/[0.05]">' + rows + '</tbody></table></div>';
+}
+const PAGES = ['dashboard','orders','products','suppliers','inventory','purchases','deliveries','finance','expenses','activity','health','settings'];
+const PAGE_META = {
+    dashboard: { title:'Dashboard',   sub:()=> 'Overview of orders, revenue and stock' },
+    orders:    { title:'Orders',      sub:()=> '<span id="headCount">' + allOrders.length + '</span> total' },
+    products:  { title:'Products',    sub:()=> 'Master product list, prices &amp; stock' },
+    suppliers: { title:'Suppliers',   sub:()=> 'Supplier database &amp; purchase history' },
+    inventory: { title:'Inventory',   sub:()=> 'Required vs available — shortage calculation' },
+    purchases: { title:'Purchases',   sub:()=> 'What to buy and what arrived' },
+    deliveries:{ title:'Deliveries',  sub:()=> 'University deliveries, order by order' },
+    finance:   { title:'Finance',     sub:()=> 'Payment verification' },
+    expenses:  { title:'Expenses',    sub:()=> 'Salaries, transport and other costs' },
+    activity:  { title:'Activity Log',sub:()=> 'Actual system activity' },
+    health:    { title:'System Health', sub:()=> 'Backend endpoint checks' },
+    settings:  { title:'Settings',    sub:()=> 'Account, security &amp; connection' }
+};
+const PAGE_RENDERERS = {};
+PAGE_RENDERERS.orders = function(){ renderStats(); renderTable(); renderPagination(); };
+PAGE_RENDERERS.settings = function(){
+    updateTokenStatus();
+    const ei = document.getElementById('endpointInput');
+    if (ei && document.activeElement !== ei) ei.value = ME_STORE.get('endpoint', '') || '';
+    const bu = document.getElementById('backendUrl');
+    if (bu) bu.textContent = endpoint();
+    if (can('users.manage') && typeof loadUsersAdmin === 'function') loadUsersAdmin();
+};
+let activePage = 'dashboard';
+function refreshActivePage(){
+    const fn = PAGE_RENDERERS[activePage];
+    if (typeof fn === 'function'){ try { fn(); } catch(e){ console.warn('render failed:', activePage, e); } }
+}
+function showPage(p){
+    if (!PAGES.includes(p)) p = 'dashboard';
+    if (isAuthed() && !hasPage(p)){
+        showToast('No access to “' + ((PAGE_META[p] && PAGE_META[p].title) || p) + '” for role ' + (currentRole() || ''), 'error');
+        p = firstAllowedPage();
+    }
+    activePage = p;
+    PAGES.forEach(pg => {
+        const sec = document.getElementById('page-'+pg);
+        if (sec) sec.style.display = pg===p ? '' : 'none';
+        const nav = document.getElementById('nav-'+pg);
+        if (nav){ nav.classList.toggle('nav-active', pg===p); nav.setAttribute('aria-current', pg===p ? 'page' : 'false'); }
+    });
+    const meta = PAGE_META[p] || { title:p, sub:()=>'' };
+    document.getElementById('pageTitle').textContent = meta.title;
+    document.getElementById('pageSub').innerHTML = meta.sub();
+    if (p==='settings') updateTokenStatus();
+    const fn = PAGE_RENDERERS[p];
+    if (typeof fn === 'function'){ try { fn(); } catch(e){ console.warn('render failed:', p, e); } }
+    const hash = '#' + p;
+    if (location.hash !== hash) history.replaceState(null, '', hash);
+}
+
+// ==================== MULTI-SELECT FILTERS ====================
+function msToggle(id){
+    const wrap = document.getElementById(id);
+    const wasOpen = wrap.classList.contains('open');
+    document.querySelectorAll('.ms-wrap').forEach(w=>w.classList.remove('open'));
+    if (!wasOpen) wrap.classList.add('open');
+}
+document.addEventListener('click', e => { if (!e.target.closest('.ms-wrap')) document.querySelectorAll('.ms-wrap').forEach(w=>w.classList.remove('open')); });
+function msValues(kind){
+    return [...document.querySelectorAll(`input[data-ms="${kind}"]:checked`)].map(c=>c.value);
+}
+function msChanged(){
+    ['order','payment'].forEach(kind=>{
+        const n = msValues(kind).length;
+        const btn = document.getElementById(kind==='order'?'msOrder':'msPayment');
+        const cnt = document.getElementById(kind==='order'?'msOrderCount':'msPaymentCount');
+        btn.classList.toggle('on', n>0);
+        cnt.textContent = n;
+    });
+    applyFilters();
+}
+function clearMs(){
+    document.querySelectorAll('input[data-ms]').forEach(c=>c.checked=false);
+    document.getElementById('searchInput').value='';
+    msChanged();
+}
+
+// ==================== INIT ====================
+function validStartPage(){
+    const h = (location.hash || '').replace('#','');
+    return (h && PAGES.includes(h)) ? h : 'dashboard';
+}
+document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('backendUrl').textContent = APPS_SCRIPT_URL;
+    const ei = document.getElementById('endpointInput');
+    if (ei) ei.value = ME_STORE.get('endpoint', '') || '';
+    document.getElementById('gateLoginForm').addEventListener('submit', doLogin);
+    document.getElementById('gatePwForm').addEventListener('submit', doChangePassword);
+    document.getElementById('gatePwVis').addEventListener('click', toggleGatePwVis);
+
+    const a = ME_STORE.get('auth', null);
+    if (!a || !a.session){ showGate('login'); return; }
+    if (a.exp && Date.now() > a.exp){ ME_STORE.del('auth'); showGate('login', 'Session expired — sign in again'); return; }
+    try {
+        const r = await apiGet('me');
+        if (r && r.success && r.user){
+            await enterApp(r.user);
+        } else {
+            if (!(r && r.code === 'AUTH')) ME_STORE.del('auth');
+            showGate('login', (r && r.error) || 'Session is no longer valid');
+        }
+    } catch(err){
+        // Network failure with a locally-valid session: enter anyway (server
+        // still rejects on its side; refresh retries 'me').
+        enterApp(a.user || null);
+    }
+});
+
+// ==================== SETTINGS: TOKEN ====================
+function toggleTokenVis(){
+    const inp = document.getElementById('tokenInput');
+    const btn = document.getElementById('tokenVisBtn');
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.textContent = show ? 'Hide' : 'Show';
+}
+function updateTokenStatus(ok){
+    const saved = getSecretToken();
+    const dot = document.getElementById('tokenDot');
+    const txt = document.getElementById('tokenStatusText');
+    if (!dot || !txt) return;
+    if (ok === true){
+        dot.className = 'h-2.5 w-2.5 rounded-full bg-accent-500';
+        txt.textContent = 'Token saved & verified — connected';
+        txt.className = 'text-accent-600 font-medium';
+    } else if (ok === false){
+        dot.className = 'h-2.5 w-2.5 rounded-full bg-red-500';
+        txt.textContent = 'Saved token rejected by backend — re-paste it';
+        txt.className = 'text-red-500 font-medium';
+    } else if (saved){
+        dot.className = 'h-2.5 w-2.5 rounded-full bg-amber-500';
+        txt.textContent = 'Token saved (not verified yet this session)';
+        txt.className = 'text-amber-600 font-medium';
+    } else {
+        dot.className = 'h-2.5 w-2.5 rounded-full bg-zinc-300 dark:bg-zinc-600';
+        txt.textContent = 'No token saved in this browser';
+        txt.className = 'text-zinc-500 dark:text-zinc-400';
+    }
+    const inp = document.getElementById('tokenInput');
+    if (inp && saved) inp.placeholder = saved.slice(0,6) + '…' + saved.slice(-4) + ' (saved — paste to replace)';
+}
+async function testToken(token){
+    // Legacy secret token verified via POST body (never in the URL).
+    const res = await fetch(endpoint(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        body: JSON.stringify({ action: 'orders', token: token })
+    });
+    const data = await res.json();
+    return { ok: !!data.success, error: data.error };
+}
+async function saveAndVerifyToken(){
+    const val = document.getElementById('tokenInput').value.trim();
+    if (!val) return showToast('Paste a token first', 'error');
+    if (val.length < 16) return showToast('Token looks too short (expected 32 chars)', 'error');
+    try {
+        const r = await testToken(val);
+        if (r.ok){
+            localStorage.setItem('makers_era_dash_token', val);
+            document.getElementById('tokenInput').value = '';
+            updateTokenStatus(true);
+            showToast('Token verified', 'success');
+            if (isAuthed()){
+                await loadOrders();
+                if (typeof loadProducts === 'function') loadProducts();
+                showPage(validStartPage());
+            }
+        } else {
+            updateTokenStatus(false);
+            showToast('Backend said: ' + (r.error || 'invalid token'), 'error');
+        }
+    } catch(e){
+        showToast('Could not reach backend: ' + e.message, 'error');
+    }
+}
+async function verifySavedToken(){
+    const saved = getSecretToken();
+    if (!saved) return showToast('No saved token', 'error');
+    try {
+        const r = await testToken(saved);
+        updateTokenStatus(r.ok);
+        showToast(r.ok ? 'Token works ✓' : 'Rejected: ' + (r.error||'invalid'), r.ok ? 'success' : 'error');
+        if (r.ok){ await loadOrders(); if (typeof loadProducts === 'function') loadProducts(); }
+    } catch(e){ showToast('Backend unreachable: ' + e.message, 'error'); }
+}
+function clearToken(){
+    localStorage.removeItem('makers_era_dash_token');
+    updateTokenStatus();
+    showToast('Legacy token removed from this browser (your sign-in session is unaffected)', 'success');
+}
+
+async function loadOrders(){
+    const token = getToken(); if (!token) return;
+    try {
+        document.getElementById('ordersBody').innerHTML = '<tr><td colspan="9" class="px-4 py-8 text-center text-zinc-500">Loading…</td></tr>';
+        const data = await apiGet('orders');
+        if (data.success){
+            allOrders = data.orders || [];
+            // Shipped ≡ Delivered — legacy rows display and count as Delivered (sheet untouched)
+            allOrders.forEach(o => { if (o.orderStatus === 'Shipped') o.orderStatus = 'Delivered'; });
+            applyFilters(); renderStats(); refreshActivePage();
+        }
+        else { showError(data.error || 'Failed to load orders'); showToast(data.error || 'Failed to load orders', 'error'); }
+    } catch(e){ showError('Connection error: '+e.message); showToast('Connection error: '+e.message, 'error'); }
+}
+
+function renderStats(){
+    const paid = allOrders.filter(o => o.paymentStatus === 'Paid');
+    const revenue = paid.reduce((s,o) => s + num(o.total), 0);
+    const profit = paid.reduce((s,o) => s + profitOf(o), 0);
+    document.getElementById('statTotal').textContent = allOrders.length;
+    document.getElementById('statPaid').textContent = paid.length;
+    document.getElementById('statRevenue').textContent = 'Rs. ' + revenue.toLocaleString();
+    document.getElementById('statProfit').textContent = 'Rs. ' + profit.toLocaleString();
+    document.getElementById('statPending').textContent = allOrders.filter(o => o.paymentStatus === 'Pending').length;
+    document.getElementById('statDelivered').textContent = allOrders.filter(o => o.orderStatus === 'Delivered' || o.orderStatus === 'Shipped').length;
+    document.getElementById('navCount').textContent = allOrders.length;
+    const hc = document.getElementById('headCount');
+    if (hc) hc.textContent = allOrders.length;
+}
+
+function applyFilters(){
+    const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+    const qDigits = q.replace(/\D/g,'');
+    const fo = msValues('order');
+    const fp = msValues('payment');
+    filteredOrders = allOrders.filter(o => {
+        if (q){
+            const hay = [o.orderId,o.name,o.email,o.phone,o.campus,o.deptRoll,o.itemsText,o.notes,o.orderStatus,o.paymentStatus]
+                .map(v => String(v==null?'':v)).join(' ').toLowerCase();
+            let hit = hay.includes(q);
+            if (!hit && qDigits && String(o.phone||'').replace(/\D/g,'').includes(qDigits)) hit = true;
+            if (!hit) return false;
+        }
+        if (fo.length && !fo.includes(o.orderStatus)) return false;
+        if (fp.length && !fp.includes(o.paymentStatus)) return false;
+        return true;
+    });
+    currentPage = 1; renderTable(); renderPagination();
+}
+function debounceSearch(){ clearTimeout(searchTimeout); searchTimeout = setTimeout(applyFilters, 250); }
+
+function statusCls(s){ return ({Paid:'bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300',
+  Pending:'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
+  Failed:'bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300',
+  Delivered:'bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300',
+  Confirmed:'bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300',
+  Rejected:'bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300',
+  Cancelled:'bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300'})[s] || 'bg-zinc-100 text-zinc-600 dark:bg-white/[0.06] dark:text-zinc-300'; }
+
+function selHtml(o, field){
+    if (!can('orders.edit')) return '<span class="rounded px-2 py-0.5 text-[11px] font-medium ' + statusCls(o[field]) + '">' + esc(o[field]) + '</span>';
+    return `<select class="status-select" data-order="${esc(o.orderId)}" data-field="${field}" data-status="${String(o[field]).toLowerCase()}" onchange="updateStatus('${esc(o.orderId)}','${field}',this.value)">
+      ${VALID_STATUSES[field].map(s=>`<option value="${s}" ${s===o[field]?'selected':''}>${s}</option>`).join('')}
+    </select>`;
+}
+
+function msgLabel(o){
+    if (o.orderStatus === 'Cancelled') return 'Cancelled';
+    if (o.orderStatus === 'Shipped' || o.orderStatus === 'Delivered') return 'Feedback';
+    if (o.paymentStatus === 'Paid') return 'Paid ✓';
+    if (o.orderStatus === 'Processing') return 'Processing';
+    return 'Request Pay';
+}
+
+function renderTable(){
+    const start = (currentPage-1)*pageSize;
+    const rows = filteredOrders.slice(start, start+pageSize);
+    const tbody = document.getElementById('ordersBody');
+    const mob = document.getElementById('mobileList');
+    if (!rows.length){
+        tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-8 text-center text-zinc-500">No orders found</td></tr>';
+        mob.innerHTML = '<p class="px-4 py-6 text-center text-sm text-zinc-500">No orders found</p>';
+        return;
+    }
+
+    tbody.innerHTML = rows.map((o,i) => {
+        const gi = start+i;
+        const items = parseItems(o.itemsText);
+        const preview = items.slice(0,2).join(', ') + (items.length>2 ? ` +${items.length-2} more` : '');
+        const prof = profitOf(o);
+        return `<tr class="border-b border-zinc-100 transition-colors hover:bg-zinc-50 dark:border-white/[0.04] dark:hover:bg-white/[0.02]">
+<td class="px-4 py-3"><button class="text-zinc-400 hover:text-accent-500" onclick="toggleExpand(${gi})" aria-label="Expand" id="expBtn-${gi}">▶</button></td>
+<td class="px-4 py-3 font-medium text-zinc-800 dark:text-zinc-100">${esc(o.orderId)}</td>
+<td class="px-4 py-3">${esc(o.name)}<br><span class="text-[12px] text-zinc-400">${esc(o.phone)}</span></td>
+<td class="max-w-[220px] truncate px-4 py-3 text-zinc-500" title="${esc(o.itemsText)}">${esc(preview)}</td>
+<td class="px-4 py-3 font-semibold tnum">${rs(o.total)}</td>
+<td class="px-4 py-3 font-medium tnum ${prof>=0?'text-accent-600':'text-red-500'}">${rs(prof)}</td>
+<td class="px-4 py-3">${selHtml(o,'orderStatus')}</td>
+<td class="px-4 py-3">${selHtml(o,'paymentStatus')}</td>
+<td class="px-4 py-3"><div class="flex flex-wrap gap-1.5">${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-accent-600" title="WhatsApp message to customer" onclick="sendOrderMsg('${esc(o.orderId)}')">${msgLabel(o)}</button>
+<button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-amber-600" onclick="openCostModal('${esc(o.orderId)}')">Cost</button>` : ''}</div></td></tr>
+<tr id="expanded-${gi}" style="display:none"><td colspan="9" class="bg-zinc-50 px-6 py-5 dark:bg-white/[0.02]">
+<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+<div class="text-sm font-semibold">${esc(o.orderId)} · ${esc(o.name)}</div>
+${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-accent-600" onclick="sendOrderMsg('${esc(o.orderId)}')">Message customer (${esc(o.phone)})</button>` : ''}
+</div>
+<div class="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
+<div><span class="detail-lbl">Date</span>${esc(o.timestamp)}</div>
+<div><span class="detail-lbl">Name</span>${esc(o.name)}</div>
+<div><span class="detail-lbl">Email</span>${esc(o.email)}</div>
+<div><span class="detail-lbl">Phone</span>${esc(o.phone)}</div>
+<div><span class="detail-lbl">Campus</span>${esc(o.campus)}</div>
+<div><span class="detail-lbl">Dept / Roll</span>${esc(o.deptRoll||'-')}</div>
+<div><span class="detail-lbl">Subtotal</span>${rs(o.subtotal)}</div>
+<div><span class="detail-lbl">Delivery</span>${num(o.delivery)===0?'FREE':rs(o.delivery)}</div>
+<div><span class="detail-lbl">Total</span><strong>${rs(o.total)}</strong></div>
+<div><span class="detail-lbl">Cost Price</span>${rs(effectiveCost(o))}</div>
+<div><span class="detail-lbl">Profit</span><strong class="${prof>=0?'text-accent-600':'text-red-500'}">${rs(prof)}</strong></div>
+<div><span class="detail-lbl">Status</span>${esc(o.orderStatus)} / ${esc(o.paymentStatus)}</div>
+</div>
+<div class="mt-4">
+<span class="detail-lbl">Items (${items.length})</span>
+<div class="mt-1 flex flex-wrap gap-1.5">${items.map(it=>`<span class="rounded bg-zinc-100 px-2 py-0.5 text-[12px] text-zinc-600 dark:bg-white/[0.06] dark:text-zinc-300">${esc(it)}</span>`).join('')}</div>
+</div>
+${o.notes?`<div class="mt-3 text-[13px] text-zinc-500"><span class="detail-lbl">Notes</span>${esc(o.notes)}</div>`:''}
+${can('orders.edit') ? `<div class="mt-4 flex items-center gap-2 border-t border-zinc-200 pt-3 dark:border-white/10">
+<label class="text-[12px] text-zinc-500">Edit Cost Rs.</label>
+<input type="number" id="costInline-${o.rowNum}" value="${num(o.costPrice)}" min="0" class="w-24 rounded border border-zinc-200 bg-white px-2 py-1 text-sm dark:border-white/10 dark:bg-white/[0.04]">
+<button class="rounded-md bg-accent-500 px-2.5 py-1 text-[12px] font-semibold text-white hover:bg-accent-600" onclick="saveInlineCost('${esc(o.orderId)}', document.getElementById('costInline-${o.rowNum}').value)">Save</button>
+</div>` : ''}</td></tr>`;
+    }).join('');
+
+    mob.innerHTML = rows.map(o => {
+        const items = parseItems(o.itemsText);
+        const prof = profitOf(o);
+        return `<div class="px-4 py-3.5">
+<div class="flex items-baseline justify-between gap-2">
+<span class="font-medium text-zinc-800 dark:text-zinc-100">${esc(o.name)}</span>
+<span class="font-semibold tnum">${rs(o.total)}</span></div>
+<div class="mt-1 flex flex-wrap items-center gap-x-2 text-[12px] text-zinc-500">
+<span>${esc(o.orderId)}</span><span>·</span><span>${items.length} items</span><span>·</span>
+<span class="${prof>=0?'text-accent-600':'text-red-500'}">Profit ${rs(prof)}</span>
+<span class="ml-auto rounded-full px-2 py-0.5 text-[11px] font-medium ${statusCls(o.paymentStatus)}">${esc(o.paymentStatus)}</span></div>
+<div class="mt-2 truncate text-[12px] text-zinc-400">${esc(items.join('; '))}</div>
+<div class="mt-2 flex flex-wrap gap-1.5">${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-2 py-1 text-[11px] font-semibold text-white" onclick="sendOrderMsg('${esc(o.orderId)}')">${msgLabel(o)}</button>
+<button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white" onclick="openCostModal('${esc(o.orderId)}')">Cost</button>` : ''}</div>
+<div class="mt-2 flex flex-wrap gap-1.5 text-[11px]">
+${selHtml(o,'orderStatus')}${selHtml(o,'paymentStatus')}
+</div></div>`;
+    }).join('');
+}
+
+function toggleExpand(gi){
+    const row = document.getElementById('expanded-'+gi);
+    const btn = document.getElementById('expBtn-'+gi);
+    const show = row.style.display === 'none';
+    row.style.display = show ? 'table-row' : 'none';
+    btn.textContent = show ? '▼' : '▶';
+}
+
+function renderPagination(){
+    const total = Math.ceil(filteredOrders.length/pageSize);
+    const el = document.getElementById('pagination');
+    if (total <= 1){ el.innerHTML = ''; return; }
+    el.innerHTML = `<button class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-white/10" ${currentPage===1?'disabled':''} onclick="changePage(${currentPage-1})">Prev</button>
+<span class="px-2 text-sm text-zinc-500">Page ${currentPage} of ${total} (${filteredOrders.length} orders)</span>
+<button class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-white/10" ${currentPage===total?'disabled':''} onclick="changePage(${currentPage+1})">Next</button>`;
+}
+function changePage(p){
+    const total = Math.ceil(filteredOrders.length/pageSize);
+    if (p<1||p>total) return;
+    currentPage = p; renderTable(); renderPagination();
+    window.scrollTo({top:0, behavior:'smooth'});
+}
+function showError(msg){ document.getElementById('ordersBody').innerHTML = `<tr><td colspan="9" class="px-4 py-8 text-center text-red-500">${esc(msg)}</td></tr>`; }
+
+function syncSelects(orderId, field, value){
+    document.querySelectorAll(`select[data-order="${orderId}"][data-field="${field}"]`).forEach(s => {
+        s.value = value;
+        s.setAttribute('data-status', String(value).toLowerCase());
+    });
+}
+
+async function updateStatus(orderId, field, value){
+    if (!getToken()){ showToast('Not signed in', 'error'); const o=allOrders.find(x=>x.orderId===orderId); if(o) syncSelects(orderId, field, o[field]); return; }
+    try {
+        const data = await apiGet('update', { orderId: orderId, field: field, value: value });
+        if (data.success){
+            const o = allOrders.find(x => x.orderId === orderId);
+            if (o) o[field] = value;
+            syncSelects(orderId, field, value);
+            renderStats();
+            renderTable(); // refresh message button label (depends on status)
+            refreshActivePage();
+            showToast(`Updated ${field} → ${value}`, 'success');
+        } else {
+            const prev = allOrders.find(x => x.orderId === orderId)?.[field];
+            syncSelects(orderId, field, prev);
+            showToast(data.error || 'Update failed', 'error');
+        }
+    } catch(e){
+        const prev = allOrders.find(x => x.orderId === orderId)?.[field];
+        syncSelects(orderId, field, prev);
+        showToast('Error: ' + e.message, 'error');
+    }
+}
+
+// ==================== WHATSAPP MESSAGES (status-based, to CUSTOMER's number) ====================
+function waNumber(phone){
+    let p = String(phone==null?'':phone).replace(/\D/g,'');
+    if (!p) return '';
+    if (p.startsWith('0')) p = '92' + p.slice(1);
+    else if (p.startsWith('92')) {}
+    else if (p.startsWith('3')) p = '92' + p;
+    return p;
+}
+function detailsBlock(o){
+    const items = parseItems(o.itemsText).map(s => '• ' + s).join('\n');
+    return `━━━━━━━━━━━━━━━
+Order: ${o.orderId}
+Date: ${o.timestamp}
+Name: ${o.name}
+Phone: ${o.phone}
+Campus: ${o.campus}
+ITEMS:
+${items}
+Subtotal: Rs.${num(o.subtotal).toLocaleString()}
+Delivery: ${num(o.delivery)===0 ? 'FREE' : 'Rs.'+num(o.delivery).toLocaleString()}
+TOTAL: Rs.${num(o.total).toLocaleString()}`;
+}
+function buildStatusMessage(o){
+    const det = detailsBlock(o);
+    const cancelled = o.orderStatus === 'Cancelled';
+    const delivered = o.orderStatus === 'Shipped' || o.orderStatus === 'Delivered';
+    const processing = o.orderStatus === 'Processing';
+    const paid = o.paymentStatus === 'Paid';
+
+    if (cancelled) return `Hi ${o.name}, your order of ${o.orderId} was cancelled.\n\n${det}\n\nIf you have any questions, just reply to this message.`;
+    if (delivered) return `Hi ${o.name}, your order ${o.orderId} was delivered! 🎉\n\n${det}\n\nPlease give us your feedback — it helps a lot. Thank you for ordering from Makers Era!`;
+    if (processing) return `Hi ${o.name}, your order ${o.orderId} is being processed.\n\nWe are under high volume right now — please cooperate while we process your order. It will be with you soon.\n\n${det}`;
+    if (paid) return `Hi ${o.name}, payment received for order ${o.orderId} — thank you! ✅\nExpected delivery: Tuesday.\n\n${det}`;
+    return `Hi ${o.name}, we received your order ${o.orderId}!\n\nPlease pay to:\nAccount: Muhammad Bin Junaid\nIBAN: PK77JSBL9999903330034535\nBank: JS Bank / Zindagi\n\nSend the payment screenshot after paying. Thank you!\n\n${det}`;
+}
+function sendOrderMsg(orderId){
+    const o = allOrders.find(x => x.orderId === orderId);
+    if (!o) return showToast('Order not found', 'error');
+    const n = waNumber(o.phone);
+    if (!n) return showToast('No WhatsApp number for this order', 'error');
+    window.open(`https://wa.me/${n}?text=${encodeURIComponent(buildStatusMessage(o))}`, '_blank');
+}
+
+// ==================== ORDER COST (modal + inline) ====================
+function openCostModal(orderId){
+    if (!can('orders.edit')) return showToast('Your role cannot edit order costs', 'error');
+    const o = allOrders.find(x => x.orderId === orderId); if (!o) return;
+    editingCostOrderId = orderId;
+    document.getElementById('costOrderId').value = o.orderId;
+    document.getElementById('costNew').value = num(o.costPrice);
+    document.getElementById('costOrderTotal').textContent = rs(o.total);
+    document.getElementById('costModal').style.display = 'flex';
+    document.getElementById('costNew').oninput = updateCostPreview;
+    updateCostPreview();
+    document.getElementById('costNew').focus();
+}
+function updateCostPreview(){
+    const c = parseFloat(document.getElementById('costNew').value);
+    const o = allOrders.find(x => x.orderId === editingCostOrderId);
+    if (!o) return;
+    document.getElementById('costProfit').textContent = isNaN(c) ? '-' : rs(num(o.total) - c);
+}
+function closeCostModal(){ document.getElementById('costModal').style.display = 'none'; editingCostOrderId = null; }
+async function saveCostPrice(){
+    const cost = parseFloat(document.getElementById('costNew').value);
+    if (isNaN(cost) || cost < 0) return showToast('Invalid cost', 'error');
+    try {
+        const data = await apiGet('updateCost', { orderId: editingCostOrderId, cost: cost });
+        if (data.success){
+            const o = allOrders.find(x => x.orderId === editingCostOrderId);
+            if (o){ o.costPrice = cost; o.profit = num(o.total) - cost; }
+            renderStats(); applyFilters(); closeCostModal(); showToast('Cost updated, profit recalculated', 'success');
+        } else showToast(data.error || 'Failed', 'error');
+    } catch(e){ showToast('Error: ' + e.message, 'error'); }
+}
+async function saveInlineCost(orderId, costStr){
+    const cost = parseFloat(costStr);
+    if (isNaN(cost) || cost < 0) return showToast('Invalid cost', 'error');
+    try {
+        const data = await apiGet('updateCost', { orderId: orderId, cost: cost });
+        if (data.success){
+            const o = allOrders.find(x => x.orderId === orderId);
+            if (o){ o.costPrice = cost; o.profit = num(o.total) - cost; }
+            renderStats(); applyFilters(); showToast('Cost updated', 'success');
+        } else showToast(data.error || 'Failed', 'error');
+    } catch(e){ showToast('Error: ' + e.message, 'error'); }
+}
+
+// ==================== SETTINGS: ENDPOINT ====================
+function saveEndpoint(){
+    const v = (document.getElementById('endpointInput').value || '').trim();
+    if (!/^https?:\/\/\S+/.test(v)) return showToast('Enter a valid https:// URL', 'error');
+    ME_STORE.set('endpoint', v.replace(/\s+$/, ''));
+    showToast('Endpoint saved', 'success');
+    testConnection();
+}
+function resetEndpoint(){
+    ME_STORE.del('endpoint');
+    document.getElementById('endpointInput').value = '';
+    showToast('Endpoint reset to default', 'success');
+    testConnection();
+}
+async function testConnection(){
+    const dot = document.getElementById('connDot');
+    const txt = document.getElementById('connStatusText');
+    dot.className = 'h-2.5 w-2.5 rounded-full bg-amber-500';
+    txt.textContent = 'Testing…';
+    txt.className = 'text-amber-600 font-medium';
+    const session = getToken();
+    if (!session){
+        dot.className = 'h-2.5 w-2.5 rounded-full bg-zinc-300 dark:bg-zinc-600';
+        txt.textContent = 'Not signed in';
+        txt.className = 'text-zinc-500 dark:text-zinc-400';
+        return;
+    }
+    try {
+        const data = await apiGet('stats');
+        if (data.success){
+            dot.className = 'h-2.5 w-2.5 rounded-full bg-accent-500';
+            txt.textContent = 'Connected — Apps Script and Sheets responding';
+            txt.className = 'text-accent-600 font-medium';
+            showToast('Connection OK', 'success');
+        } else {
+            dot.className = 'h-2.5 w-2.5 rounded-full bg-red-500';
+            txt.textContent = 'Backend said: ' + (data.error || 'unknown error');
+            txt.className = 'text-red-500 font-medium';
+        }
+    } catch(e){
+        dot.className = 'h-2.5 w-2.5 rounded-full bg-red-500';
+        txt.textContent = 'Unreachable: ' + e.message;
+        txt.className = 'text-red-500 font-medium';
+    }
+}
+
+async function refreshData(){
+    await loadOrders();
+    if (typeof loadProducts === 'function') loadProducts();
+    if (typeof loadExpenses === 'function') loadExpenses();
+    if (typeof suppliersInit !== 'undefined') suppliersInit = false;
+    if (typeof purchasesInit !== 'undefined') purchasesInit = false;
+    refreshActivePage();
+    showToast('Data refreshed', 'success');
+}
+
+function exportCsv(){ exportFromFilter(); }
+function exportFromFilter(){
+    const rows = [['OrderID','Timestamp','Name','Email','Phone','Campus','DeptRoll','Items','Subtotal','Delivery','Total','OrderStatus','PaymentStatus','Notes','CostPrice','Profit']];
+    filteredOrders.forEach(o => rows.push([o.orderId,o.timestamp,o.name,o.email,o.phone,o.campus,o.deptRoll,o.itemsText,o.subtotal,o.delivery,o.total,o.orderStatus,o.paymentStatus,o.notes||'',effectiveCost(o),profitOf(o)]));
+    sableDownloadCsv('makers-era-orders.csv', rows);
+}
+
+function showToast(msg, type){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'fixed bottom-6 right-6 z-[70] max-w-[90vw] rounded-lg px-4 py-2.5 text-sm font-medium shadow-pop ' +
+        (type==='error' ? 'bg-red-600 text-white' : 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => { t.className = 'hidden'; }, 3200);
+}
+</script>
+<script src="dash-board.js"></script>
+<script src="dash-products.js"></script>
+<script src="dash-ops.js"></script>
+<script src="dash-fin.js"></script>
+<script src="dash-sys.js"></script>
+</body>
+</html>

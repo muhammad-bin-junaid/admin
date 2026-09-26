@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)https://admin-dashboard-template-beta.vercel.app/products.html -->
+<html lang="en" class="h-full"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Products | Sable</title>
+  <meta name="description" content="Sable product catalog with stock, pricing and status.">
+  <link rel="icon" href="https://admin-dashboard-template-beta.vercel.app/assets/favicon.svg" type="image/svg+xml">
+  <script>(function(){try{var t=localStorage.getItem('sable-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+  <link rel="stylesheet" href="./Products _ Sable_files/sable.css">
+  <script defer="" src="./Products _ Sable_files/alpine.min.js.download"></script>
+  <script src="./Products _ Sable_files/sable.js.download"></script><script id="sable-va" defer="" src="./Products _ Sable_files/script.js.download"></script>
+<style id="sable-ribbon-style">#sable-demo-ribbon{position:fixed;z-index:25;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;text-decoration:none;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px)) 16px;font:600 13px/1 Inter,system-ui,sans-serif;background:#12655B;color:#FAF8F5;border-top:1px solid rgba(255,255,255,.14);box-shadow:0 -6px 24px -10px rgba(0,0,0,.45);transition:transform .15s ease,box-shadow .15s ease}body.sable-has-ribbon{padding-bottom:76px}@media (min-width:640px){#sable-demo-ribbon{left:auto;right:20px;bottom:20px;justify-content:flex-start;border-radius:999px;border:1px solid rgba(255,255,255,.14);padding:9px 11px 9px 17px;box-shadow:0 10px 30px -8px rgba(18,101,91,.5)}body.sable-has-ribbon{padding-bottom:0}}@keyframes sableRibbonGlow{0%,100%{box-shadow:0 10px 30px -8px rgba(18,101,91,.5)}50%{box-shadow:0 12px 34px -6px rgba(18,101,91,.75),0 0 0 4px rgba(95,187,172,.28)}}@media (prefers-reduced-motion:reduce){#sable-demo-ribbon{animation:none!important}}</style><link rel="stylesheet" type="text/css" href="chrome-extension://mfidniedemcgceagapgdekdbmanojomk/css/content-shared.css"><link rel="stylesheet" type="text/css" href="chrome-extension://mfidniedemcgceagapgdekdbmanojomk/css/content-lite.css"></head>
+<body class="h-full bg-canvas dark:bg-[#16130F] text-zinc-900 dark:text-zinc-100 font-sans antialiased sable-has-ribbon" x-data="{ sidebarOpen:false }" x-effect="document.body.classList.toggle('overflow-hidden', sidebarOpen)" @keydown.escape.window="sidebarOpen=false">
+  <div x-show="sidebarOpen" @click="sidebarOpen=false" x-transition.opacity="" class="fixed inset-0 z-30 bg-zinc-900/40 backdrop-blur-sm lg:hidden" style="display: none;"></div>
+  <div class="flex h-full">
+
+    <aside x-ref="sidebar" class="sidebar fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-zinc-200 bg-white dark:border-white/[0.06] dark:bg-[#1F1B16] lg:static lg:translate-x-0" :class="sidebarOpen &amp;&amp; 'open'">
+      <div class="flex h-16 shrink-0 items-center gap-2.5 px-5">
+        <div class="grid h-8 w-8 place-items-center rounded-lg bg-accent-500 shadow-sm"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 L9 11 L13 15 L21 6"></path><path d="M15 6h6v6"></path></svg></div>
+        <div class="leading-none"><div class="font-display text-[17px] font-semibold tracking-tight text-zinc-900 dark:text-white">Sable</div><div class="text-[11px] text-zinc-500 dark:text-zinc-400">Revenue OS</div></div>
+      </div>
+      <nav class="flex-1 space-y-6 overflow-y-auto px-3 py-3" aria-label="Primary">
+        <div>
+          <p class="eyebrow px-3 pb-2 text-zinc-500 dark:text-zinc-400">Overview</p>
+          <div class="space-y-0.5">
+            <a href="https://admin-dashboard-template-beta.vercel.app/index.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>Dashboard</a>
+            <a href="https://admin-dashboard-template-beta.vercel.app/analytics.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 14l3-3 3 3 4-5"></path></svg>Analytics</a>
+            <a href="https://admin-dashboard-template-beta.vercel.app/activity.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>Activity</a>
+            <a href="https://admin-dashboard-template-beta.vercel.app/messages.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>Messages<span class="ml-auto rounded-full bg-accent-500/90 px-1.5 py-0.5 text-[10px] font-semibold text-white">3</span></a>
+          </div>
+        </div>
+
+        <div>
+          <p class="eyebrow px-3 pb-2 text-zinc-500 dark:text-zinc-400">Commerce</p>
+          <div class="space-y-0.5">
+            <a href="https://admin-dashboard-template-beta.vercel.app/tables.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>Orders<span class="ml-auto rounded-full bg-accent-500/90 px-1.5 py-0.5 text-[10px] font-semibold text-white">24</span></a>
+            <a href="https://admin-dashboard-template-beta.vercel.app/board.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18"></path><path d="M15 3v18"></path></svg>Fulfillment</a>
+            <a href="https://admin-dashboard-template-beta.vercel.app/products.html" aria-current="page" class="nav-active group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"></path><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>Products</a>
+            <a href="https://admin-dashboard-template-beta.vercel.app/customers.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>Customers</a>
+            <a href="https://admin-dashboard-template-beta.vercel.app/payouts.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"></path><path d="M16 12h.01"></path><path d="M3 10h18"></path></svg>Payouts</a>
+            <a href="https://admin-dashboard-template-beta.vercel.app/invoices.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path><path d="M10 9H8"></path></svg>Invoices</a>
+          </div>
+        </div>
+
+        <div>
+          <p class="eyebrow px-3 pb-2 text-zinc-500 dark:text-zinc-400">Account</p>
+          <div class="space-y-0.5">
+            <a href="https://admin-dashboard-template-beta.vercel.app/settings.html" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"></path><circle cx="12" cy="12" r="3"></circle></svg>Settings</a>
+          </div>
+        </div>
+      </nav>
+      <div class="shrink-0 p-3">
+        <a href="https://admin-dashboard-template-beta.vercel.app/payouts.html" class="focusable group block rounded-xl border border-zinc-200 bg-gradient-to-b from-accent-50 to-white p-3.5 transition-colors hover:border-accent-200 dark:border-white/[0.06] dark:from-white/[0.05] dark:to-transparent dark:hover:border-white/[0.12]">
+          <div class="flex items-center justify-between"><span class="eyebrow text-accent-700 dark:text-accent-300">Next payout</span><span class="text-[11px] font-medium text-zinc-500 tnum dark:text-zinc-400">Jul 25</span></div>
+          <p class="mt-1.5 font-display text-xl font-semibold tracking-tight text-zinc-900 tnum dark:text-white" data-sable-money="18240" data-money-compact="">$18,240</p>
+          <p class="mt-0.5 text-[12px] leading-snug text-zinc-500 dark:text-zinc-400">To Revolut Business ···· 4471</p>
+          <span class="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent-500 py-1.5 text-xs font-semibold text-white transition-colors group-hover:bg-accent-600">View payouts<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+        </a>
+      </div>
+    </aside>
+    <div class="flex min-w-0 flex-1 flex-col">
+
+      <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-zinc-200 bg-canvas/80 px-4 backdrop-blur-md dark:border-white/[0.06] dark:bg-[#16130F]/80 sm:px-6">
+        <button @click="sidebarOpen=true; $nextTick(()=&gt;$refs.sidebar &amp;&amp; $refs.sidebar.querySelector('a') &amp;&amp; $refs.sidebar.querySelector('a').focus())" class="focusable -ml-1 rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/[0.05] lg:hidden" aria-label="Open menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+        <div class="hidden sm:block"><h1 class="font-display text-[15px] font-semibold text-zinc-900 dark:text-white">Products</h1><p class="text-[12px] text-zinc-500 dark:text-zinc-400">248 active · 12 low stock</p></div>
+        <!-- Search trigger (desktop), centered -->
+        <div class="hidden min-w-0 flex-1 justify-center px-2 md:flex sm:px-4">
+          <button type="button" @click="$dispatch('open-palette')" class="focusable flex w-full max-w-md items-center gap-2 rounded-lg border border-zinc-200 bg-white py-2 pl-3 pr-2 text-sm text-zinc-500 hover:border-zinc-300 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-400 dark:hover:border-white/20" aria-label="Search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+            <span class="flex-1 text-left">Search…</span>
+            <kbd class="rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400">⌘K</kbd>
+          </button>
+        </div>
+        <div class="ml-auto flex items-center gap-1.5 sm:gap-1">
+          <!-- Search trigger (mobile) -->
+          <button type="button" @click="$dispatch('open-palette')" class="focusable rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05] md:hidden" aria-label="Search"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+          <!-- Theme toggle -->
+          <button onclick="toggleTheme()" class="focusable rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05]" aria-label="Toggle theme">
+            <svg class="hidden dark:block" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+            <svg class="block dark:hidden" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+          </button>
+          <!-- Notifications -->
+          <div class="relative" x-data="{ open:false }" @keydown.escape="open=false">
+            <button @click="open=!open" class="focusable relative rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05]" aria-label="Notifications" :aria-expanded="open" aria-expanded="false">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+              <span class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-accent-500 ring-2 ring-canvas dark:ring-[#16130F]"></span>
+            </button>
+            <div x-show="open" @click.outside="open=false" x-transition="" class="absolute right-0 mt-2 w-80 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]" style="display: none;">
+              <div class="flex items-center justify-between border-b border-zinc-100 px-4 py-3 dark:border-white/[0.06]"><span class="text-sm font-semibold">Notifications</span><span class="rounded-full bg-accent-50 px-2 py-0.5 text-[11px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">3 new</span></div>
+              <ul class="max-h-80 divide-y divide-zinc-100 overflow-y-auto text-sm dark:divide-white/[0.05]">
+                <li class="flex gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-white/[0.03]"><span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"></path></svg></span><span><span class="font-medium text-zinc-800 dark:text-zinc-100">Payout of <span data-sable-money="18240" data-money-compact="">$18,240</span> settled</span><span class="block text-zinc-500 dark:text-zinc-400">to Revolut Business · 12m ago</span></span></li>
+                <li class="flex gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-white/[0.03]"><span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-50 text-accent-600 dark:bg-accent-500/15 dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path></svg></span><span><span class="font-medium text-zinc-800 dark:text-zinc-100">Order #SB-10492 needs review</span><span class="block text-zinc-500 dark:text-zinc-400">Flagged by fraud filter · 34m ago</span></span></li>
+                <li class="flex gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-white/[0.03]"><span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg></span><span><span class="font-medium text-zinc-800 dark:text-zinc-100">Low stock: Merino wool scarf</span><span class="block text-zinc-500 dark:text-zinc-400">6 units left · 2h ago</span></span></li>
+              </ul>
+              <a href="https://admin-dashboard-template-beta.vercel.app/activity.html" class="block border-t border-zinc-100 px-4 py-2.5 text-center text-xs font-semibold text-accent-600 hover:bg-zinc-50 dark:border-white/[0.06] dark:text-accent-300 dark:hover:bg-white/[0.03]">View all activity</a>
+            </div>
+          </div>
+          <div class="mx-1 hidden h-6 w-px bg-zinc-200 dark:bg-white/10 sm:block"></div>
+          <!-- User menu -->
+          <div class="relative" x-data="{ open:false }" @keydown.escape="open=false">
+            <button @click="open=!open" class="focusable flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 hover:bg-zinc-100 dark:hover:bg-white/[0.05]" :aria-expanded="open" aria-expanded="false">
+              <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-accent-100 to-accent-50 text-[11px] font-semibold text-accent-700 ring-1 ring-accent-200/50 dark:from-accent-500/25 dark:to-accent-500/10 dark:text-accent-200 dark:ring-white/10" aria-hidden="true">ER</span>
+              <span class="hidden text-left leading-tight sm:block"><span class="block text-[13px] font-semibold text-zinc-800 dark:text-zinc-100">Elena Rossi</span><span class="block text-[11px] text-zinc-500 dark:text-zinc-400">Owner</span></span>
+              <svg class="hidden text-zinc-500 sm:block dark:text-zinc-400" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <div x-show="open" @click.outside="open=false" x-transition="" class="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-zinc-200 bg-white py-1 shadow-pop dark:border-white/[0.08] dark:bg-[#262019]" style="display: none;">
+              <div class="border-b border-zinc-100 px-3 py-2.5 dark:border-white/[0.06]"><p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Elena Rossi</p><p class="truncate text-xs text-zinc-500 dark:text-zinc-400">elena@sablegoods.co</p></div>
+              <a href="https://admin-dashboard-template-beta.vercel.app/settings.html" class="flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-white/[0.04]"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Profile</a>
+              <a href="https://admin-dashboard-template-beta.vercel.app/settings.html" class="flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-white/[0.04]"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 6 19.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15H4.5a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 6 8.1L5.9 8A2 2 0 1 1 8.7 5.2l.1.1A1.7 1.7 0 0 0 11 4.6V4.5a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 18 5.9l.1-.1A2 2 0 1 1 20.9 8.7l-.1.1a1.7 1.7 0 0 0-1.2 2.9v.1a2 2 0 1 1 0 4Z"></path></svg>Settings</a>
+              <div class="my-1 border-t border-zinc-100 dark:border-white/[0.06]"></div>
+              <a href="https://admin-dashboard-template-beta.vercel.app/login.html" class="flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg>Sign out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="flex-1 overflow-y-auto">
+        <div class="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8" x-data="productsTable()">
+          <!-- Heading -->
+          <div class="mb-5 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p class="eyebrow text-accent-600 dark:text-accent-400">Catalog</p>
+              <h2 class="mt-1 font-display text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">Products</h2>
+              <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Every item in the Sable Goods catalog, with stock and pricing.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" @click="exportCsv()" class="focusable inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-sm font-medium text-zinc-600 shadow-sm transition-colors hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300 dark:hover:bg-white/[0.06]"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>Export</button>
+              <a href="https://admin-dashboard-template-beta.vercel.app/forms.html" class="focusable inline-flex items-center gap-2 rounded-lg bg-accent-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-accent-600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>New product</a>
+            </div>
+          </div>
+
+          <!-- KPI ROW -->
+          <section class="mb-4 grid grid-cols-2 gap-4 xl:grid-cols-4" aria-label="Catalog metrics">
+            <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">
+              <span class="eyebrow text-zinc-500 dark:text-zinc-400">Active products</span>
+              <div class="mt-2 font-display text-3xl font-semibold tracking-tight text-zinc-900 tnum dark:text-white">248</div>
+              <div class="mt-1.5 flex items-center gap-1.5 text-[13px]"><span class="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-1.5 py-0.5 font-semibold text-emerald-700 dark:bg-emerald-500/[0.12] dark:text-emerald-400"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"></path></svg>6</span><span class="text-zinc-500 dark:text-zinc-400">new this cycle</span></div>
+            </div>
+            <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">
+              <span class="eyebrow text-zinc-500 dark:text-zinc-400">Low stock</span>
+              <div class="mt-2 font-display text-3xl font-semibold tracking-tight text-zinc-900 tnum dark:text-white">12</div>
+              <div class="mt-1.5 flex items-center gap-1.5 text-[13px]"><span class="inline-flex items-center gap-0.5 rounded-full bg-amber-50 px-1.5 py-0.5 font-semibold text-amber-700 dark:bg-amber-500/[0.15] dark:text-amber-400">Needs reorder</span></div>
+            </div>
+            <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">
+              <span class="eyebrow text-zinc-500 dark:text-zinc-400">Avg. price</span>
+              <div class="mt-2 font-display text-3xl font-semibold tracking-tight text-zinc-900 tnum dark:text-white" data-sable-money="96" data-money-compact="">$96</div>
+              <div class="mt-1.5 flex items-center gap-1.5 text-[13px]"><span class="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-1.5 py-0.5 font-semibold text-emerald-700 dark:bg-emerald-500/[0.12] dark:text-emerald-400"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"></path></svg>2.4%</span><span class="text-zinc-500 dark:text-zinc-400">vs last cycle</span></div>
+            </div>
+            <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">
+              <span class="eyebrow text-zinc-500 dark:text-zinc-400">Inventory value</span>
+              <div class="mt-2 font-display text-3xl font-semibold tracking-tight text-zinc-900 tnum dark:text-white" data-sable-money="184000" data-money-compact="">$184,000</div>
+              <div class="mt-1.5 flex items-center gap-1.5 text-[13px]"><span class="text-zinc-500 dark:text-zinc-400">Across all warehouses</span></div>
+            </div>
+          </section>
+
+          <div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">
+            <!-- Filter bar -->
+            <div class="flex flex-wrap items-center gap-2.5 border-b border-zinc-100 p-3.5 dark:border-white/[0.06]">
+              <label class="relative block grow sm:grow-0">
+                <span class="sr-only">Search products</span>
+                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-zinc-400"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+                <input x-model="q" @input="page=1" type="search" placeholder="Search name or SKU…" class="focusable w-full rounded-lg border border-zinc-200 bg-white py-2 pl-9 pr-3 text-sm text-zinc-700 placeholder:text-zinc-500 focus:border-accent-400 focus:outline-none dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-200 dark:placeholder:text-zinc-400 sm:w-72">
+              </label>
+              <select x-model="catFilter" @change="page=1" aria-label="Filter by category" class="focusable rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-600 focus:border-accent-400 focus:outline-none dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-300">
+                <option value="">All categories</option><option>Knitwear</option><option>Accessories</option><option>Outerwear</option><option>Home</option>
+              </select>
+              <select x-model="statusFilter" @change="page=1" aria-label="Filter by status" class="focusable rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-600 focus:border-accent-400 focus:outline-none dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-300">
+                <option value="">All statuses</option><option value="active">Active</option><option value="low">Low stock</option><option value="draft">Draft</option><option value="archived">Archived</option>
+              </select>
+            </div>
+
+            <!-- Mobile card list (< sm) -->
+            <div class="divide-y divide-zinc-100 dark:divide-white/[0.05] sm:hidden">
+              <template x-for="p in paged" :key="p.sku"></template><a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-HOM-ALP-04">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[12px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#F0C9B6;color:#822C16"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4Z M4 10h16 M8 6v12"></path></svg></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-baseline justify-between gap-2">
+                      <span class="truncate font-medium text-zinc-800 dark:text-zinc-100" x-text="p.name">Alpaca throw blanket</span>
+                      <span class="shrink-0 font-semibold text-zinc-900 tnum dark:text-white" x-text="p.price">$180.00</span>
+                    </div>
+                    <span class="mt-0.5 block truncate text-[12px] text-zinc-500 tnum dark:text-zinc-400" x-text="p.sku">SB-HOM-ALP-04</span>
+                    <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                      <span class="text-[12px] text-zinc-500 dark:text-zinc-400" x-text="p.cat">Home</span>
+                      <span class="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                      <span class="text-[12px] tnum text-zinc-500 dark:text-zinc-400" :class="p.stock&lt;=10 ? 'font-medium text-amber-600 dark:text-amber-400' : 'text-zinc-500 dark:text-zinc-400'" x-text="p.stock+' in stock'">15 in stock</span>
+                      <span class="ml-auto inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-paid" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-paid" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Active</span></span>
+                    </div>
+                  </div>
+                </a><a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-BEA-CAS-02">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[12px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#C3E0CD;color:#12543B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 0 1 16 0Z M3 14h18v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"></path></svg></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-baseline justify-between gap-2">
+                      <span class="truncate font-medium text-zinc-800 dark:text-zinc-100" x-text="p.name">Cashmere beanie</span>
+                      <span class="shrink-0 font-semibold text-zinc-900 tnum dark:text-white" x-text="p.price">$65.00</span>
+                    </div>
+                    <span class="mt-0.5 block truncate text-[12px] text-zinc-500 tnum dark:text-zinc-400" x-text="p.sku">SB-BEA-CAS-02</span>
+                    <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                      <span class="text-[12px] text-zinc-500 dark:text-zinc-400" x-text="p.cat">Knitwear</span>
+                      <span class="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                      <span class="text-[12px] tnum text-zinc-500 dark:text-zinc-400" :class="p.stock&lt;=10 ? 'font-medium text-amber-600 dark:text-amber-400' : 'text-zinc-500 dark:text-zinc-400'" x-text="p.stock+' in stock'">42 in stock</span>
+                      <span class="ml-auto inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-paid" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-paid" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Active</span></span>
+                    </div>
+                  </div>
+                </a><a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-ACC-GLV-14">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[12px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#C3E0CD;color:#12543B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12V7a1 1 0 0 1 2 0v4 M9 11V5a1 1 0 0 1 2 0v6 M11 11V6a1 1 0 0 1 2 0v5 M13 12V8a1 1 0 0 1 2 0v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1"></path></svg></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-baseline justify-between gap-2">
+                      <span class="truncate font-medium text-zinc-800 dark:text-zinc-100" x-text="p.name">Cashmere fingerless gloves</span>
+                      <span class="shrink-0 font-semibold text-zinc-900 tnum dark:text-white" x-text="p.price">$72.00</span>
+                    </div>
+                    <span class="mt-0.5 block truncate text-[12px] text-zinc-500 tnum dark:text-zinc-400" x-text="p.sku">SB-ACC-GLV-14</span>
+                    <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                      <span class="text-[12px] text-zinc-500 dark:text-zinc-400" x-text="p.cat">Accessories</span>
+                      <span class="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                      <span class="text-[12px] tnum text-zinc-500 dark:text-zinc-400" :class="p.stock&lt;=10 ? 'font-medium text-amber-600 dark:text-amber-400' : 'text-zinc-500 dark:text-zinc-400'" x-text="p.stock+' in stock'">26 in stock</span>
+                      <span class="ml-auto inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-refund" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-refund" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Draft</span></span>
+                    </div>
+                  </div>
+                </a><a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-HOM-SLP-08">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[12px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#C9DAEC;color:#2A517D"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h8l3 2h4a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z M4 14v-3"></path></svg></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-baseline justify-between gap-2">
+                      <span class="truncate font-medium text-zinc-800 dark:text-zinc-100" x-text="p.name">Felted wool slippers</span>
+                      <span class="shrink-0 font-semibold text-zinc-900 tnum dark:text-white" x-text="p.price">$58.00</span>
+                    </div>
+                    <span class="mt-0.5 block truncate text-[12px] text-zinc-500 tnum dark:text-zinc-400" x-text="p.sku">SB-HOM-SLP-08</span>
+                    <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                      <span class="text-[12px] text-zinc-500 dark:text-zinc-400" x-text="p.cat">Home</span>
+                      <span class="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                      <span class="text-[12px] tnum font-medium text-amber-600 dark:text-amber-400" :class="p.stock&lt;=10 ? 'font-medium text-amber-600 dark:text-amber-400' : 'text-zinc-500 dark:text-zinc-400'" x-text="p.stock+' in stock'">9 in stock</span>
+                      <span class="ml-auto inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-pending" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-pending" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Low stock</span></span>
+                    </div>
+                  </div>
+                </a><a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-SWT-LAM-03">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[12px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#C3E0CD;color:#12543B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 6l2 3 2-1.5V21h8V7.5l2 1.5 2-3-4-3-2 2a2.8 2.8 0 0 1-4 0Z"></path></svg></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-baseline justify-between gap-2">
+                      <span class="truncate font-medium text-zinc-800 dark:text-zinc-100" x-text="p.name">Lambswool crew sweater</span>
+                      <span class="shrink-0 font-semibold text-zinc-900 tnum dark:text-white" x-text="p.price">$145.00</span>
+                    </div>
+                    <span class="mt-0.5 block truncate text-[12px] text-zinc-500 tnum dark:text-zinc-400" x-text="p.sku">SB-SWT-LAM-03</span>
+                    <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                      <span class="text-[12px] text-zinc-500 dark:text-zinc-400" x-text="p.cat">Knitwear</span>
+                      <span class="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                      <span class="text-[12px] tnum text-zinc-500 dark:text-zinc-400" :class="p.stock&lt;=10 ? 'font-medium text-amber-600 dark:text-amber-400' : 'text-zinc-500 dark:text-zinc-400'" x-text="p.stock+' in stock'">28 in stock</span>
+                      <span class="ml-auto inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-paid" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-paid" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Active</span></span>
+                    </div>
+                  </div>
+                </a><a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-ACC-LEA-05">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[12px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#F0C9B6;color:#822C16"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v10H3Z M3 11h18 M15 14h3"></path></svg></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-baseline justify-between gap-2">
+                      <span class="truncate font-medium text-zinc-800 dark:text-zinc-100" x-text="p.name">Leather card holder</span>
+                      <span class="shrink-0 font-semibold text-zinc-900 tnum dark:text-white" x-text="p.price">$45.00</span>
+                    </div>
+                    <span class="mt-0.5 block truncate text-[12px] text-zinc-500 tnum dark:text-zinc-400" x-text="p.sku">SB-ACC-LEA-05</span>
+                    <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                      <span class="text-[12px] text-zinc-500 dark:text-zinc-400" x-text="p.cat">Accessories</span>
+                      <span class="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                      <span class="text-[12px] tnum text-zinc-500 dark:text-zinc-400" :class="p.stock&lt;=10 ? 'font-medium text-amber-600 dark:text-amber-400' : 'text-zinc-500 dark:text-zinc-400'" x-text="p.stock+' in stock'">88 in stock</span>
+                      <span class="ml-auto inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-paid" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-paid" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Active</span></span>
+                    </div>
+                  </div>
+                </a><a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-HOM-PIL-11">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[12px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#E1CBD9;color:#6E2C50"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4Z M4 10h16 M8 6v12"></path></svg></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-baseline justify-between gap-2">
+                      <span class="truncate font-medium text-zinc-800 dark:text-zinc-100" x-text="p.name">Linen throw pillow</span>
+                      <span class="shrink-0 font-semibold text-zinc-900 tnum dark:text-white" x-text="p.price">$42.00</span>
+                    </div>
+                    <span class="mt-0.5 block truncate text-[12px] text-zinc-500 tnum dark:text-zinc-400" x-text="p.sku">SB-HOM-PIL-11</span>
+                    <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                      <span class="text-[12px] text-zinc-500 dark:text-zinc-400" x-text="p.cat">Home</span>
+                      <span class="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                      <span class="text-[12px] tnum font-medium text-amber-600 dark:text-amber-400" :class="p.stock&lt;=10 ? 'font-medium text-amber-600 dark:text-amber-400' : 'text-zinc-500 dark:text-zinc-400'" x-text="p.stock+' in stock'">0 in stock</span>
+                      <span class="ml-auto inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-failed" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-failed" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Archived</span></span>
+                    </div>
+                  </div>
+                </a><a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-SWT-BAS-13">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[12px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#EDD59B;color:#6B4A08"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 6l2 3 2-1.5V21h8V7.5l2 1.5 2-3-4-3-2 2a2.8 2.8 0 0 1-4 0Z"></path></svg></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-baseline justify-between gap-2">
+                      <span class="truncate font-medium text-zinc-800 dark:text-zinc-100" x-text="p.name">Merino base layer</span>
+                      <span class="shrink-0 font-semibold text-zinc-900 tnum dark:text-white" x-text="p.price">$95.00</span>
+                    </div>
+                    <span class="mt-0.5 block truncate text-[12px] text-zinc-500 tnum dark:text-zinc-400" x-text="p.sku">SB-SWT-BAS-13</span>
+                    <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                      <span class="text-[12px] text-zinc-500 dark:text-zinc-400" x-text="p.cat">Knitwear</span>
+                      <span class="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                      <span class="text-[12px] tnum text-zinc-500 dark:text-zinc-400" :class="p.stock&lt;=10 ? 'font-medium text-amber-600 dark:text-amber-400' : 'text-zinc-500 dark:text-zinc-400'" x-text="p.stock+' in stock'">17 in stock</span>
+                      <span class="ml-auto inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-refund" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-refund" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Draft</span></span>
+                    </div>
+                  </div>
+                </a>
+              <div x-show="!filtered.length" class="px-4 py-16 text-center" style="display: none;"><p class="font-medium text-zinc-700 dark:text-zinc-200">No products match your search</p><p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Try a different name, SKU or category.</p></div>
+            </div>
+
+            <!-- Table (sm+) -->
+            <div class="hidden overflow-x-auto sm:block">
+              <table class="w-full text-left text-sm">
+                <thead>
+                  <tr class="border-b border-zinc-100 text-[11px] uppercase tracking-wider text-zinc-500 dark:border-white/[0.06] dark:text-zinc-400">
+                    <th scope="col" class="px-5 py-3" :aria-sort="ariaSort('name')" aria-sort="ascending"><button type="button" @click="sort('name')" class="focusable inline-flex items-center gap-1 font-semibold uppercase tracking-wider hover:text-zinc-700 dark:hover:text-zinc-200">Product <span x-html="caret('name')" aria-hidden="true"><span style="color:var(--accent)">↑</span></span></button></th>
+                    <th scope="col" class="hidden px-5 py-3 font-semibold lg:table-cell">SKU</th>
+                    <th scope="col" class="hidden px-5 py-3 font-semibold md:table-cell">Category</th>
+                    <th scope="col" class="px-5 py-3 text-right" :aria-sort="ariaSort('priceVal')" aria-sort="none"><button type="button" @click="sort('priceVal')" class="focusable ml-auto inline-flex items-center gap-1 font-semibold uppercase tracking-wider hover:text-zinc-700 dark:hover:text-zinc-200">Price <span x-html="caret('priceVal')" aria-hidden="true"><span style="opacity:.3">↕</span></span></button></th>
+                    <th scope="col" class="px-5 py-3 text-right" :aria-sort="ariaSort('stock')" aria-sort="none"><button type="button" @click="sort('stock')" class="focusable ml-auto inline-flex items-center gap-1 font-semibold uppercase tracking-wider hover:text-zinc-700 dark:hover:text-zinc-200">Stock <span x-html="caret('stock')" aria-hidden="true"><span style="opacity:.3">↕</span></span></button></th>
+                    <th scope="col" class="px-5 py-3 font-semibold">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-white/[0.05]">
+                  <template x-for="p in paged" :key="p.sku"></template><tr class="transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]">
+                      <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[11px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#F0C9B6;color:#822C16"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4Z M4 10h16 M8 6v12"></path></svg></span>
+                          <a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="focusable rounded font-medium text-zinc-800 hover:text-accent-600 dark:text-zinc-100 dark:hover:text-accent-400" x-text="p.name" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-HOM-ALP-04">Alpaca throw blanket</a>
+                        </div>
+                      </td>
+                      <td class="hidden px-5 py-3.5 text-zinc-500 tnum dark:text-zinc-400 lg:table-cell" x-text="p.sku">SB-HOM-ALP-04</td>
+                      <td class="hidden px-5 py-3.5 text-zinc-600 dark:text-zinc-300 md:table-cell" x-text="p.cat">Home</td>
+                      <td class="px-5 py-3.5 text-right font-semibold text-zinc-800 tnum dark:text-zinc-100" x-text="p.price">$180.00</td>
+                      <td class="px-5 py-3.5 text-right tnum text-zinc-600 dark:text-zinc-300" :class="p.stock&lt;=10 ? 'font-semibold text-amber-600 dark:text-amber-400' : 'text-zinc-600 dark:text-zinc-300'" x-text="p.stock">15</td>
+                      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-paid" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-paid" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Active</span></span></td>
+                    </tr><tr class="transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]">
+                      <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[11px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#C3E0CD;color:#12543B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 0 1 16 0Z M3 14h18v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"></path></svg></span>
+                          <a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="focusable rounded font-medium text-zinc-800 hover:text-accent-600 dark:text-zinc-100 dark:hover:text-accent-400" x-text="p.name" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-BEA-CAS-02">Cashmere beanie</a>
+                        </div>
+                      </td>
+                      <td class="hidden px-5 py-3.5 text-zinc-500 tnum dark:text-zinc-400 lg:table-cell" x-text="p.sku">SB-BEA-CAS-02</td>
+                      <td class="hidden px-5 py-3.5 text-zinc-600 dark:text-zinc-300 md:table-cell" x-text="p.cat">Knitwear</td>
+                      <td class="px-5 py-3.5 text-right font-semibold text-zinc-800 tnum dark:text-zinc-100" x-text="p.price">$65.00</td>
+                      <td class="px-5 py-3.5 text-right tnum text-zinc-600 dark:text-zinc-300" :class="p.stock&lt;=10 ? 'font-semibold text-amber-600 dark:text-amber-400' : 'text-zinc-600 dark:text-zinc-300'" x-text="p.stock">42</td>
+                      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-paid" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-paid" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Active</span></span></td>
+                    </tr><tr class="transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]">
+                      <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[11px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#C3E0CD;color:#12543B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12V7a1 1 0 0 1 2 0v4 M9 11V5a1 1 0 0 1 2 0v6 M11 11V6a1 1 0 0 1 2 0v5 M13 12V8a1 1 0 0 1 2 0v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1"></path></svg></span>
+                          <a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="focusable rounded font-medium text-zinc-800 hover:text-accent-600 dark:text-zinc-100 dark:hover:text-accent-400" x-text="p.name" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-ACC-GLV-14">Cashmere fingerless gloves</a>
+                        </div>
+                      </td>
+                      <td class="hidden px-5 py-3.5 text-zinc-500 tnum dark:text-zinc-400 lg:table-cell" x-text="p.sku">SB-ACC-GLV-14</td>
+                      <td class="hidden px-5 py-3.5 text-zinc-600 dark:text-zinc-300 md:table-cell" x-text="p.cat">Accessories</td>
+                      <td class="px-5 py-3.5 text-right font-semibold text-zinc-800 tnum dark:text-zinc-100" x-text="p.price">$72.00</td>
+                      <td class="px-5 py-3.5 text-right tnum text-zinc-600 dark:text-zinc-300" :class="p.stock&lt;=10 ? 'font-semibold text-amber-600 dark:text-amber-400' : 'text-zinc-600 dark:text-zinc-300'" x-text="p.stock">26</td>
+                      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-refund" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-refund" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Draft</span></span></td>
+                    </tr><tr class="transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]">
+                      <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[11px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#C9DAEC;color:#2A517D"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h8l3 2h4a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z M4 14v-3"></path></svg></span>
+                          <a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="focusable rounded font-medium text-zinc-800 hover:text-accent-600 dark:text-zinc-100 dark:hover:text-accent-400" x-text="p.name" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-HOM-SLP-08">Felted wool slippers</a>
+                        </div>
+                      </td>
+                      <td class="hidden px-5 py-3.5 text-zinc-500 tnum dark:text-zinc-400 lg:table-cell" x-text="p.sku">SB-HOM-SLP-08</td>
+                      <td class="hidden px-5 py-3.5 text-zinc-600 dark:text-zinc-300 md:table-cell" x-text="p.cat">Home</td>
+                      <td class="px-5 py-3.5 text-right font-semibold text-zinc-800 tnum dark:text-zinc-100" x-text="p.price">$58.00</td>
+                      <td class="px-5 py-3.5 text-right tnum font-semibold text-amber-600 dark:text-amber-400" :class="p.stock&lt;=10 ? 'font-semibold text-amber-600 dark:text-amber-400' : 'text-zinc-600 dark:text-zinc-300'" x-text="p.stock">9</td>
+                      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-pending" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-pending" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Low stock</span></span></td>
+                    </tr><tr class="transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]">
+                      <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[11px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#C3E0CD;color:#12543B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 6l2 3 2-1.5V21h8V7.5l2 1.5 2-3-4-3-2 2a2.8 2.8 0 0 1-4 0Z"></path></svg></span>
+                          <a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="focusable rounded font-medium text-zinc-800 hover:text-accent-600 dark:text-zinc-100 dark:hover:text-accent-400" x-text="p.name" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-SWT-LAM-03">Lambswool crew sweater</a>
+                        </div>
+                      </td>
+                      <td class="hidden px-5 py-3.5 text-zinc-500 tnum dark:text-zinc-400 lg:table-cell" x-text="p.sku">SB-SWT-LAM-03</td>
+                      <td class="hidden px-5 py-3.5 text-zinc-600 dark:text-zinc-300 md:table-cell" x-text="p.cat">Knitwear</td>
+                      <td class="px-5 py-3.5 text-right font-semibold text-zinc-800 tnum dark:text-zinc-100" x-text="p.price">$145.00</td>
+                      <td class="px-5 py-3.5 text-right tnum text-zinc-600 dark:text-zinc-300" :class="p.stock&lt;=10 ? 'font-semibold text-amber-600 dark:text-amber-400' : 'text-zinc-600 dark:text-zinc-300'" x-text="p.stock">28</td>
+                      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-paid" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-paid" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Active</span></span></td>
+                    </tr><tr class="transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]">
+                      <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[11px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#F0C9B6;color:#822C16"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v10H3Z M3 11h18 M15 14h3"></path></svg></span>
+                          <a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="focusable rounded font-medium text-zinc-800 hover:text-accent-600 dark:text-zinc-100 dark:hover:text-accent-400" x-text="p.name" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-ACC-LEA-05">Leather card holder</a>
+                        </div>
+                      </td>
+                      <td class="hidden px-5 py-3.5 text-zinc-500 tnum dark:text-zinc-400 lg:table-cell" x-text="p.sku">SB-ACC-LEA-05</td>
+                      <td class="hidden px-5 py-3.5 text-zinc-600 dark:text-zinc-300 md:table-cell" x-text="p.cat">Accessories</td>
+                      <td class="px-5 py-3.5 text-right font-semibold text-zinc-800 tnum dark:text-zinc-100" x-text="p.price">$45.00</td>
+                      <td class="px-5 py-3.5 text-right tnum text-zinc-600 dark:text-zinc-300" :class="p.stock&lt;=10 ? 'font-semibold text-amber-600 dark:text-amber-400' : 'text-zinc-600 dark:text-zinc-300'" x-text="p.stock">88</td>
+                      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-paid" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-paid" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Active</span></span></td>
+                    </tr><tr class="transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]">
+                      <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[11px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#E1CBD9;color:#6E2C50"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4Z M4 10h16 M8 6v12"></path></svg></span>
+                          <a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="focusable rounded font-medium text-zinc-800 hover:text-accent-600 dark:text-zinc-100 dark:hover:text-accent-400" x-text="p.name" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-HOM-PIL-11">Linen throw pillow</a>
+                        </div>
+                      </td>
+                      <td class="hidden px-5 py-3.5 text-zinc-500 tnum dark:text-zinc-400 lg:table-cell" x-text="p.sku">SB-HOM-PIL-11</td>
+                      <td class="hidden px-5 py-3.5 text-zinc-600 dark:text-zinc-300 md:table-cell" x-text="p.cat">Home</td>
+                      <td class="px-5 py-3.5 text-right font-semibold text-zinc-800 tnum dark:text-zinc-100" x-text="p.price">$42.00</td>
+                      <td class="px-5 py-3.5 text-right tnum font-semibold text-amber-600 dark:text-amber-400" :class="p.stock&lt;=10 ? 'font-semibold text-amber-600 dark:text-amber-400' : 'text-zinc-600 dark:text-zinc-300'" x-text="p.stock">0</td>
+                      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-failed" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-failed" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Archived</span></span></td>
+                    </tr><tr class="transition-colors hover:bg-zinc-50/70 dark:hover:bg-white/[0.02]">
+                      <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[11px] font-semibold" :style="window.sableAvatarStyle(p.name)" x-html="window.sableProductSvg(p.name)" style="background:#EDD59B;color:#6B4A08"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 6l2 3 2-1.5V21h8V7.5l2 1.5 2-3-4-3-2 2a2.8 2.8 0 0 1-4 0Z"></path></svg></span>
+                          <a :href="'product-detail.html?id='+encodeURIComponent(p.sku)" class="focusable rounded font-medium text-zinc-800 hover:text-accent-600 dark:text-zinc-100 dark:hover:text-accent-400" x-text="p.name" href="https://admin-dashboard-template-beta.vercel.app/product-detail.html?id=SB-SWT-BAS-13">Merino base layer</a>
+                        </div>
+                      </td>
+                      <td class="hidden px-5 py-3.5 text-zinc-500 tnum dark:text-zinc-400 lg:table-cell" x-text="p.sku">SB-SWT-BAS-13</td>
+                      <td class="hidden px-5 py-3.5 text-zinc-600 dark:text-zinc-300 md:table-cell" x-text="p.cat">Knitwear</td>
+                      <td class="px-5 py-3.5 text-right font-semibold text-zinc-800 tnum dark:text-zinc-100" x-text="p.price">$95.00</td>
+                      <td class="px-5 py-3.5 text-right tnum text-zinc-600 dark:text-zinc-300" :class="p.stock&lt;=10 ? 'font-semibold text-amber-600 dark:text-amber-400' : 'text-zinc-600 dark:text-zinc-300'" x-text="p.stock">17</td>
+                      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ring-inset badge-refund" :class="statusCls(p.status)"><span class="h-1.5 w-1.5 rounded-full dot-refund" :class="dotCls(p.status)"></span><span x-text="statusLabel(p.status)">Draft</span></span></td>
+                    </tr>
+                  <tr x-show="!filtered.length" style="display: none;"><td colspan="6" class="px-5 py-16 text-center"><p class="font-medium text-zinc-700 dark:text-zinc-200">No products match your search</p><p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Try a different name, SKU or category.</p></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex flex-col items-center justify-between gap-3 border-t border-zinc-100 px-4 py-3 text-sm dark:border-white/[0.06] sm:flex-row">
+              <p class="text-zinc-500 dark:text-zinc-400">Showing <span class="font-medium text-zinc-700 dark:text-zinc-200" x-text="filtered.length? (page-1)*perPage+1 : 0">1</span>–<span class="font-medium text-zinc-700 dark:text-zinc-200" x-text="Math.min(page*perPage, filtered.length)">8</span> of <span class="font-medium text-zinc-700 dark:text-zinc-200" x-text="filtered.length">14</span></p>
+              <div class="flex items-center gap-1">
+                <button @click="page=Math.max(1,page-1)" :disabled="page===1" class="focusable inline-flex h-10 items-center rounded-lg border border-zinc-200 px-2.5 text-zinc-500 enabled:hover:bg-zinc-50 disabled:opacity-40 dark:border-white/[0.08] dark:enabled:hover:bg-white/[0.04]" aria-label="Previous page" disabled="disabled"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+                <template x-for="p in pages" :key="p"></template><button @click="page=p" class="focusable h-10 min-w-10 rounded-lg px-2 text-sm font-medium bg-accent-500 text-white shadow-sm" :class="p===page ? 'bg-accent-500 text-white shadow-sm' : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.04]'" :aria-current="p===page ? 'page' : false" x-text="p" aria-current="page">1</button><button @click="page=p" class="focusable h-10 min-w-10 rounded-lg px-2 text-sm font-medium text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.04]" :class="p===page ? 'bg-accent-500 text-white shadow-sm' : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.04]'" :aria-current="p===page ? 'page' : false" x-text="p">2</button>
+                <button @click="page=Math.min(totalPages,page+1)" :disabled="page===totalPages" class="focusable inline-flex h-10 items-center rounded-lg border border-zinc-200 px-2.5 text-zinc-500 enabled:hover:bg-zinc-50 disabled:opacity-40 dark:border-white/[0.08] dark:enabled:hover:bg-white/[0.04]" aria-label="Next page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"></path></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div x-data="commandPalette()" @open-palette.window="open()" @keydown.window.meta.k.prevent="open()" @keydown.window.ctrl.k.prevent="open()" @keydown.escape.window="close()">
+    <div x-show="show" x-transition.opacity="" class="fixed inset-0 z-50 bg-zinc-900/40 backdrop-blur-sm" @click="close()" style="display: none;"></div>
+    <div x-show="show" x-transition="" class="fixed inset-x-0 top-[12vh] z-50 mx-auto w-full max-w-lg px-4" @keydown.arrow-down.prevent="move(1)" @keydown.arrow-up.prevent="move(-1)" @keydown.enter.prevent="go()" style="display: none;">
+      <div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]">
+        <div class="flex items-center gap-2.5 border-b border-zinc-100 px-4 dark:border-white/[0.06]">
+          <svg class="text-zinc-400" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input x-ref="palInput" x-model="q" @input="sel=0" type="text" placeholder="Search pages, orders, customers…" class="w-full bg-transparent py-3.5 text-base text-zinc-800 placeholder:text-zinc-500 focus:outline-none dark:text-zinc-100" aria-label="Search">
+          <kbd class="shrink-0 rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400">Esc</kbd>
+        </div>
+        <ul class="max-h-80 overflow-y-auto p-2">
+          <template x-for="(item, i) in results" :key="item.t"></template><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left bg-accent-50 dark:bg-white/[0.06]">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Dashboard</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Overview &amp; KPIs</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Orders</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Search, filter &amp; reconcile</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Products</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Catalog, stock &amp; pricing</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">New product</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Catalog editor</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">New order</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Create an order</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Customers</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Directory &amp; lifetime value</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">New customer</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Add a customer</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Payouts</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Settlements &amp; schedule</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Analytics</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Trends &amp; channel reports</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Activity</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Global activity feed</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Messages</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Customer email &amp; inbox</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Invoices</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Billing &amp; payments</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">New invoice</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Bill a customer</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Fulfillment</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Order packing board</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Settings</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">Account &amp; preferences</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Page</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Order #SB-10492, Alessandra Ferri</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">a.ferri@example.com · €182.40 · Paid</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Order</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Order #SB-10491, Marcus Lindqvist</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">marcus.l@example.com · €59.00 · Pending</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Order</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Order #SB-10490, Yuki Tanaka</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">yuki.t@example.com · €248.00 · Paid</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Order</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Order #SB-10488, Tom Okafor</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">t.okafor@example.com · €512.00 · Paid</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Order</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Order #SB-10487, Léa Dubois</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">lea@atelier-dubois.fr · €1,240.00 · Paid</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Order</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Order #SB-10486, Diego Moretti</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">diego.m@example.com · €76.50 · Failed</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Order</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Order #SB-10479, James Whitfield</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">j.whitfield@example.com · €2,380.00 · Paid</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Order</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Alessandra Ferri</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">a.ferri@example.com · Milan, IT · VIP</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Customer</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">James Whitfield</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">j.whitfield@example.com · Wholesale · VIP</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Customer</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Léa Dubois</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">lea@atelier-dubois.fr · Lyon, FR · VIP</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Customer</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Yuki Tanaka</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">yuki.t@example.com · Osaka, JP · Repeat</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Customer</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Marcus Lindqvist</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">marcus.l@example.com · Stockholm, SE · New</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Customer</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Diego Moretti</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">diego.m@example.com · Rome, IT · New</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Customer</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Merino wool scarf</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">SB-SCF-MER-01 · Knitwear · €89.00</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Product</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Cashmere beanie</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">SB-BEA-CAS-02 · Knitwear · €65.00</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Product</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Lambswool crew sweater</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">SB-SWT-LAM-03 · Knitwear · €145.00</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Product</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Alpaca throw blanket</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">SB-HOM-ALP-04 · Home · €180.00</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Product</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Leather card holder</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">SB-ACC-LEA-05 · Accessories · €45.00</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Product</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Recycled wool overcoat</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">SB-OUT-OVC-10 · Outerwear · €340.00</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Product</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Invoice #INV-2048, James Whitfield</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">j.whitfield@example.com · €2,380.00 · Pending</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Invoice</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Invoice #INV-2043, Tom Okafor</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">t.okafor@example.com · €512.00 · Overdue</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Invoice</span>
+              </button>
+            </li><li>
+              <button type="button" @click="window.location.href=item.href" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t">Invoice #INV-2045, Alessandra Ferri</span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s">a.ferri@example.com · €820.00 · Paid</span></span>
+                <span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag">Invoice</span>
+              </button>
+            </li>
+          <li x-show="!results.length" class="px-3 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400" style="display: none;">No matches for “<span x-text="q"></span>”.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div x-data="emailCompose()" @open-compose.window="open($event.detail)" @keydown.escape.window="close()">
+    <div x-show="show" x-transition.opacity="" class="fixed inset-0 z-50 bg-zinc-900/40 backdrop-blur-sm" @click="close()" style="display: none;"></div>
+    <div x-show="show" x-transition="" class="fixed inset-x-0 top-[7vh] z-50 mx-auto w-full max-w-xl px-4" style="display: none;">
+      <div x-ref="dialog" @keydown.tab="trapTab($event)" class="flex max-h-[86vh] flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#1F1B16]" role="dialog" aria-modal="true" aria-labelledby="compose-title" @click.outside="close()">
+        <div class="flex shrink-0 items-center justify-between border-b border-zinc-100 px-5 py-3.5 dark:border-white/[0.06]">
+          <div class="flex items-center gap-2.5">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.15] dark:text-accent-300"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span>
+            <h2 id="compose-title" class="font-display text-base font-semibold text-zinc-900 dark:text-white" x-text="isReply ? 'Reply' : 'New message'">New message</h2>
+          </div>
+          <button type="button" @click="close()" class="focusable rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05]" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+        </div>
+        <form @submit.prevent="send()" novalidate="" class="flex min-h-0 flex-1 flex-col">
+          <div class="min-h-0 flex-1 space-y-3.5 overflow-y-auto px-5 py-4">
+            <div>
+              <label class="lbl" for="compose-to">To</label>
+              <input x-ref="composeFirst" x-model="to" @blur="touched.to=true" id="compose-to" type="email" inputmode="email" autocomplete="off" placeholder="customer@example.com" class="field focusable" :class="touched.to &amp;&amp; !validEmail() ? 'field-err' : ''" :aria-invalid="(touched.to &amp;&amp; !validEmail()) ? 'true' : 'false'" aria-invalid="false">
+              <p x-show="touched.to &amp;&amp; !validEmail()" class="mt-1 text-[12px] text-red-600 dark:text-red-400" style="display: none;">Enter a valid email address.</p>
+            </div>
+            <div>
+              <label class="lbl" for="compose-template">Template</label>
+              <div class="relative">
+                <select x-model="tid" @change="applyTemplate()" id="compose-template" class="field focusable appearance-none pr-9">
+                  <template x-for="t in templates" :key="t.id"></template><option :value="t.id" x-text="t.label" value="blank">Blank message</option><option :value="t.id" x-text="t.label" value="cust-welcome">Welcome</option><option :value="t.id" x-text="t.label" value="cust-thanks">Thank-you (VIP)</option><option :value="t.id" x-text="t.label" value="cust-winback">We miss you</option><option :value="t.id" x-text="t.label" value="cust-account">Account update</option>
+                </select>
+                <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"></path></svg>
+              </div>
+              <p class="mt-1 text-[12px] text-zinc-500 dark:text-zinc-400">Templates fill in the subject and message from this record. Edit freely before sending.</p>
+            </div>
+            <div>
+              <label class="lbl" for="compose-subject">Subject</label>
+              <input x-model="subject" @blur="touched.subject=true" id="compose-subject" type="text" placeholder="Subject line" class="field focusable" :class="touched.subject &amp;&amp; !validSubject() ? 'field-err' : ''" :aria-invalid="(touched.subject &amp;&amp; !validSubject()) ? 'true' : 'false'" aria-invalid="false">
+              <p x-show="touched.subject &amp;&amp; !validSubject()" class="mt-1 text-[12px] text-red-600 dark:text-red-400" style="display: none;">Add a subject line.</p>
+            </div>
+            <div>
+              <label class="lbl" for="compose-body">Message</label>
+              <textarea x-model="body" @blur="touched.body=true" id="compose-body" rows="9" placeholder="Write your message…" class="field focusable resize-y leading-relaxed" :class="touched.body &amp;&amp; !validBody() ? 'field-err' : ''" :aria-invalid="(touched.body &amp;&amp; !validBody()) ? 'true' : 'false'" aria-invalid="false"></textarea>
+              <p x-show="touched.body &amp;&amp; !validBody()" class="mt-1 text-[12px] text-red-600 dark:text-red-400" style="display: none;">The message can't be empty.</p>
+            </div>
+          </div>
+          <div class="flex shrink-0 items-center justify-between gap-3 border-t border-zinc-100 bg-zinc-50/60 px-5 py-3.5 dark:border-white/[0.06] dark:bg-white/[0.02]">
+            <p class="min-w-0 truncate text-[12px] text-zinc-500 dark:text-zinc-400"><span x-show="toName &amp;&amp; toName!==to" style="display: none;">To <span class="font-medium text-zinc-700 dark:text-zinc-200" x-text="toName"></span> · </span>demo, nothing actually leaves the browser</p>
+            <div class="flex shrink-0 items-center gap-2">
+              <button type="button" @click="close()" class="focusable rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300 dark:hover:bg-white/[0.06]">Cancel</button>
+              <button type="submit" :disabled="!valid" class="focusable inline-flex items-center gap-2 rounded-lg bg-accent-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-50" disabled="disabled"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>Send</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<script>
+    function productsTable(){
+      const raw = [
+        ['Merino wool scarf','SB-SCF-MER-01','Knitwear',89.00,6,'low'],
+        ['Cashmere beanie','SB-BEA-CAS-02','Knitwear',65.00,42,'active'],
+        ['Lambswool crew sweater','SB-SWT-LAM-03','Knitwear',145.00,28,'active'],
+        ['Alpaca throw blanket','SB-HOM-ALP-04','Home',180.00,15,'active'],
+        ['Leather card holder','SB-ACC-LEA-05','Accessories',45.00,88,'active'],
+        ['Waxed cotton tote','SB-ACC-TOT-06','Accessories',78.00,34,'active'],
+        ['Merino travel socks','SB-SCK-MER-07','Accessories',32.00,120,'active'],
+        ['Felted wool slippers','SB-HOM-SLP-08','Home',58.00,9,'low'],
+        ['Quilted down gilet','SB-OUT-GIL-09','Outerwear',210.00,22,'active'],
+        ['Recycled wool overcoat','SB-OUT-OVC-10','Outerwear',340.00,4,'low'],
+        ['Linen throw pillow','SB-HOM-PIL-11','Home',42.00,0,'archived'],
+        ['Ribbed cotton scarf','SB-SCF-COT-12','Accessories',38.00,51,'active'],
+        ['Merino base layer','SB-SWT-BAS-13','Knitwear',95.00,17,'draft'],
+        ['Cashmere fingerless gloves','SB-ACC-GLV-14','Accessories',72.00,26,'draft'],
+      ];
+      const data = raw.map(r=>({ name:r[0], sku:r[1], cat:r[2], price:window.sableMoney(r[3]), priceVal:r[3], stock:r[4], status:r[5] }));
+      return {
+        data, q:'', catFilter:'', statusFilter:'', sortKey:'name', sortDir:'asc', page:1, perPage:8,
+        get filtered(){
+          let f = this.data.filter(p=>{
+            const t=(p.name+' '+p.sku).toLowerCase();
+            return (!this.q || t.includes(this.q.toLowerCase())) && (!this.catFilter || p.cat===this.catFilter) && (!this.statusFilter || p.status===this.statusFilter);
+          });
+          const dir=this.sortDir==='asc'?1:-1;
+          f.sort((a,b)=>{ let x=a[this.sortKey],y=b[this.sortKey]; if(typeof x==='string'){x=x.toLowerCase();y=y.toLowerCase();} return x<y?-1*dir:x>y?1*dir:0; });
+          return f;
+        },
+        get totalPages(){ return Math.max(1, Math.ceil(this.filtered.length/this.perPage)); },
+        get paged(){ const p = Math.min(this.page, this.totalPages); return this.filtered.slice((p-1)*this.perPage, p*this.perPage); },
+        get pages(){ return Array.from({length:this.totalPages},(_,i)=>i+1); },
+        sort(k){ if(this.sortKey===k){ this.sortDir=this.sortDir==='asc'?'desc':'asc'; } else { this.sortKey=k; this.sortDir='asc'; } this.page=1; },
+        ariaSort(k){ if(this.sortKey!==k) return 'none'; return this.sortDir==='asc'?'ascending':'descending'; },
+        caret(k){ if(this.sortKey!==k) return '<span style="opacity:.3">↕</span>'; return this.sortDir==='asc'?'<span style="color:var(--accent)">↑</span>':'<span style="color:var(--accent)">↓</span>'; },
+        statusLabel(s){ return {active:'Active',low:'Low stock',draft:'Draft',archived:'Archived'}[s]; },
+        statusCls(s){ return {active:'badge-paid',low:'badge-pending',draft:'badge-refund',archived:'badge-failed'}[s]; },
+        dotCls(s){ return {active:'dot-paid',low:'dot-pending',draft:'dot-refund',archived:'dot-failed'}[s]; },
+        exportCsv(){
+          const rows=[['Product','SKU','Category','Price','Stock','Status']];
+          this.filtered.forEach(p=> rows.push([p.name, p.sku, p.cat, p.priceVal.toFixed(2), p.stock, this.statusLabel(p.status)]));
+          sableDownloadCsv('sable-products.csv', rows);
+        },
+      };
+    }
+  </script>
+
+
+<a href="https://domenico145.gumroad.com/l/sable-tailwind-admin-dashboard" target="_blank" rel="noopener" aria-label="Get Sable, 22 pages, for $29" id="sable-demo-ribbon" style="animation: 2.4s ease-in-out 0s 3 normal none running sableRibbonGlow;"><span style="display:flex;flex-direction:column;gap:3px;line-height:1.15;text-align:left;min-width:0"><span style="font-size:10px;letter-spacing:.14em;font-weight:700;color:#9FD4C9">LIVE DEMO</span><span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Get Sable, 22 pages</span></span><span style="display:flex;align-items:center;gap:9px;flex:none"><span style="background:#FAF8F5;color:#0E5249;font-weight:700;font-size:13px;padding:5px 10px;border-radius:999px">$29</span><span aria-hidden="true" style="font-size:15px">→</span></span></a></body></html>
