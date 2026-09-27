@@ -470,27 +470,65 @@ function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;'
 function num(v){ const n = Number(v); return isNaN(n)?0:n; }
 function rs(v){ return 'Rs. ' + num(v).toLocaleString(); }
 
-// Sheet separates products with ";" only (legacy rows may still use ", ")
+// Sheet separates products with ";" only (legacy rows may still use ", " or newlines)
 function parseItems(text){
     const s = String(text==null?'':text).trim();
     if (!s) return [];
     if (s.includes(';')) return s.split(';').map(x=>x.trim()).filter(Boolean);
-    if (/^\s*[^,]+\s+x\d+\s*,/.test(s)) return s.split(',').map(x=>x.trim()).filter(Boolean); // legacy rows
+    if (s.includes('\n')) return s.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+    if (/^\s*[^,]+\s+x\s*\d+\s*,/.test(s)) return s.split(',').map(x=>x.trim()).filter(Boolean); // legacy rows
     return [s];
+}
+// tolerant "Name xQty" parser: bullets, "= Rs. N" suffixes, "x 5" spacing, newlines
+function itemParse_(row){
+    let s = String(row==null?'':row).trim();
+    s = s.replace(/^[•·▪◦*\-–—>\s]+/, '');
+    s = s.replace(/[\s,;:·•]+$/, '');
+    s = s.replace(/\s*(?:[=:]\s*)?Rs\.?\s*[\d,]+(\.\d+)?\s*$/i, '');
+    const m = s.match(/^(.*?)\s*[xX]\s*(\d+)$/);
+    if (m && m[1].trim()) return { name: m[1].trim(), qty: Math.max(1, parseInt(m[2], 10) || 1) };
+    return { name: s, qty: 1 };
+}
+function itemTokens_(s){
+    return String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]+/g, ' ').split(/\s+/).filter(Boolean);
+}
+// exact → token-subset (covers renames/word variants like "Transistor Based Flip Flop Kit") → substring
+function matchProductByName_(name){
+    if (typeof productList !== 'function') return null;
+    const list = productList();
+    const n = String(name==null?'':name).trim().toLowerCase();
+    if (!n) return null;
+    const exact = list.find(x => String(x.name).trim().toLowerCase() === n);
+    if (exact) return exact;
+    const nt = itemTokens_(n);
+    if (nt.length) {
+        let best = null, bestExtra = Infinity;
+        list.forEach(x => {
+            const pt = itemTokens_(x.name);
+            if (!pt.length) return;
+            const pInN = pt.every(t => nt.indexOf(t) !== -1);
+            const nInP = nt.every(t => pt.indexOf(t) !== -1);
+            if (!pInN && !nInP) return;
+            const extra = pt.filter(t => nt.indexOf(t) === -1).length + nt.filter(t => pt.indexOf(t) === -1).length;
+            if (extra < bestExtra){ bestExtra = extra; best = x; }
+        });
+        if (best) return best;
+        const sub = list.find(x => { const pn = String(x.name).trim().toLowerCase(); return n.indexOf(pn) !== -1 || pn.indexOf(n) !== -1; });
+        if (sub) return sub;
+    }
+    return null;
 }
 function effectiveCost(o){
     const raw = o.costPrice;
-    if (raw !== '' && raw !== null && raw !== undefined && !isNaN(Number(raw))) return Number(raw);
-    // legacy order without a stored cost — calculate from the Products sheet
+    const stored = Number(raw);
+    if (raw !== '' && raw !== null && raw !== undefined && !isNaN(stored) && stored > 0) return stored;
+    // no usable stored cost — recalculate from the Products sheet
     if (typeof productList !== 'function') return 0;
-    const products = productList();
     let sum = 0;
     parseItems(o.itemsText).forEach(row => {
-        const m = String(row).trim().match(/^(.*?)\s*[xX]\s*(\d+)$/);
-        const name = (m ? m[1] : String(row).trim()).toLowerCase();
-        const qty = m ? parseInt(m[2], 10) : 1;
+        const { name, qty } = itemParse_(row);
         if (!name || !qty) return;
-        const p = products.find(x => String(x.name).trim().toLowerCase() === name);
+        const p = matchProductByName_(name);
         if (p) sum += num(p.cost) * qty;
     });
     return sum;
@@ -498,12 +536,7 @@ function effectiveCost(o){
 function profitOf(o){
     const c = effectiveCost(o);
     if (c > 0) return num(o.total) - c;
-    const p = o.profit;
-    if (p !== '' && p !== null && p !== undefined){
-        const n = Number(p);
-        if (!isNaN(n)) return n;
-    }
-    return num(o.total) - c;
+    return 0; // cost unknown → never claim the full order total as profit
 }
 
 // ==================== CORE HELPERS (shared with dash-fin/ops/sys) ====================

@@ -30,16 +30,7 @@ async function loadProducts(){
 
 // ---- shared quantity helpers (used by Inventory / Purchases / Deliveries) ----
 function itemRowParse_(row){
-    const m = String(row || '').trim().match(/^(.*?)\s*[xX](\d+)$/);
-    return { name: (m ? m[1] : row).trim(), qty: m ? parseInt(m[2], 10) : 1 };
-}
-function matchProductByName_(name){
-    const lower = String(name || '').trim().toLowerCase();
-    if (!lower) return null;
-    const list = productList();
-    let p = list.find(x => String(x.name).trim().toLowerCase() === lower);
-    if (!p) p = list.find(x => lower.indexOf(String(x.name).trim().toLowerCase()) !== -1 || String(x.name).trim().toLowerCase().indexOf(lower) !== -1);
-    return p || null;
+    return itemParse_(row); // robust parser/matcher live in dash.html (shared)
 }
 // qty per product (and unmatched rows) for orders passing the filter
 function qtyByProduct_(orderFilter){
