@@ -1,8 +1,16 @@
 // dash-products.js — master product list + shared order-quantity helpers
+const SHOP_ORIGIN = 'https://makerapk.vercel.app'; // storefront origin (for relative image paths)
 let masterProducts = [];
 let productsLoaded = false;
 let productsErr = null;
 let editingProductId = null;
+
+function shopImg(v){
+    v = String(v || '').trim();
+    if (!v) return '';
+    if (/^(https?:)?\/\//i.test(v) || v.indexOf('data:') === 0) return v;
+    return SHOP_ORIGIN + '/' + v.replace(/^\/+/, '');
+}
 
 function fallbackProducts(){
     return PRODUCTS.map(p => ({
@@ -106,6 +114,8 @@ function openProductModal(id){
     document.getElementById('prodInventory').value = p && p.inventory != null ? p.inventory : 0;
     document.getElementById('prodUnit').value = p ? p.unit : 'pcs';
     document.getElementById('prodDesc').value = p ? p.description : '';
+    document.getElementById('prodImage').value = p ? (p.image || '') : '';
+    document.getElementById('prodDetails').value = p ? (p.details || '') : '';
     document.getElementById('prodActive').value = p ? String(!!p.active) : 'true';
     document.getElementById('productModal').style.display = 'flex';
     document.getElementById('prodName').focus();
@@ -124,6 +134,8 @@ async function saveProductForm(){
         inventory: document.getElementById('prodInventory').value,
         unit: (document.getElementById('prodUnit').value || '').trim(),
         description: (document.getElementById('prodDesc').value || '').trim(),
+        image: (document.getElementById('prodImage').value || '').trim(),
+        details: (document.getElementById('prodDetails').value || '').trim(),
         active: document.getElementById('prodActive').value
     };
     if (editingProductId == null){
@@ -150,6 +162,21 @@ async function saveProductForm(){
     } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
 }
 
+async function syncWebsiteCatalog(){
+    if (currentRole() !== 'CEO') return showToast('Only the CEO can sync the catalog', 'error');
+    if (!confirm('Sync name, price, description, image and details from the website catalog into the Products sheet?\n\nExisting cost, inventory, reorder level and status are kept.')) return;
+    try {
+        const data = await apiGet('syncCatalog');
+        if (data && data.success){
+            if (data.products) masterProducts = data.products;
+            if (data.costs) Object.assign(productCosts, data.costs);
+            showToast('Catalog synced: ' + data.added + ' added, ' + data.updated + ' updated', 'success');
+            logLocal('Catalog sync', data.added + ' added, ' + data.updated + ' updated');
+            renderProducts();
+        } else showToast((data && data.error) || 'Sync failed', 'error');
+    } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
+}
+
 function renderProducts(){
     const el = document.getElementById('view-products');
     if (!el) return;
@@ -171,8 +198,10 @@ function renderProducts(){
         const st = stockStatus_(p, req);
         const inv = p.inventory == null ? '' : p.inventory;
         return '<tr class="border-b border-zinc-100 dark:border-white/[0.04]">'
-            + '<td class="px-4 py-3"><div class="font-medium text-zinc-800 dark:text-zinc-100">' + esc(p.name) + '</div>'
-            + '<div class="text-[11px] text-zinc-400">#' + p.id + ' · ' + esc(p.unit || 'pcs') + (p.active ? '' : ' · <span class="text-amber-600">Inactive</span>') + '</div></td>'
+            + '<td class="px-4 py-3"><div class="flex items-center gap-2.5">'
+            + (p.image ? '<img src="' + esc(shopImg(p.image)) + '" alt="" class="h-8 w-8 shrink-0 rounded-md border border-zinc-100 object-cover dark:border-white/[0.06]" onerror="this.remove()">' : '')
+            + '<div><div class="font-medium text-zinc-800 dark:text-zinc-100">' + esc(p.name) + '</div>'
+            + '<div class="text-[11px] text-zinc-400">#' + p.id + ' · ' + esc(p.unit || 'pcs') + (p.active ? '' : ' · <span class="text-amber-600">Inactive</span>') + '</div></div></div></td>'
             + '<td class="px-4 py-3 tnum">' + rs(p.price) + '</td>'
             + '<td class="px-4 py-3">' + (writable
                 ? '<input type="number" min="0" step="1" class="cost-input" id="pc-' + p.id + '" value="' + num(p.cost) + '" onchange="saveProductCost(' + p.id + ', this.value)">'
@@ -198,13 +227,15 @@ function renderProducts(){
         + err
         + '<div class="mb-4 flex flex-wrap items-center gap-3">'
         + (writable ? '<button onclick="openProductModal(null)" class="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-600">+ Add Product</button>' : '')
+        + (currentRole() === 'CEO' ? '<button onclick="syncWebsiteCatalog()" title="Overwrite name/price/description/image/details from the website catalog (keeps cost, inventory, status)" class="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300">Sync website catalog</button>' : '')
         + '<button onclick="loadProducts()" class="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300">Reload</button>'
         + '<span class="text-[13px] text-zinc-500">' + list.length + ' products · ' + shortCount + ' in shortage</span>'
         + '</div>'
         + uiTable(['Product', 'Selling Price', 'Cost Price', 'Current Inventory', 'Ordered Qty', 'Reorder Level', 'Status', ''], rows,
             'No products yet — backend returned none')
         + '<div class="mt-4 rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-500 dark:border-white/[0.07] dark:bg-[#1F1B16] dark:text-zinc-400">'
-        + '<strong class="text-zinc-700 dark:text-zinc-200">Custom orders</strong> (unknown items / IDs not in this list) get their cost set per order from the Orders page (Cost button).'
+        + '<strong class="text-zinc-700 dark:text-zinc-200">Custom orders</strong> (unknown items / IDs not in this list) get their cost set per order from the Orders page (Cost button).<br>'
+        + '<strong class="text-zinc-700 dark:text-zinc-200">Website link:</strong> name, price, description, image and details shown on the storefront are read live from this sheet — edit them here (Edit button) and the website picks them up on its next load.'
         + '</div>';
 }
 

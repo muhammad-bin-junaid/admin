@@ -132,7 +132,7 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
         <button class="gate-btn" type="button" id="resetSendBtn">Send code</button>
       </div>
       <div id="resetStep2" class="hidden space-y-4">
-        <p class="text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-400">Code sent to <span id="resetEmailEcho" class="font-medium text-zinc-700 dark:text-zinc-200"></span>. It is valid for 10 minutes.</p>
+        <p class="text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-400">Code sent to <span id="resetEmailEcho" class="font-medium text-zinc-700 dark:text-zinc-200"></span>. It is valid for 10 minutes. Not in your inbox? Check the <strong>Spam / Junk</strong> folder — it is sent from your own Gmail address.</p>
         <div>
           <label class="gate-label" for="gateResetCode">6-digit code</label>
           <input class="gate-input" type="text" inputmode="numeric" maxlength="6" id="gateResetCode" autocomplete="one-time-code" placeholder="123456">
@@ -475,7 +475,9 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 <div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Status</label><select id="prodActive" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"><option value="true">Active</option><option value="false">Inactive</option></select></div>
 </div>
 <div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Description</label><textarea id="prodDesc" rows="2" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></textarea></div>
-<p class="text-[12px] text-zinc-500">Changing cost price affects <strong>new orders only</strong> — historical order profits are never rewritten.</p>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Image (path or URL — shown on the website)</label><input type="text" id="prodImage" placeholder="img/all product images/… or https://…" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Details / kit parts (one per line — shown on the website)</label><textarea id="prodDetails" rows="3" placeholder="C945 Transistor x2&#10;220Ω Resistor x2&#10;Veroboard" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></textarea></div>
+<p class="text-[12px] text-zinc-500">Changing cost price affects <strong>new orders only</strong> — historical order profits are never rewritten. Name, price, description, image and details also update the website on the next page load.</p>
 </div>
 <div class="flex justify-end gap-2 border-t border-zinc-100 px-5 py-3 dark:border-white/[0.06]">
 <button onclick="closeProductModal()" class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300">Cancel</button>

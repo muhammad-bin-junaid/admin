@@ -390,24 +390,33 @@ function renderDashboard(){
         sableTable([{ label: 'Order' }, { label: 'Customer' }, { label: 'Amount', right: true }, { label: 'Payment' }, { label: 'Status' }],
             recentRows, 'No orders yet'));
 
+    // Most ordered products — ranked straight from order items (matched to the
+    // sheet by id, unmatched names kept as-is so nothing is ever dropped)
     const ordered = orderedQtyMap();
-    const ranked = productList()
-        .map(p => ({ p: p, qty: ordered.byId[p.id] || 0 }))
-        .filter(x => x.qty > 0)
+    const nameQty = {};
+    productList().forEach(p => {
+        const q = ordered.byId[p.id] || 0;
+        if (q) nameQty[p.name] = (nameQty[p.name] || 0) + q;
+    });
+    Object.keys(ordered.unmatched).forEach(n => {
+        if (n) nameQty[n] = (nameQty[n] || 0) + ordered.unmatched[n];
+    });
+    const ranked = Object.keys(nameQty)
+        .map(n => ({ name: n, qty: nameQty[n] }))
         .sort((a, b) => b.qty - a.qty)
         .slice(0, 8);
     const maxQty = ranked.length ? ranked[0].qty : 1;
     const rankedRows = ranked.map((x, i) =>
         '<div class="flex items-center gap-3 px-5 py-2.5">'
         + '<span class="tnum w-5 text-[12px] font-semibold text-zinc-400">' + (i + 1) + '</span>'
-        + '<span class="min-w-0 flex-1 truncate text-sm text-zinc-700 dark:text-zinc-200" title="' + esc(x.p.name) + '">' + esc(x.p.name) + '</span>'
+        + '<span class="min-w-0 flex-1 truncate text-sm text-zinc-700 dark:text-zinc-200" title="' + esc(x.name) + '">' + esc(x.name) + '</span>'
         + '<span class="h-2 w-24 overflow-hidden rounded-full bg-zinc-100 dark:bg-white/[0.04] sm:w-40"><span class="block h-full rounded-full bg-accent-500" style="width:' + Math.max(4, Math.round((x.qty / maxQty) * 100)) + '%"></span></span>'
         + '<span class="tnum w-10 text-right text-[13px] font-semibold text-zinc-900 dark:text-white">' + x.qty + '</span>'
         + '</div>').join('');
     const rankedBody = ranked.length
         ? '<div class="divide-y divide-zinc-100 py-1 dark:divide-white/[0.05]">' + rankedRows + '</div>'
-        : '<p class="px-5 py-8 text-center text-sm text-zinc-500">No product quantities yet — needs orders with known products</p>';
-    const rankedCard = sectionCard('Most ordered', 'All-time units by product', '', rankedBody);
+        : '<p class="px-5 py-8 text-center text-sm text-zinc-500">No product quantities yet — place some orders first</p>';
+    const rankedCard = sectionCard('Most ordered', 'Units sold, straight from your orders', '', rankedBody);
 
     el.innerHTML = sableHead('Store overview', greetTitle(), 'Here is how Makers Era is performing.', rangeToggleHtml(true))
         + kpis + chartRow + recentCard + rankedCard + sableFooter();
