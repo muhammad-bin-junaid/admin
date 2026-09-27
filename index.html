@@ -475,7 +475,16 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 <div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Status</label><select id="prodActive" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"><option value="true">Active</option><option value="false">Inactive</option></select></div>
 </div>
 <div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Description</label><textarea id="prodDesc" rows="2" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></textarea></div>
-<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Image (path or URL — shown on the website)</label><input type="text" id="prodImage" placeholder="img/all product images/… or https://…" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
+<div>
+<label class="mb-1 block text-[12px] font-medium text-zinc-500">Image — drag &amp; drop or click to upload (shown on the website)</label>
+<div id="prodImageDrop" class="mb-2 flex min-h-[84px] cursor-pointer items-center justify-center gap-3 rounded-lg border-2 border-dashed border-zinc-300 bg-zinc-50 px-4 py-3 text-center transition dark:border-white/15 dark:bg-white/[0.02]" onclick="document.getElementById('prodImageFile').click()" ondragover="imageDragOver(event)" ondragleave="imageDragLeave(this)" ondrop="imageDrop(this,event)">
+<img id="prodImagePreview" alt="" class="hidden h-16 w-16 shrink-0 rounded-md border border-zinc-200 object-cover shadow-sm dark:border-white/10" onerror="this.classList.add('hidden')">
+<span id="prodImageHint" class="text-[13px] leading-5 text-zinc-500">Drop an image here or click to browse<br><span class="text-[12px] text-zinc-400">PNG / JPG / WEBP · auto-resized · or just paste a path/URL below</span></span>
+</div>
+<input type="file" id="prodImageFile" accept="image/*" class="hidden" onchange="imageFilePicked(this)">
+<input type="text" id="prodImage" placeholder="img/all product images/… or https://…" oninput="updateImagePreview()" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]">
+<p id="prodImageStatus" class="mt-1 hidden text-[12px] text-zinc-500"></p>
+</div>
 <div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Details / kit parts (one per line — shown on the website)</label><textarea id="prodDetails" rows="3" placeholder="C945 Transistor x2&#10;220Ω Resistor x2&#10;Veroboard" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></textarea></div>
 <p class="text-[12px] text-zinc-500">Changing cost price affects <strong>new orders only</strong> — historical order profits are never rewritten. Name, price, description, image and details also update the website on the next page load.</p>
 </div>

@@ -117,6 +117,8 @@ function openProductModal(id){
     document.getElementById('prodImage').value = p ? (p.image || '') : '';
     document.getElementById('prodDetails').value = p ? (p.details || '') : '';
     document.getElementById('prodActive').value = p ? String(!!p.active) : 'true';
+    updateImagePreview();
+    setImageStatus('');
     document.getElementById('productModal').style.display = 'flex';
     document.getElementById('prodName').focus();
 }
@@ -240,3 +242,99 @@ function renderProducts(){
 }
 
 PAGE_RENDERERS.products = renderProducts;
+
+// ---- image drag-drop upload: dashboard → Google Drive (via backend) → sheet URL → website ----
+function setImageStatus(msg, cls){
+    const st = document.getElementById('prodImageStatus');
+    if (!st) return;
+    if (!msg){ st.textContent = ''; st.className = 'mt-1 hidden text-[12px] text-zinc-500'; }
+    else { st.textContent = msg; st.className = 'mt-1 text-[12px] ' + (cls || 'text-zinc-500'); }
+}
+
+function updateImagePreview(){
+    const input = document.getElementById('prodImage');
+    const img = document.getElementById('prodImagePreview');
+    if (!input || !img) return;
+    const v = (input.value || '').trim();
+    if (!v){ img.classList.add('hidden'); img.removeAttribute('src'); return; }
+    img.src = shopImg(v);
+    img.classList.remove('hidden');
+}
+
+function imageDragOver(e){
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+    const z = document.getElementById('prodImageDrop');
+    if (z) z.classList.add('border-accent-500', 'bg-accent-500/10');
+}
+function imageDragLeave(el){
+    const z = el || document.getElementById('prodImageDrop');
+    if (z) z.classList.remove('border-accent-500', 'bg-accent-500/10');
+}
+function imageDrop(el, e){
+    e.preventDefault();
+    imageDragLeave(el);
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) uploadProductImage(f);
+}
+function imageFilePicked(inp){
+    const f = inp.files && inp.files[0];
+    inp.value = '';
+    if (f) uploadProductImage(f);
+}
+
+function resizeImage_(file){
+    const keepRaw = file.type === 'image/svg+xml' || file.type === 'image/gif' || file.size <= 500 * 1024;
+    if (keepRaw){
+        return new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload = () => resolve({ data: r.result, mime: file.type || 'image/png', name: file.name || 'image' });
+            r.onerror = () => reject(new Error('Could not read the file'));
+            r.readAsDataURL(file);
+        });
+    }
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = function(){
+            try {
+                const max = 1400;
+                let w = img.naturalWidth, h = img.naturalHeight;
+                if (w > max || h > max){ const s = Math.min(max / w, max / h); w = Math.round(w * s); h = Math.round(h * s); }
+                const c = document.createElement('canvas');
+                c.width = w; c.height = h;
+                c.getContext('2d').drawImage(img, 0, 0, w, h);
+                URL.revokeObjectURL(url);
+                let data = c.toDataURL('image/jpeg', 0.85);
+                if (data.length > 6.5 * 1024 * 1024) data = c.toDataURL('image/jpeg', 0.7);
+                resolve({ data: data, mime: 'image/jpeg', name: (file.name || 'image').replace(/\.[a-z0-9]+$/i, '') + '.jpg' });
+            } catch(err){ URL.revokeObjectURL(url); reject(err); }
+        };
+        img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('Not a readable image')); };
+        img.src = url;
+    });
+}
+
+async function uploadProductImage(file){
+    if (!can('products.write')) return showToast('Your role cannot upload images', 'error');
+    if (!file) return;
+    if (file.type && !/^image\//.test(file.type)) return showToast('Please choose an image file', 'error');
+    if (file.size > 12 * 1024 * 1024) return showToast('Image too large — max 12 MB before resize', 'error');
+    try {
+        setImageStatus('Preparing ' + (file.name || 'image') + '…');
+        const prep = await resizeImage_(file);
+        setImageStatus('Uploading…');
+        const out = await apiGet('uploadImage', { filename: prep.name, mime: prep.mime, data: prep.data });
+        if (out && out.success && out.url){
+            document.getElementById('prodImage').value = out.url;
+            updateImagePreview();
+            setImageStatus('Uploaded — press Save to apply it to this product', 'text-emerald-600 dark:text-emerald-400');
+            showToast('Image uploaded — press Save', 'success');
+            logLocal('Image uploaded', prep.name);
+        } else {
+            setImageStatus((out && out.error) || 'Upload failed', 'text-red-600 dark:text-red-400');
+        }
+    } catch(e){
+        setImageStatus('Upload error: ' + e.message, 'text-red-600 dark:text-red-400');
+    }
+}
