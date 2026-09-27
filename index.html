@@ -6,6 +6,7 @@
 <title>Orders | Makers Era</title>
 <script>(function(){try{var t=localStorage.getItem('sable-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="stylesheet" href="sable.css">
+<script>window.SABLE_HIDE_RIBBON = true; /* no Sable demo promo capsule in our dashboard */</script>
 <script src="sable-script.js"></script>
 <script defer src="alpine.min.js"></script>
 <style>
@@ -79,10 +80,16 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
         <input class="gate-input" type="email" id="gateEmail" required autocomplete="username" spellcheck="false" placeholder="you@gmail.com">
       </div>
       <div>
-        <label class="gate-label" for="gatePassword">Password</label>
+        <div class="flex items-center justify-between">
+          <label class="gate-label" for="gatePassword">Password</label>
+          <a href="#" id="gateForgot" class="text-[11px] font-medium text-accent-600 hover:underline dark:text-accent-400">Forgot password?</a>
+        </div>
         <div class="relative">
-          <input class="gate-input pr-16" type="password" id="gatePassword" required autocomplete="current-password" placeholder="Your password">
-          <button type="button" id="gatePwVis" class="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-[11px] font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400">Show</button>
+          <input class="gate-input pr-11" type="password" id="gatePassword" required autocomplete="current-password" placeholder="Your password">
+          <button type="button" id="gatePwVis" aria-label="Show password" class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-white/[0.06] dark:hover:text-zinc-200">
+            <svg id="eyeOpen" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg id="eyeOff" class="hidden" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
+          </button>
         </div>
       </div>
       <p class="gate-err hidden" id="gateError"></p>
@@ -110,6 +117,39 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
       <p class="gate-err hidden" id="pwError"></p>
       <button class="gate-btn" type="submit" id="pwSubmit">Set password &amp; continue</button>
       <button class="gate-ghost" type="button" onclick="doLogout(true)">Sign out</button>
+    </form>
+
+    <form id="gateResetForm" class="gate-card hidden space-y-4">
+      <div>
+        <p class="font-display text-[15px] font-semibold text-zinc-900 dark:text-white">Reset your password</p>
+        <p class="mt-1 text-[13px] text-zinc-500 dark:text-zinc-400">Enter your staff email &#8212; we'll send a 6-digit code to it.</p>
+      </div>
+      <div id="resetStep1" class="space-y-4">
+        <div>
+          <label class="gate-label" for="gateResetEmail">Email</label>
+          <input class="gate-input" type="email" id="gateResetEmail" required autocomplete="username" spellcheck="false" placeholder="you@gmail.com">
+        </div>
+        <button class="gate-btn" type="button" id="resetSendBtn">Send code</button>
+      </div>
+      <div id="resetStep2" class="hidden space-y-4">
+        <p class="text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-400">Code sent to <span id="resetEmailEcho" class="font-medium text-zinc-700 dark:text-zinc-200"></span>. It is valid for 10 minutes.</p>
+        <div>
+          <label class="gate-label" for="gateResetCode">6-digit code</label>
+          <input class="gate-input" type="text" inputmode="numeric" maxlength="6" id="gateResetCode" autocomplete="one-time-code" placeholder="123456">
+        </div>
+        <div>
+          <label class="gate-label" for="gateResetNew">New password (min 8 characters)</label>
+          <input class="gate-input" type="password" id="gateResetNew" autocomplete="new-password">
+        </div>
+        <div>
+          <label class="gate-label" for="gateResetConfirm">Confirm new password</label>
+          <input class="gate-input" type="password" id="gateResetConfirm" autocomplete="new-password">
+        </div>
+        <button class="gate-btn" type="button" id="resetConfirmBtn">Set new password</button>
+        <button class="gate-ghost" type="button" id="resetResendBtn">Resend code</button>
+      </div>
+      <p class="gate-err hidden" id="resetError"></p>
+      <button class="gate-ghost" type="button" id="resetBackBtn">Back to sign in</button>
     </form>
   </div>
 </div>
@@ -159,16 +199,45 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-zinc-200 bg-canvas/80 px-4 backdrop-blur-md dark:border-white/[0.06] dark:bg-[#16130F]/80 sm:px-6">
 <button @click="sidebarOpen=true" class="focusable -ml-1 rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/[0.05] lg:hidden" aria-label="Open menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
 <div class="hidden sm:block"><h1 class="font-display text-[15px] font-semibold text-zinc-900 dark:text-white" id="pageTitle">Orders</h1><p class="text-[12px] text-zinc-500 dark:text-zinc-400" id="pageSub"><span id="headCount">0</span> total</p></div>
-<div class="ml-auto flex items-center gap-1.5 sm:gap-1">
-<div class="hidden items-center gap-2 sm:flex" id="userChip" style="display:none">
-<span class="max-w-[220px] truncate rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] text-zinc-600 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-300"><span class="font-semibold" id="chipName"></span> · <span class="font-medium text-accent-600" id="chipRole"></span></span>
-<button onclick="doLogout()" class="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-zinc-300 dark:hover:bg-white/[0.06]">Sign out</button>
+<div class="hidden min-w-0 flex-1 justify-center px-2 md:flex sm:px-4">
+<button type="button" @click="$dispatch('open-palette')" class="focusable flex w-full max-w-md items-center gap-2 rounded-lg border border-zinc-200 bg-white py-2 pl-3 pr-2 text-sm text-zinc-500 hover:border-zinc-300 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-400 dark:hover:border-white/20" aria-label="Search">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+<span class="flex-1 text-left">Search&#8230;</span>
+<kbd class="rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400">&#8984;K</kbd>
+</button>
 </div>
+<div class="ml-auto flex items-center gap-1.5 sm:gap-1">
+<button type="button" @click="$dispatch('open-palette')" class="focusable rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05] md:hidden" aria-label="Search"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
 <button onclick="toggleTheme()" class="focusable rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05]" aria-label="Toggle theme">
 <svg class="hidden dark:block" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
 <svg class="block dark:hidden" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
 </button>
-<button onclick="refreshData()" class="focusable rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05]" aria-label="Refresh"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+<button onclick="refreshData()" class="focusable rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05]" aria-label="Refresh"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+<div class="relative" x-data="{ open:false }" @keydown.escape.window="open=false">
+<button @click="open=!open" class="focusable relative rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/[0.05]" aria-label="New orders" :aria-expanded="open" aria-expanded="false">
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+<span id="bellCount" class="absolute -top-0.5 -right-0.5 hidden h-4 min-w-4 rounded-full bg-accent-500 px-1 text-[10px] font-semibold leading-4 text-white ring-2 ring-canvas dark:ring-[#16130F]">0</span>
+</button>
+<div x-show="open" @click.outside="open=false" x-transition="" class="absolute right-0 mt-2 w-80 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]" style="display: none;">
+<div class="flex items-center justify-between border-b border-zinc-100 px-4 py-3 dark:border-white/[0.06]"><span class="text-sm font-semibold">New orders</span><span class="rounded-full bg-accent-50 px-2 py-0.5 text-[11px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-300" id="bellBadge">0</span></div>
+<ul id="bellList" class="max-h-80 divide-y divide-zinc-100 overflow-y-auto text-sm dark:divide-white/[0.05]"><li class="px-4 py-4 text-sm text-zinc-500">Loading&#8230;</li></ul>
+<button type="button" onclick="showPage('orders')" class="block w-full border-t border-zinc-100 px-4 py-2.5 text-center text-xs font-semibold text-accent-600 hover:bg-zinc-50 dark:border-white/[0.06] dark:text-accent-300 dark:hover:bg-white/[0.03]">View all orders</button>
+</div>
+</div>
+<div class="mx-1 hidden h-6 w-px bg-zinc-200 dark:bg-white/10 sm:block"></div>
+<div class="relative" x-data="{ open:false }" @keydown.escape.window="open=false" id="userChip" style="display:none">
+<button @click="open=!open" class="focusable flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 hover:bg-zinc-100 dark:hover:bg-white/[0.05]" :aria-expanded="open" aria-expanded="false">
+<span id="avatarTxt" class="grid h-8 w-8 shrink-0 place-items-center rounded-full text-[11px] font-semibold ring-1 ring-accent-200/50 dark:ring-white/10" style="background:#BFE0D8;color:#0B443D" aria-hidden="true">ME</span>
+<span class="hidden text-left leading-tight sm:block"><span class="block text-[13px] font-semibold text-zinc-800 dark:text-zinc-100" id="userName"></span><span class="block text-[11px] text-zinc-500 dark:text-zinc-400" id="userRole"></span></span>
+<svg class="hidden text-zinc-500 sm:block dark:text-zinc-400" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+<div x-show="open" @click.outside="open=false" x-transition="" class="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-zinc-200 bg-white py-1 shadow-pop dark:border-white/[0.08] dark:bg-[#262019]" style="display: none;">
+<div class="border-b border-zinc-100 px-3 py-2.5 dark:border-white/[0.06]"><p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100" id="menuName"></p><p class="truncate text-xs text-zinc-500 dark:text-zinc-400" id="menuEmail"></p></div>
+<a href="#" onclick="event.preventDefault();showPage('settings')" class="flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-white/[0.04]"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 6 19.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15H4.5a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 6 8.1L5.9 8A2 2 0 1 1 8.7 5.2l.1.1A1.7 1.7 0 0 0 11 4.6V4.5a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.4 1Z"></path></svg>Settings</a>
+<div class="my-1 border-t border-zinc-100 dark:border-white/[0.06]"></div>
+<a href="#" onclick="event.preventDefault();doLogout()" class="flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg>Sign out</a>
+</div>
+</div>
 </div>
 </header>
 <main class="flex-1 overflow-y-auto">
@@ -589,9 +658,10 @@ function can(perm){ const r = currentRole(); if (!r) return false; return (ROLE_
 function firstAllowedPage(){ const list = rolePages(currentRole()); if (!list.length) return 'dashboard'; return list.indexOf('dashboard') !== -1 ? 'dashboard' : list[0]; }
 
 async function apiGet(action, params, tokenOverride){
+    const PUB_ACTIONS = ['login', 'forgotPasswordStart', 'forgotPasswordComplete'];
     const session = tokenOverride ? null : getToken();
     const legacyToken = tokenOverride || null;
-    if (!session && !legacyToken && action !== 'login') throw new Error('Not signed in');
+    if (!session && !legacyToken && PUB_ACTIONS.indexOf(action) === -1) throw new Error('Not signed in');
     const body = Object.assign({ action: action }, params || {});
     if (session) body.session = session;
     if (legacyToken) body.token = legacyToken;
@@ -607,7 +677,7 @@ async function apiGet(action, params, tokenOverride){
         const data = await res.json();
         if (data && data.success === false){
             recordErr(action, data.error || 'Backend returned failure');
-            if (data.code === 'AUTH' && action !== 'login') forceLogout(data.error || 'Session expired — sign in again');
+            if (data.code === 'AUTH' && PUB_ACTIONS.indexOf(action) === -1) forceLogout(data.error || 'Session expired — sign in again');
         } else {
             recordOk(action, Math.round(performance.now() - t0));
             if (session) refreshSessionExpiry();
@@ -633,13 +703,20 @@ function showGate(state, msg){
     root.style.display = 'none';
     const loginForm = document.getElementById('gateLoginForm');
     const pwForm = document.getElementById('gatePwForm');
-    setGateError('gateError', null); setGateError('pwError', null);
+    const resetForm = document.getElementById('gateResetForm');
+    setGateError('gateError', null); setGateError('pwError', null); setGateError('resetError', null);
+    loginForm.classList.add('hidden'); pwForm.classList.add('hidden'); resetForm.classList.add('hidden');
     if (state === 'password'){
-        loginForm.classList.add('hidden'); pwForm.classList.remove('hidden');
+        pwForm.classList.remove('hidden');
         document.getElementById('gateSubtitle').textContent = 'First-time sign-in — password change required';
         if (msg) setGateError('pwError', msg);
+    } else if (state === 'reset'){
+        resetForm.classList.remove('hidden');
+        document.getElementById('gateSubtitle').textContent = 'Account recovery';
+        resetStepUI(1);
+        if (msg) setGateError('resetError', msg);
     } else {
-        pwForm.classList.add('hidden'); loginForm.classList.remove('hidden');
+        loginForm.classList.remove('hidden');
         document.getElementById('gateSubtitle').textContent = 'Sign in with your staff account';
         if (msg) setGateError('gateError', msg);
     }
@@ -667,8 +744,15 @@ function applyRoleUI(){
     const chip = document.getElementById('userChip');
     if (u){
         chip.style.display = 'flex';
-        document.getElementById('chipName').textContent = u.name || u.email;
-        document.getElementById('chipRole').textContent = u.role || '';
+        const name = u.name || u.email;
+        document.getElementById('userName').textContent = name;
+        document.getElementById('userRole').textContent = u.role || '';
+        document.getElementById('menuName').textContent = name;
+        document.getElementById('menuEmail').textContent = u.email;
+        const av = document.getElementById('avatarTxt');
+        const parts = String(name).trim().split(/\s+/);
+        av.textContent = (parts.length > 1 && parts[1] ? parts[0][0] + parts[1][0] : parts[0].slice(0, 2)).toUpperCase();
+        if (typeof sableAvatarStyle === 'function') av.style.cssText = sableAvatarStyle(name);
     } else chip.style.display = 'none';
     const tok = document.getElementById('settingsTokenCard');
     if (tok) tok.style.display = can('settings.secret') ? '' : 'none';
@@ -836,7 +920,91 @@ function toggleGatePwVis(){
     const btn = document.getElementById('gatePwVis');
     const show = inp.type === 'password';
     inp.type = show ? 'text' : 'password';
-    btn.textContent = show ? 'Hide' : 'Show';
+    const open = document.getElementById('eyeOpen'), off = document.getElementById('eyeOff');
+    if (open) open.classList.toggle('hidden', show);
+    if (off) off.classList.toggle('hidden', !show);
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+}
+// ---- forgot password (email 6-digit code) ----
+let resetEmailVal = '';
+function resetStepUI(n){
+    const s1 = document.getElementById('resetStep1'), s2 = document.getElementById('resetStep2');
+    if (!s1 || !s2) return;
+    s1.classList.toggle('hidden', n !== 1);
+    s2.classList.toggle('hidden', n !== 2);
+    const echo = document.getElementById('resetEmailEcho');
+    if (echo) echo.textContent = resetEmailVal;
+}
+function openResetFlow(){
+    const ge = document.getElementById('gateEmail');
+    resetEmailVal = ge ? ge.value.trim().toLowerCase() : '';
+    showGate('reset');
+    const re = document.getElementById('gateResetEmail');
+    if (re && resetEmailVal) re.value = resetEmailVal;
+}
+async function sendResetCode(email){
+    const btn = document.getElementById('resetSendBtn');
+    setGateError('resetError', null);
+    if (btn){ btn.disabled = true; btn.textContent = 'Sending…'; }
+    try {
+        const r = await apiGet('forgotPasswordStart', { email: email });
+        if (r && r.success){
+            resetEmailVal = email;
+            resetStepUI(2);
+            ['gateResetCode','gateResetNew','gateResetConfirm'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            const cd = document.getElementById('gateResetCode'); if (cd) cd.focus();
+        } else setGateError('resetError', (r && r.error) || 'Could not send the code');
+    } catch(e){ setGateError('resetError', 'Cannot reach backend: ' + e.message); }
+    if (btn){ btn.disabled = false; btn.textContent = 'Send code'; }
+}
+function doForgotSend(){
+    const email = (document.getElementById('gateResetEmail').value || '').trim().toLowerCase();
+    if (!email) return setGateError('resetError', 'Enter your staff email');
+    sendResetCode(email);
+}
+function doForgotResend(){ if (resetEmailVal) sendResetCode(resetEmailVal); }
+async function doForgotComplete(){
+    const code = (document.getElementById('gateResetCode').value || '').trim();
+    const np = document.getElementById('gateResetNew').value || '';
+    const cf = document.getElementById('gateResetConfirm').value || '';
+    setGateError('resetError', null);
+    if (!/^\d{6}$/.test(code)) return setGateError('resetError', 'Enter the 6-digit code from your email');
+    if (np.length < 8) return setGateError('resetError', 'New password must be at least 8 characters');
+    if (np !== cf) return setGateError('resetError', 'Passwords do not match');
+    const btn = document.getElementById('resetConfirmBtn');
+    btn.disabled = true; btn.textContent = 'Setting…';
+    try {
+        const r = await apiGet('forgotPasswordComplete', { email: resetEmailVal, code: code, newPassword: np });
+        if (r && r.success){
+            ['gateResetCode','gateResetNew','gateResetConfirm'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            const ge = document.getElementById('gateEmail'); if (ge) ge.value = resetEmailVal;
+            showGate('login', 'Password updated — sign in with your new password');
+        } else setGateError('resetError', (r && r.error) || 'Could not reset the password');
+    } catch(e){ setGateError('resetError', 'Cannot reach backend: ' + e.message); }
+    btn.disabled = false; btn.textContent = 'Set new password';
+}
+// ---- topbar bell + palette helpers ----
+function jumpToOrder(id){
+    showPage('orders');
+    const si = document.getElementById('searchInput');
+    if (si){ si.value = String(id); if (typeof applyFilters === 'function') applyFilters(); }
+}
+function renderBell(){
+    const list = document.getElementById('bellList');
+    if (!list) return;
+    const news = allOrders.filter(o => o.orderStatus === 'New');
+    const cnt = document.getElementById('bellCount');
+    const badge = document.getElementById('bellBadge');
+    if (cnt){ cnt.textContent = news.length > 9 ? '9+' : String(news.length); cnt.classList.toggle('hidden', !news.length); }
+    if (badge) badge.textContent = news.length;
+    list.innerHTML = news.length
+        ? news.slice(0, 6).map(o =>
+            '<li><button type="button" onclick="jumpToOrder(\'' + esc(o.orderId) + '\')" class="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-zinc-50 dark:hover:bg-white/[0.03]">'
+            + '<span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-50 text-accent-600 dark:bg-accent-500/15 dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path></svg></span>'
+            + '<span class="min-w-0 leading-tight"><span class="block truncate font-medium text-zinc-800 dark:text-zinc-100">#' + esc(o.orderId) + ' · ' + esc(o.name) + '</span>'
+            + '<span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400">' + esc(o.itemsText || '') + '</span></span>'
+            + '<span class="ml-auto shrink-0 text-[13px] font-semibold tnum text-zinc-900 dark:text-white">' + rs(o.total) + '</span></button></li>').join('')
+        : '<li class="px-4 py-4 text-sm text-zinc-500">No new orders.</li>';
 }
 function logLocal(action, target){
     const u = currentUserObj();
@@ -956,6 +1124,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('gateLoginForm').addEventListener('submit', doLogin);
     document.getElementById('gatePwForm').addEventListener('submit', doChangePassword);
     document.getElementById('gatePwVis').addEventListener('click', toggleGatePwVis);
+    document.getElementById('gateForgot').addEventListener('click', function(e){ e.preventDefault(); openResetFlow(); });
+    document.getElementById('resetSendBtn').addEventListener('click', doForgotSend);
+    document.getElementById('resetConfirmBtn').addEventListener('click', doForgotComplete);
+    document.getElementById('resetResendBtn').addEventListener('click', doForgotResend);
+    document.getElementById('resetBackBtn').addEventListener('click', function(){ showGate('login'); });
 
     const a = ME_STORE.get('auth', null);
     if (!a || !a.session){ showGate('login'); return; }
@@ -1084,6 +1257,7 @@ function renderStats(){
     document.getElementById('statPending').textContent = allOrders.filter(o => o.paymentStatus === 'Pending').length;
     document.getElementById('statDelivered').textContent = allOrders.filter(o => o.orderStatus === 'Delivered' || o.orderStatus === 'Shipped').length;
     document.getElementById('navCount').textContent = allOrders.length;
+    renderBell();
     const hc = document.getElementById('headCount');
     if (hc) hc.textContent = allOrders.length;
 }
@@ -1426,6 +1600,72 @@ function showToast(msg, type){
     t._timer = setTimeout(() => { t.className = 'hidden'; }, 3200);
 }
 </script>
+<script>
+/* Command palette: same look/behaviour as Sable, wired to OUR pages + recent orders
+   (overrides the demo version shipped in sable-script.js). */
+function commandPalette(){
+    const PAGE_SUBS = {
+        dashboard: 'Overview & KPIs', orders: 'Search, filter & reconcile', products: 'Catalog, stock & pricing',
+        suppliers: 'Vendor directory', inventory: 'Stock & shortages', purchases: 'Restock orders',
+        deliveries: 'Fulfillment log', finance: 'Payments & profit', expenses: 'Operating costs',
+        activity: 'Audit trail', health: 'System status', settings: 'Account & preferences'
+    };
+    return {
+        show: false, q: '', sel: 0,
+        get items(){
+            const pages = (typeof PAGES !== 'undefined' ? PAGES : [])
+                .filter(p => (typeof hasPage !== 'function') || hasPage(p))
+                .map(p => ({ t: p.charAt(0).toUpperCase() + p.slice(1), s: PAGE_SUBS[p] || '', tag: 'Page', act: function(){ showPage(p); } }));
+            const orders = (typeof allOrders !== 'undefined' && allOrders ? allOrders : []).slice(0, 30).map(o =>
+                ({ t: '#' + o.orderId + ' · ' + o.name, s: (o.itemsText || '') + ' · Rs. ' + num(o.total), tag: 'Order',
+                   act: function(){ jumpToOrder(o.orderId); } }));
+            return pages.concat(orders);
+        },
+        get results(){
+            const q = this.q.trim().toLowerCase();
+            const its = this.items;
+            if (!q) return its;
+            return its.filter(i => (i.t + ' ' + i.s + ' ' + i.tag).toLowerCase().indexOf(q) !== -1);
+        },
+        open(){ this.show = true; this.q = ''; this.sel = 0; const s = this; this.$nextTick(function(){ if (s.$refs.palInput) s.$refs.palInput.focus(); }); },
+        close(){ this.show = false; },
+        move(d){ const n = this.results.length; if (!n) return; this.sel = (this.sel + d + n) % n; },
+        pick(i){ this.sel = i; this.go(); },
+        go(){
+            const r = this.results[this.sel];
+            if (!r) return;
+            this.close();
+            if (r.act) r.act();
+            else if (r.href) window.location.href = r.href;
+        }
+    };
+}
+</script>
+<div x-data="commandPalette()" @open-palette.window="open()" @keydown.window.meta.k.prevent="open()" @keydown.window.ctrl.k.prevent="open()" @keydown.escape.window="close()">
+<div x-show="show" x-transition.opacity="" class="fixed inset-0 z-50 bg-zinc-900/40 backdrop-blur-sm" @click="close()" style="display: none;"></div>
+<div x-show="show" x-transition="" class="fixed inset-x-0 top-[12vh] z-50 mx-auto w-full max-w-lg px-4" @keydown.arrow-down.prevent="move(1)" @keydown.arrow-up.prevent="move(-1)" @keydown.enter.prevent="go()" style="display: none;">
+<div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]">
+<div class="flex items-center gap-2.5 border-b border-zinc-100 px-4 dark:border-white/[0.06]">
+<svg class="text-zinc-400" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+<input x-ref="palInput" x-model="q" @input="sel=0" type="text" placeholder="Search pages and recent orders…" class="w-full bg-transparent py-3.5 text-base text-zinc-800 placeholder:text-zinc-500 focus:outline-none dark:text-zinc-100" aria-label="Search">
+<kbd class="shrink-0 rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400">Esc</kbd>
+</div>
+<ul class="max-h-80 overflow-y-auto p-2">
+<template x-for="(item, i) in results" :key="item.tag + item.t">
+<li>
+<button type="button" @click="pick(i)" @mouseenter="sel=i" :class="sel===i ? 'bg-accent-50 dark:bg-white/[0.06]' : ''" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+<span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-500/[0.12] dark:text-accent-300"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+<span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-100" x-text="item.t"></span><span class="block truncate text-[12px] text-zinc-500 dark:text-zinc-400" x-text="item.s"></span></span>
+<span class="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400" x-text="item.tag"></span>
+</button>
+</li>
+</template>
+<li x-show="!results.length" x-cloak class="px-3 py-4 text-center text-sm text-zinc-500">No matches</li>
+</ul>
+<button type="button" @click="close()" class="w-full border-t border-zinc-100 px-4 py-2.5 text-center text-xs font-semibold text-zinc-500 hover:bg-zinc-50 dark:border-white/[0.06] dark:hover:bg-white/[0.03]">Close</button>
+</div>
+</div>
+</div>
 <script src="dash-board.js"></script>
 <script src="dash-products.js"></script>
 <script src="dash-ops.js"></script>
