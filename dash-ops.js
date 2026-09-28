@@ -816,24 +816,27 @@ function code128Svg_(text){
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (x + qz) + ' ' + (h + 1) + '" preserveAspectRatio="none" role="img" aria-label="Barcode ' + esc(text) + '"><g fill="#000">' + rects + '</g></svg>';
 }
 
-const STICKER_CSS_ = '@page{size:A4 portrait;margin:8mm}*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#000;background:#fff}.toolbar{padding:16px;text-align:center}.toolbar button{padding:10px 20px;border:1px solid #000;background:#fff;color:#000;cursor:pointer;font-weight:bold}.page{width:194mm;height:281mm;margin:12px auto;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:3mm;page-break-after:always;break-after:page}.page:last-child{page-break-after:auto;break-after:auto}.sticker{border:1px dashed #000;padding:3mm;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:#fff;break-inside:avoid}.brand{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;padding-bottom:2mm}.brand-name{font-size:13pt;font-weight:800;letter-spacing:.5px}.brand-sub{font-size:6pt;text-align:right}.order-id{margin-top:2mm;font-size:8pt;font-weight:bold}.ship-label{margin-top:2mm;font-size:7pt;font-weight:bold;letter-spacing:.5px}.customer{margin-top:1mm;font-size:11pt;font-weight:bold;overflow-wrap:anywhere}.details{font-size:7.5pt;line-height:1.4;margin-top:1mm;overflow-wrap:anywhere}.items-title{margin-top:2mm;border-top:1px solid #000;padding-top:1.5mm;font-size:7pt;font-weight:bold}.items{font-size:7.5pt;line-height:1.4;margin-top:1mm;overflow-wrap:anywhere}.bc{margin-top:1.5mm}.bc svg{display:block;width:100%;height:11mm}.bc-cap{font-size:5.5pt;text-align:center;letter-spacing:1px}.bottom{display:flex;align-items:end;justify-content:space-between;gap:2mm;border-top:1px solid #000;padding-top:1.5mm;margin-top:2mm}.thanks{font-size:6pt;font-weight:bold}.qr{width:16mm;height:16mm;object-fit:contain;flex-shrink:0}.qr-caption{font-size:5pt;text-align:center}@media print{.toolbar{display:none}.page{margin:0}}';
+const STICKER_CSS_ = '@page{size:A4 portrait;margin:8mm}*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#000;background:#fff}.toolbar{padding:14px;text-align:center}.toolbar button{padding:10px 18px;border:1px solid #000;background:#fff;color:#000;cursor:pointer;font-weight:bold}.page{width:192mm;height:268mm;margin:12px auto;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:2mm;overflow:hidden;page-break-after:always;break-after:page}.page:last-child{page-break-after:auto;break-after:auto}.sticker{display:flex;flex-direction:column;justify-content:space-between;min-height:0;overflow:hidden;border:1px dashed #000;padding:2mm;background:#fff;break-inside:avoid}.brand{display:flex;align-items:baseline;justify-content:space-between;gap:1.5mm;border-bottom:1px solid #000;padding-bottom:1.2mm}.brand-name{font-size:11pt;font-weight:800;letter-spacing:.4px;white-space:nowrap}.brand-sub{font-size:5.5pt;text-align:right;line-height:1.15}.order-id{margin-top:1.5mm;font-size:7.5pt;font-weight:bold;letter-spacing:.3px}.ship-label{margin-top:1.5mm;font-size:6.5pt;font-weight:bold;letter-spacing:.5px}.customer{margin-top:.5mm;font-size:9.5pt;font-weight:bold;line-height:1.15;overflow-wrap:anywhere}.details{margin-top:1mm;font-size:6.5pt;line-height:1.25;overflow-wrap:anywhere}.items-title{margin-top:1.5mm;border-top:1px solid #000;padding-top:1.2mm;font-size:6pt;font-weight:bold}.items{margin-top:.8mm;font-size:6.5pt;line-height:1.25;overflow-wrap:anywhere}.items-sm{font-size:6pt;line-height:1.2}.bottom{margin-top:auto;border-top:1px solid #000;padding-top:1.2mm}.thanks{font-size:5.5pt;font-weight:bold;letter-spacing:.3px}.bc{margin-top:.8mm}.bc svg{display:block;width:100%;height:9mm}@media print{.toolbar{display:none}.page{margin:0}}';
 function stickerHtml_(o){
     const items = parseItems(o.itemsText);
     const d = parseOrderDate(o.timestamp);
+    const facts = [];
+    if (o.phone) facts.push('<b>Ph</b> ' + esc(o.phone));
+    if (o.campus) facts.push('<b>Univ</b> ' + esc(o.campus));
+    if (o.deptRoll) facts.push('<b>Dept</b> ' + esc(o.deptRoll));
+    if (d) facts.push('<b>Date</b> ' + esc(d.toLocaleDateString('en-GB')));
     return '<div class="sticker">'
-        + '<div>'
-        + '<div class="brand"><div class="brand-name">MAKERS ERA</div><div class="brand-sub">ELECTRONICS<br>&amp; DIY STORE</div></div>'
+        + '<div class="top">'
+        + '<div class="brand"><span class="brand-name">MAKERS ERA</span><span class="brand-sub">ELECTRONICS<br>&amp; DIY STORE</span></div>'
         + '<div class="order-id">ORDER: ' + esc(o.orderId) + '</div>'
         + '<div class="ship-label">SHIP TO</div>'
         + '<div class="customer">' + esc(o.name) + '</div>'
-        + '<div class="details"><b>Phone:</b> ' + esc(o.phone || '-') + '<br><b>University:</b> ' + esc(o.campus || '-') + '<br><b>Dept/Roll:</b> ' + esc(o.deptRoll || '-') + (d ? '<br><b>Ordered:</b> ' + esc(d.toLocaleDateString('en-GB')) : '') + '</div>'
+        + '<div class="details">' + (facts.length ? facts.join(' &middot; ') : '&mdash;') + '</div>'
         + '<div class="items-title">ORDER DETAILS</div>'
-        + '<div class="items">' + (items.length ? items.map(i => esc(i)).join('<br>') : esc(o.itemsText || '')) + '</div>'
-        + '<div class="bc">' + code128Svg_(o.orderId) + '</div>'
-        + '<div class="bc-cap">' + esc(o.orderId) + '</div>'
+        + '<div class="items' + (items.length > 4 ? ' items-sm' : '') + '">' + (items.length ? items.map(i => esc(i)).join(' &middot; ') : esc(o.itemsText || '')) + '</div>'
         + '</div>'
-        + '<div class="bottom"><div class="thanks">MAKERS ERA<br>THANK YOU!</div>'
-        + '<div><img class="qr" src="../qr.png" alt="QR" onerror="this.style.display=\'none\'"><div class="qr-caption">SCAN ORDER</div></div></div>'
+        + '<div class="bottom"><div class="thanks">MAKERS ERA &middot; THANK YOU!</div>'
+        + '<div class="bc">' + code128Svg_(o.orderId) + '</div></div>'
         + '</div>';
 }
 function printSticker(orderId){ printStickers([orderId]); }
@@ -850,7 +853,10 @@ function printStickers(ids){
         + '<div class="toolbar"><button onclick="window.print()">Print / Save as PDF</button><p>Shipping stickers · A4 · 12 per page · ' + orders.length + ' order(s)</p></div>'
         + '<div id="sheet">' + pages + '</div></body></html>');
     w.document.close();
-    setTimeout(function(){ try { w.focus(); w.print(); } catch(e){} }, 400);
+    let printed = false;
+    const go = function(){ if (printed) return; printed = true; try { w.focus(); w.print(); } catch(e){} };
+    if (w.document.readyState === 'complete') setTimeout(go, 150);
+    else { w.addEventListener('load', function(){ setTimeout(go, 100); }); setTimeout(go, 2000); }
 }
 
 function renderProcessing(){
