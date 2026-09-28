@@ -364,6 +364,12 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 <div class="mt-3 overflow-x-auto" id="usersAdminBody"><p class="text-sm text-zinc-500">Loading accounts…</p></div>
 </div>
 
+<div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]" id="settingsBinCard" style="display:none">
+<h3 class="font-display text-base font-semibold text-zinc-900 dark:text-white">Recycle Bin — deleted orders</h3>
+<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">CEO only — orders deleted from the Orders page land here and can be restored (they are never erased automatically).</p>
+<div class="mt-3 overflow-x-auto" id="orderBinBody"><p class="text-sm text-zinc-500">Loading…</p></div>
+</div>
+
 <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]" id="settingsTokenCard" style="display:none">
 <h3 class="font-display text-base font-semibold text-zinc-900 dark:text-white">Apps Script Secret Token</h3>
 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Generated once in Apps Script (run <code class="rounded bg-zinc-100 px-1.5 py-0.5 text-[12px] dark:bg-white/[0.06]">generateToken()</code>), stored only in this browser — never in source code.</p>
@@ -519,32 +525,29 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 </div>
 </div>
 
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" id="confirmModal" style="display:none">
+<div class="w-full max-w-sm rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]">
+<div class="px-5 py-4">
+<h3 class="font-display text-base font-semibold text-zinc-900 dark:text-white" id="confirmTitle">Are you sure?</h3>
+<p class="mt-2 text-[13px] leading-5 text-zinc-500 dark:text-zinc-400" id="confirmMsg"></p>
+</div>
+<div class="flex justify-end gap-2 border-t border-zinc-100 px-5 py-3 dark:border-white/[0.06]">
+<button onclick="closeConfirmModal()" class="rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700">Cancel</button>
+<button id="confirmYesBtn" onclick="runConfirm()" class="rounded-lg bg-red-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-red-700">Yes</button>
+</div>
+</div>
+</div>
+
 <script>
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9zbFRKyrvpSk53OPRz00MgFpQ3CGCE3T5UyM5MTN5sHSLHSAsRbFBpeuPJg_Mfp8/exec';
 let allOrders = [], filteredOrders = [], currentPage = 1, searchTimeout = null, editingCostOrderId = null;
 const pageSize = 20;
 const VALID_STATUSES = { orderStatus: ['New','Processing','Delivered','Cancelled'], paymentStatus: ['Pending','Paid','Failed'] };
 
-// Catalog: id, name, selling price (matches js/script.js)
-const PRODUCTS = [
-  { id:1,  name:'Standard Digital Multimeter (600V)',            price:1750 },
-  { id:2,  name:'UNI-T UT33B+ Digital Multimeter',                price:2050 },
-  { id:3,  name:'Mini Handheld Multimeter (DT-830B)',                 price:600 },
-  { id:4,  name:'MAS830L Backlit Multimeter Pro',             price:950 },
-  { id:5,  name:'Arduino Nano V3.0 Board',                       price:550 },
-  { id:6,  name:'555 Timer DIY Circuit Kit',     price:85 },
-  { id:7,  name:'Dual LED Flip-Flop DIY Kit',           price:80 },
-  { id:8,  name:'Basic 40W Electric Soldering Iron',                     price:600 },
-  { id:9,  name:'AFA Tool Precision Soldering Iron',                 price:750 },
-  { id:10, name:'Hi-Flow Solder Wire (50g)',               price:160 },
-  { id:11, name:'FINE 63/37 Rosin Core Solder Wire',       price:200 },
-  { id:12, name:'Standard Solderless Breadboard',                   price:200 },
-  { id:13, name:'Premium Solderless Breadboard',                   price:300 },
-  { id:14, name:'18650 Li-ion Battery (2200mAh)',            price:230 },
-  { id:15, name:'UNITY 60W Digital Temperature Soldering Iron', price:1150 }
-];
-// default cost prices (offline fallback only — live costs come from the Products sheet)
-let productCosts = { 1:80, 2:90, 3:90, 4:120, 5:50, 6:70, 7:70, 8:70, 9:100, 10:30, 11:40, 12:160, 13:288, 14:180, 15:850 };
+// Products & cost prices are loaded live from the Apps Script Products sheet
+// (dash-products.js). No hardcoded catalog here — if the backend is down the
+// pages show a loading/error state instead of stale fake data.
+let productCosts = {};
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function num(v){ const n = Number(v); return isNaN(n)?0:n; }
@@ -660,7 +663,7 @@ function rolePages(r){
     return [];
 }
 const ROLE_ACTIONS = {
-    CEO: ['orders.edit','finance.verify','products.write','suppliers.write','purchases.write','deliveries.write','expenses.write','settings.secret','users.manage'],
+    CEO: ['orders.edit','orders.delete','finance.verify','products.write','suppliers.write','purchases.write','deliveries.write','expenses.write','settings.secret','users.manage'],
     CFO: ['finance.verify','expenses.write'],
     COO: ['products.write','suppliers.write','purchases.write','deliveries.write','expenses.write']
 };
@@ -769,6 +772,8 @@ function applyRoleUI(){
     if (tok) tok.style.display = can('settings.secret') ? '' : 'none';
     const uc = document.getElementById('settingsUsersCard');
     if (uc){ uc.style.display = can('users.manage') ? '' : 'none'; if (can('users.manage') && typeof loadUsersAdmin === 'function') loadUsersAdmin(); }
+    const bc = document.getElementById('settingsBinCard');
+    if (bc){ bc.style.display = can('orders.delete') ? '' : 'none'; if (can('orders.delete') && typeof loadOrderBin === 'function' && activePage === 'settings') loadOrderBin(); }
     const t = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     t('acctName', u ? (u.name || '—') : '—');
     t('acctEmail', u ? u.email : '—');
@@ -1067,6 +1072,7 @@ PAGE_RENDERERS.settings = function(){
     const bu = document.getElementById('backendUrl');
     if (bu) bu.textContent = endpoint();
     if (can('users.manage') && typeof loadUsersAdmin === 'function') loadUsersAdmin();
+    if (can('orders.delete') && typeof loadOrderBin === 'function') loadOrderBin();
 };
 let activePage = 'dashboard';
 function refreshActivePage(){
@@ -1343,7 +1349,7 @@ function renderTable(){
 <td class="px-4 py-3">${selHtml(o,'orderStatus')}</td>
 <td class="px-4 py-3">${selHtml(o,'paymentStatus')}</td>
 <td class="px-4 py-3"><div class="flex flex-wrap gap-1.5">${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-accent-600" title="WhatsApp message to customer" onclick="sendOrderMsg('${esc(o.orderId)}')">${msgLabel(o)}</button>
-<button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-amber-600" onclick="openCostModal('${esc(o.orderId)}')">Cost</button>` : ''}</div></td></tr>
+<button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-amber-600" onclick="openCostModal('${esc(o.orderId)}')">Cost</button>` : ''}${can('orders.delete') ? `<button class="rounded-md border border-red-200 px-2 py-1 text-[11px] font-semibold text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:hover:bg-red-500/10" title="Delete order (moves to bin)" onclick="askDeleteOrder('${esc(o.orderId)}')">🗑</button>` : ''}</div></td></tr>
 <tr id="expanded-${gi}" style="display:none"><td colspan="9" class="bg-zinc-50 px-6 py-5 dark:bg-white/[0.02]">
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
 <div class="text-sm font-semibold">${esc(o.orderId)} · ${esc(o.name)}</div>
@@ -1388,7 +1394,7 @@ ${can('orders.edit') ? `<div class="mt-4 flex items-center gap-2 border-t border
 <span class="ml-auto rounded-full px-2 py-0.5 text-[11px] font-medium ${statusCls(o.paymentStatus)}">${esc(o.paymentStatus)}</span></div>
 <div class="mt-2 truncate text-[12px] text-zinc-400">${esc(items.join('; '))}</div>
 <div class="mt-2 flex flex-wrap gap-1.5">${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-2 py-1 text-[11px] font-semibold text-white" onclick="sendOrderMsg('${esc(o.orderId)}')">${msgLabel(o)}</button>
-<button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white" onclick="openCostModal('${esc(o.orderId)}')">Cost</button>` : ''}</div>
+<button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white" onclick="openCostModal('${esc(o.orderId)}')">Cost</button>` : ''}${can('orders.delete') ? `<button class="rounded-md border border-red-200 px-2 py-1 text-[11px] font-semibold text-red-600 dark:border-red-500/30" onclick="askDeleteOrder('${esc(o.orderId)}')">🗑 Delete</button>` : ''}</div>
 <div class="mt-2 flex flex-wrap gap-1.5 text-[11px]">
 ${selHtml(o,'orderStatus')}${selHtml(o,'paymentStatus')}
 </div></div>`;
@@ -1448,6 +1454,93 @@ async function updateStatus(orderId, field, value){
         syncSelects(orderId, field, prev);
         showToast('Error: ' + e.message, 'error');
     }
+}
+
+// ==================== ORDER DELETE (CEO, soft delete → recycle bin) ====================
+let confirmCb = null;
+function askConfirm(title, msg, cb){
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMsg').textContent = msg;
+    confirmCb = cb;
+    document.getElementById('confirmModal').style.display = 'flex';
+}
+function closeConfirmModal(){ document.getElementById('confirmModal').style.display = 'none'; confirmCb = null; }
+function runConfirm(){ const cb = confirmCb; closeConfirmModal(); if (cb) cb(); }
+
+function askDeleteOrder(orderId){
+    if (!can('orders.delete')) return showToast('Only the CEO can delete orders', 'error');
+    const o = allOrders.find(x => x.orderId === orderId);
+    askConfirm('Delete order ' + orderId + '?',
+        'Are you sure? ' + (o ? 'Order from ' + o.name + ' (' + rs(o.total) + ')' : '') + ' It moves to the recycle bin in Settings — you can restore it there.',
+        function(){ doDeleteOrder(orderId); });
+}
+async function doDeleteOrder(orderId){
+    if (!can('orders.delete')) return showToast('Only the CEO can delete orders', 'error');
+    try {
+        const data = await apiGet('deleteOrder', { orderId: orderId });
+        if (data && data.success){
+            allOrders = allOrders.filter(x => x.orderId !== orderId);
+            applyFilters(); renderStats();
+            if (activePage === 'settings' && typeof loadOrderBin === 'function') loadOrderBin();
+            showToast(orderId + ' moved to the recycle bin (Settings)', 'success');
+            logLocal('Order deleted', orderId);
+        } else showToast((data && data.error) || 'Delete failed', 'error');
+    } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
+}
+
+async function loadOrderBin(){
+    const box = document.getElementById('orderBinBody');
+    if (!box || !can('orders.delete')) return;
+    try {
+        const r = await apiGet('orderBin');
+        if (!r || !r.success){
+            box.innerHTML = '<p class="text-sm text-red-600">' + esc((r && r.error) || 'Failed to load the bin') + '</p>';
+            return;
+        }
+        const entries = r.entries || [];
+        const rows = entries.map(e => {
+            const o = e.order || {};
+            return '<tr class="hover:bg-zinc-50 dark:hover:bg-white/[0.03]">'
+                + '<td class="px-4 py-2.5 font-medium text-zinc-900 dark:text-white">' + esc(e.orderId) + '</td>'
+                + '<td class="px-4 py-2.5">' + esc(o.name || '—') + '<div class="text-[11px] text-zinc-400">' + esc(o.phone || '') + '</div></td>'
+                + '<td class="tnum px-4 py-2.5 text-right font-semibold">' + rs(o.total) + '</td>'
+                + '<td class="px-4 py-2.5 text-[12px] text-zinc-500">' + esc(e.deletedAt || '—') + '<div class="text-[11px] text-zinc-400">by ' + esc(e.deletedBy || '—') + '</div></td>'
+                + '<td class="px-4 py-2.5 whitespace-nowrap text-right">'
+                + '<button onclick="askRestoreOrder(\'' + esc(e.orderId) + '\')" class="mr-2 text-[12px] font-medium text-accent-600 hover:underline">Restore</button>'
+                + '<button onclick="askPurgeOrder(\'' + esc(e.orderId) + '\')" class="text-[12px] font-medium text-red-600 hover:underline">Delete forever</button>'
+                + '</td></tr>';
+        }).join('');
+        box.innerHTML = uiTable(['Order #', 'Customer', 'Total', 'Deleted', ''], rows, 'Bin is empty — nothing to restore');
+    } catch(e){
+        box.innerHTML = '<p class="text-sm text-red-600">Connection error: ' + esc(e.message) + '</p>';
+    }
+}
+function askRestoreOrder(orderId){
+    askConfirm('Restore ' + orderId + '?', 'Put ' + orderId + ' back into the Orders list.', function(){ restoreOrderBin(orderId); });
+}
+function askPurgeOrder(orderId){
+    askConfirm('Delete ' + orderId + ' forever?', 'Are you sure? This permanently erases the order from the bin. It cannot be recovered.', function(){ purgeOrderBin(orderId); });
+}
+async function restoreOrderBin(orderId){
+    try {
+        const r = await apiGet('restoreOrder', { orderId: orderId });
+        if (r && r.success){
+            showToast(orderId + ' restored to Orders', 'success');
+            logLocal('Order restored', orderId);
+            await loadOrderBin();
+            if (typeof loadOrders === 'function') await loadOrders();
+        } else showToast((r && r.error) || 'Restore failed', 'error');
+    } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
+}
+async function purgeOrderBin(orderId){
+    try {
+        const r = await apiGet('purgeOrder', { orderId: orderId });
+        if (r && r.success){
+            showToast(orderId + ' permanently deleted', 'success');
+            logLocal('Order purged', orderId);
+            await loadOrderBin();
+        } else showToast((r && r.error) || 'Delete failed', 'error');
+    } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
 }
 
 // ==================== WHATSAPP MESSAGES (status-based, to CUSTOMER's number) ====================

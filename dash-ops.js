@@ -4,7 +4,7 @@ let allPurchases = [], purchasesErr = null, purchasesLoading = false, purchasesI
 let allDeliveries = [], deliveriesErr = null, deliveriesInit = false;
 let supplierFormId = null;     // null = adding
 let supplierDrawerId = null;
-let dlvrCampus = '', dlvrWeek = true, dlvrStatus = 'needs';
+let dlvrCampus = '', dlvrWeek = true, dlvrStatus = 'undelivered';
 
 function opsNoToken(){ return uiHead('Operations', 'Sign in required', '') + uiEmpty('Sign in to see this page'); }
 
@@ -162,7 +162,7 @@ function renderSuppliers(){
     if (!el) return;
     if (!getToken()){ el.innerHTML = opsNoToken(); return; }
     if (!suppliersInit && !suppliersLoading) loadSuppliers();
-    if (!productsLoaded) loadProducts();
+    if (productsPending()) loadProducts();
 
     const rows = allSuppliers.map(s => {
         const hist = supplierPurchaseList(s);
@@ -287,7 +287,12 @@ function renderInventory(){
     const el = document.getElementById('view-inventory');
     if (!el) return;
     if (!getToken()){ el.innerHTML = opsNoToken(); return; }
-    if (!productsLoaded) loadProducts();
+    if (productsPending()){
+        loadProducts();
+        el.innerHTML = uiHead('Inventory', 'Inventory', 'Required vs available — shortage calculation.')
+            + uiEmpty('Loading products…');
+        return;
+    }
 
     const rowsData = inventoryRows();
     const required = requiredQtyMap();
@@ -313,6 +318,7 @@ function renderInventory(){
 
     el.innerHTML = uiHead('Inventory', 'Inventory',
         '<strong>Required</strong> = items in New / Processing orders. <strong>Available</strong> is saved in the Products sheet — it rises when a purchase is received and drops when an order is delivered.')
+        + missingApiBanner(productsErr)
         + '<div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">'
         + uiCard('Products tracked', String(rowsData.length))
         + uiCard('Shortages', String(shortages), shortages ? 'text-red-600' : 'text-accent-600')
@@ -334,14 +340,55 @@ function lastPurchaseForProduct(productId){
     const list = allPurchases.filter(p => p.productId === productId).sort((a, b) => String(b.date).localeCompare(String(a.date)));
     return list.length ? list[0] : null;
 }
+function suppliersForProduct(productId){
+    return allSuppliers.filter(s => (s.productIds || []).some(id => String(id) === String(productId)));
+}
+function onPurchProductChange(){
+    const pid = document.getElementById('purchProduct').value;
+    const hint = document.getElementById('purchSupHint');
+    const supSel = document.getElementById('purchSupplier');
+    if (!hint) return;
+    if (!pid){ hint.innerHTML = ''; return; }
+    const sups = suppliersForProduct(pid);
+    const last = lastPurchaseForProduct(parseInt(pid, 10));
+    let html = '';
+    if (sups.length) html += 'Linked supplier' + (sups.length > 1 ? 's' : '') + ': <strong>' + esc(sups.map(s => s.name).join(', ')) + '</strong>';
+    else html += '<span class="text-amber-600">No supplier linked — tick products on the Suppliers page</span>';
+    if (last) html += ' · last bought ' + esc(last.date) + ' from ' + esc(last.supplier || '—') + ' @ ' + rs(last.unitCost);
+    hint.innerHTML = html;
+    // pre-fill supplier from the link (only if untouched) and cost from last purchase
+    if (supSel && !supSel.dataset.touched && !supSel.value && sups.length === 1) supSel.value = sups[0].id;
+    if (supSel && !supSel.dataset.touched && !supSel.value && last && last.supplierId) supSel.value = last.supplierId;
+}
+function exportWhatToBuy(){
+    const needed = inventoryRows().filter(r => (r.shortage == null && r.req > 0) || (r.shortage > 0));
+    if (!needed.length) return showToast('Nothing to buy right now', 'error');
+    const rows = [['Product', 'ID', 'Required', 'Available', 'Shortage', 'Supplier(s)', 'Last supplier', 'Last date', 'Last price', 'Suggested qty', 'Est. cost']];
+    needed.forEach(r => {
+        const last = lastPurchaseForProduct(r.p.id);
+        const sups = suppliersForProduct(r.p.id);
+        const qty = r.shortage == null ? r.req : r.shortage;
+        const cost = last && last.unitCost ? Math.round(qty * num(last.unitCost)) : '';
+        rows.push([r.p.name, r.p.id, r.req, r.avail == null ? '' : r.avail,
+            r.shortage == null ? 'stock not set' : r.shortage,
+            sups.map(s => s.name).join('; '),
+            last ? (last.supplier || '') : '', last ? last.date : '', last ? last.unitCost : '',
+            qty, cost]);
+    });
+    sableDownloadCsv('what-to-buy.csv', rows);
+    showToast(needed.length + ' item(s) exported (CSV)', 'success');
+}
 function fillPurchaseForm(productId, qty, supplierId, unitCost){
     if (!can('purchases.write')) return showToast('Your role cannot create purchases', 'error');
     const set = (k, v) => { const el = document.getElementById(k); if (el) el.value = v; };
     set('purchProduct', String(productId));
     set('purchQty', qty);
+    const supSel = document.getElementById('purchSupplier');
+    if (supSel) supSel.dataset.touched = '';
     if (supplierId) set('purchSupplier', supplierId);
     if (unitCost != null) set('purchCost', unitCost);
     set('purchDate', todayStr());
+    onPurchProductChange();
     const f = document.getElementById('purchForm');
     if (f) f.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
@@ -406,17 +453,26 @@ function renderPurchases(){
     if (!getToken()){ el.innerHTML = opsNoToken(); return; }
     if (!purchasesInit && !purchasesLoading) loadPurchases();
     if (!suppliersInit && !suppliersLoading) loadSuppliers();
-    if (!productsLoaded) loadProducts();
+    if (productsPending()){
+        loadProducts();
+        el.innerHTML = uiHead('Purchases', 'Purchases',
+            'Answers <strong>"what do we need to buy?"</strong> using orders, inventory and supplier history.')
+            + missingApiBanner(productsErr)
+            + uiEmpty('Loading products…');
+        return;
+    }
 
     // What we need to buy
     const needed = inventoryRows().filter(r => (r.shortage == null && r.req > 0) || (r.shortage > 0));
     const needRows = needed.map(r => {
         const last = lastPurchaseForProduct(r.p.id);
+        const sups = suppliersForProduct(r.p.id);
         return '<tr class="hover:bg-zinc-50 dark:hover:bg-white/[0.03]">'
             + '<td class="px-4 py-3 font-medium text-zinc-900 dark:text-white">' + esc(r.p.name) + '<div class="text-[11px] text-zinc-400">#' + r.p.id + '</div></td>'
             + '<td class="tnum px-4 py-3 text-right">' + r.req + '</td>'
             + '<td class="tnum px-4 py-3 text-right">' + (r.avail == null ? '—' : r.avail) + '</td>'
             + '<td class="tnum px-4 py-3 text-right font-semibold ' + (r.shortage > 0 ? 'text-red-600' : 'text-amber-600') + '">' + (r.shortage == null ? 'stock not set' : r.shortage) + '</td>'
+            + '<td class="px-4 py-3 text-[13px]">' + (sups.length ? esc(sups.map(s => s.name).join(', ')) : '<span class="text-zinc-400">—</span>') + '</td>'
             + '<td class="px-4 py-3 text-[13px]">' + (last ? esc(last.supplier || '—') + '<div class="text-[11px] text-zinc-400">' + esc(last.date) + '</div>' : '<span class="text-zinc-400">no history</span>') + '</td>'
             + '<td class="tnum px-4 py-3 text-right">' + (last ? rs(last.unitCost) : '—') + '</td>'
             + '<td class="px-4 py-3 text-right">' + (can('purchases.write')
@@ -446,7 +502,11 @@ function renderPurchases(){
 
     const supOptions = allSuppliers.map(s => '<option value="' + esc(s.id) + '">' + esc(s.name) + '</option>').join('');
     const prodOptions = productList().filter(p => p.active !== false)
-        .map(p => '<option value="' + p.id + '">' + esc(p.name) + ' (#' + p.id + ')</option>').join('');
+        .map(p => {
+            const sups = suppliersForProduct(p.id);
+            const suffix = sups.length ? ' — ' + sups.map(s => s.name).join(', ') : '';
+            return '<option value="' + p.id + '">' + esc(p.name) + ' (#' + p.id + ')' + esc(suffix) + '</option>';
+        }).join('');
 
     const open = allPurchases.filter(p => p.status === 'Ordered').length;
     const received = allPurchases.filter(p => p.status === 'Received').length;
@@ -461,21 +521,25 @@ function renderPurchases(){
         + uiCard('Received', String(received), 'text-accent-600')
         + uiCard('Recorded spend', rs(totalSpend))
         + '</div>'
-        + '<div class="mb-6"><p class="eyebrow mb-2">What we need to buy</p>'
-        + uiTable(['Product', 'Required', 'Inventory', 'Shortage', 'Supplier', 'Last Price', ''], needRows,
+        + '<div class="mb-6"><div class="mb-2 flex flex-wrap items-center justify-between gap-2">'
+        + '<p class="eyebrow mb-0">What we need to buy</p>'
+        + (needed.length ? '<button onclick="exportWhatToBuy()" class="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-zinc-700 hover:border-accent-400 hover:text-accent-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">Download sheet (CSV)</button>' : '')
+        + '</div>'
+        + uiTable(['Product', 'Required', 'Inventory', 'Shortage', 'Supplier(s)', 'Last Supplier', 'Last Price', ''], needRows,
             'Nothing to buy — no shortages right now')
         + '</div>'
         + (can('purchases.write') ? '<div class="mb-6 rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">'
         + '<h3 class="font-display text-base font-semibold">New purchase</h3>'
         + (allSuppliers.length ? '' : '<p class="mt-1 text-[12px] text-amber-600">No suppliers yet — add one in <a href="#" onclick="event.preventDefault();showPage(\'suppliers\')" class="underline">Suppliers</a> first (optional).</p>')
         + '<div id="purchForm" class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">'
-        + '<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Supplier</label><select id="purchSupplier" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"><option value="">— none —</option>' + supOptions + '</select></div>'
-        + '<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Product *</label><select id="purchProduct" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"><option value="">— choose —</option>' + prodOptions + '</select></div>'
+        + '<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Supplier</label><select id="purchSupplier" onchange="this.dataset.touched=1" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"><option value="">— none —</option>' + supOptions + '</select></div>'
+        + '<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Product *</label><select id="purchProduct" onchange="onPurchProductChange()" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"><option value="">— choose —</option>' + prodOptions + '</select></div>'
         + '<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Quantity *</label><input type="number" id="purchQty" min="1" step="1" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"></div>'
         + '<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Unit Cost (Rs.) *</label><input type="number" id="purchCost" min="0" step="1" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"></div>'
         + '<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Purchase Date</label><input type="date" id="purchDate" value="' + todayStr() + '" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"></div>'
         + '<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Notes</label><input type="text" id="purchNotes" placeholder="Optional" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"></div>'
         + '</div>'
+        + '<div id="purchSupHint" class="mt-2 text-[12px] text-zinc-500"></div>'
         + '<div class="mt-4"><button onclick="savePurchase()" class="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-600">Create purchase</button></div>'
         + '</div>' : '')
         + '<div><p class="eyebrow mb-2">Purchase history</p>'
@@ -488,6 +552,7 @@ function deliveryOrders(){
         if (dlvrStatus === 'delivered') return o.orderStatus === 'Delivered';
         if (dlvrStatus === 'all') return true;
         if (dlvrStatus === 'active') return ['New', 'Processing'].includes(o.orderStatus);
+        if (dlvrStatus === 'undelivered') return o.orderStatus !== 'Delivered' && o.orderStatus !== 'Cancelled';
         return o.paymentStatus === 'Paid' && ['New', 'Processing'].includes(o.orderStatus); // needs delivery
     }).filter(o => {
         if (dlvrCampus && String(o.campus) !== dlvrCampus) return false;
@@ -496,9 +561,9 @@ function deliveryOrders(){
             if (!d) return false;
             const now = new Date();
             const day = (now.getDay() + 6) % 7; // Monday = 0
-            const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day);
-            const weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 7);
-            if (d < weekStart || d >= weekEnd) return false;
+            const thisMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day);
+            const prevMonday = new Date(thisMonday.getFullYear(), thisMonday.getMonth(), thisMonday.getDate() - 7);
+            if (d < prevMonday || d > now) return false;
         }
         return true;
     });
@@ -571,6 +636,27 @@ async function confirmDeliver(){
     } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
 }
 
+function exportDeliveriesSheet(){
+    // Delivery sheet = paid orders in the current filtered view (Signature column left blank for printing)
+    const rows = deliveryOrders().filter(o => o.paymentStatus === 'Paid');
+    if (!rows.length) return showToast('No paid orders in this view', 'error');
+    const receipts = {};
+    allDeliveries.forEach(d => { receipts[d.orderId] = d; });
+    const data = [['Order ID', 'Date', 'Customer', 'Phone', 'Campus', 'Dept/Roll', 'Products',
+        'Subtotal', 'Delivery', 'Total', 'Order Status', 'Payment', 'Received By', 'Received Date', 'Received Time', 'Notes', 'Signature']];
+    rows.forEach(o => {
+        const rec = receipts[o.orderId] || {};
+        const d = parseOrderDate(o.timestamp);
+        data.push([o.orderId, d ? d.toLocaleDateString('en-GB') : String(o.timestamp || ''),
+            o.name, o.phone || '', o.campus || '', o.deptRoll || '', o.itemsText || '',
+            num(o.subtotal), num(o.delivery), num(o.total),
+            o.orderStatus, o.paymentStatus, rec.receivedBy || '', rec.date || '', rec.time || '',
+            rec.notes || o.notes || '', '']);
+    });
+    sableDownloadCsv('delivery-sheet.csv', data);
+    showToast(rows.length + ' paid order(s) exported (CSV)', 'success');
+}
+
 function renderDeliveries(){
     const el = document.getElementById('view-deliveries');
     if (!el) return;
@@ -585,9 +671,14 @@ function renderDeliveries(){
 
     const now = new Date();
     const day = (now.getDay() + 6) % 7;
-    const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day);
-    const weekLabel = weekStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' – '
-        + new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 6).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    const thisMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day);
+    const prevMonday = new Date(thisMonday.getFullYear(), thisMonday.getMonth(), thisMonday.getDate() - 7);
+    const weekLabel = prevMonday.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+    // next Tuesday (deliveries run Tuesdays only)
+    const nextTue = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    nextTue.setDate(nextTue.getDate() + ((2 - now.getDay() + 7) % 7));
+    const tueLabel = nextTue.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'short' });
 
     const body = groups.map(g => {
         const dateLabel = g.date
@@ -628,7 +719,7 @@ function renderDeliveries(){
                 + '<th class="px-4 py-2 text-left font-medium">Received</th></tr></thead>'
                 + '<tbody class="divide-y divide-zinc-100 dark:divide-white/[0.05]">' + rows + '</tbody></table></div></div>';
         }).join('');
-        return '<div class="mb-6"><p class="eyebrow mb-2">' + (dlvrWeek ? 'This week · ' : '') + esc(dateLabel) + '</p>' + campusBlocks + '</div>';
+        return '<div class="mb-6"><p class="eyebrow mb-2">' + (dlvrWeek ? 'Since Mon · ' : '') + esc(dateLabel) + '</p>' + campusBlocks + '</div>';
     }).join('');
 
     const needs = allOrders.filter(o => o.paymentStatus === 'Paid' && ['New', 'Processing'].includes(o.orderStatus)).length;
@@ -637,7 +728,7 @@ function renderDeliveries(){
         .concat(campuses.map(c => '<option value="' + esc(c) + '"' + (dlvrCampus === c ? ' selected' : '') + '>' + esc(c) + '</option>')).join('');
 
     el.innerHTML = uiHead('Deliveries', 'Deliveries',
-        'Paid orders waiting for delivery, grouped by <strong>week → day → university</strong>. Tick each order individually and record who received it.')
+        'Deliveries run <strong>Tuesdays only</strong> — next run <strong>' + esc(tueLabel) + '</strong>. Undelivered orders grouped by <strong>date → university</strong>; tick each order and record who received it.')
         + missingApiBanner(deliveriesErr)
         + '<div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">'
         + uiCard('Needs delivery', String(needs), needs ? 'text-amber-600' : 'text-accent-600')
@@ -648,13 +739,15 @@ function renderDeliveries(){
         + '<div class="mb-5 flex flex-wrap items-center gap-2">'
         + '<select onchange="setDlvrCampus(this.value)" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]">' + campusOpts + '</select>'
         + '<select onchange="setDlvrStatus(this.value)" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]">'
+        + '<option value="undelivered"' + (dlvrStatus === 'undelivered' ? ' selected' : '') + '>All undelivered</option>'
         + '<option value="needs"' + (dlvrStatus === 'needs' ? ' selected' : '') + '>Paid · needs delivery</option>'
         + '<option value="active"' + (dlvrStatus === 'active' ? ' selected' : '') + '>All active (any payment)</option>'
         + '<option value="delivered"' + (dlvrStatus === 'delivered' ? ' selected' : '') + '>Delivered</option>'
         + '<option value="all"' + (dlvrStatus === 'all' ? ' selected' : '') + '>All orders</option>'
         + '</select>'
-        + '<button onclick="setDlvrWeek(true)" class="rounded-lg border px-3 py-2 text-sm font-medium ' + (dlvrWeek ? 'border-accent-500 bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300' : 'border-zinc-200 bg-white text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300') + '">This week (' + weekLabel + ')</button>'
+        + '<button onclick="setDlvrWeek(true)" class="rounded-lg border px-3 py-2 text-sm font-medium ' + (dlvrWeek ? 'border-accent-500 bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300' : 'border-zinc-200 bg-white text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300') + '">Since Mon (' + weekLabel + ')</button>'
         + '<button onclick="setDlvrWeek(false)" class="rounded-lg border px-3 py-2 text-sm font-medium ' + (!dlvrWeek ? 'border-accent-500 bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300' : 'border-zinc-200 bg-white text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300') + '">All dates</button>'
+        + '<button onclick="exportDeliveriesSheet()" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 hover:border-accent-400 hover:text-accent-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">Download delivery sheet (CSV)</button>'
         + '</div>'
         + (groups.length ? body : uiEmpty('Nothing to deliver with these filters'));
 }

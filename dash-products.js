@@ -3,6 +3,7 @@ const SHOP_ORIGIN = 'https://makerapk.vercel.app'; // storefront origin (for rel
 let masterProducts = [];
 let productsLoaded = false;
 let productsErr = null;
+let productsLoading = false;
 let editingProductId = null;
 
 function shopImg(v){
@@ -12,16 +13,14 @@ function shopImg(v){
     return SHOP_ORIGIN + '/' + v.replace(/^\/+/, '');
 }
 
-function fallbackProducts(){
-    return PRODUCTS.map(p => ({
-        id: p.id, name: p.name, price: p.price, cost: num(productCosts[p.id]),
-        reorderLevel: 0, unit: 'pcs', description: '', active: true, inventory: null
-    }));
-}
-function productList(){ return productsLoaded && masterProducts.length ? masterProducts : fallbackProducts(); }
+// Master products come only from the Products sheet (no hardcoded fallback list).
+// Before the first successful load productList() is empty → pages show a loading state.
+function productList(){ return productsLoaded ? masterProducts : []; }
+function productsPending(){ return !productsLoaded && !productsErr; }
 
 async function loadProducts(){
-    const token = getToken(); if (!token) return;
+    const token = getToken(); if (!token || productsLoading) return;
+    productsLoading = true;
     try {
         const data = await apiGet('products');
         if (data && data.success && Array.isArray(data.products)){
@@ -33,6 +32,7 @@ async function loadProducts(){
             productsErr = (data && data.error) || 'Failed to load products';
         }
     } catch(e){ productsErr = 'Connection error: ' + e.message; }
+    productsLoading = false;
     refreshActivePage();
 }
 
@@ -183,6 +183,12 @@ function renderProducts(){
     const el = document.getElementById('view-products');
     if (!el) return;
     if (!getToken()){ el.innerHTML = uiHead('Products', 'Sign in required', '') + uiEmpty('Sign in to see Products'); return; }
+    if (productsPending()){
+        loadProducts();
+        el.innerHTML = uiHead('Products', 'Products', 'Master product list from the Products sheet.')
+            + uiEmpty('Loading products…');
+        return;
+    }
     const writable = can('products.write');
 
     const ordered = orderedQtyMap();
