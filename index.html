@@ -14,11 +14,13 @@
 .status-select[data-status="new"],.status-select[data-status="pending"]{background:rgba(234,179,8,.15);border-color:rgba(234,179,8,.35);color:#B45309}
 .status-select[data-status="processing"],.status-select[data-status="failed"]{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.35);color:#1D4ED8}
 .status-select[data-status="shipped"]{background:rgba(14,165,233,.15);border-color:rgba(14,165,233,.35);color:#0369A1}
+.status-select[data-status="ready to ship"]{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.35);color:#6D28D9}
 .status-select[data-status="delivered"],.status-select[data-status="paid"],.status-select[data-status="confirmed"]{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.35);color:#15803D}
 .status-select[data-status="cancelled"],.status-select[data-status="rejected"]{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.35);color:#B91C1C}
 .dark .status-select[data-status="new"],.dark .status-select[data-status="pending"]{color:#FACC15}
 .dark .status-select[data-status="processing"],.dark .status-select[data-status="failed"]{color:#60A5FA}
 .dark .status-select[data-status="shipped"]{color:#38BDF8}
+.dark .status-select[data-status="ready to ship"]{color:#A78BFA}
 .dark .status-select[data-status="delivered"],.dark .status-select[data-status="paid"],.dark .status-select[data-status="confirmed"]{color:#4ADE80}
 .dark .status-select[data-status="cancelled"],.dark .status-select[data-status="rejected"]{color:#F87171}
 .detail-lbl{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#A8A29E;margin-bottom:2px}
@@ -175,6 +177,7 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 <a href="#" id="nav-suppliers" onclick="event.preventDefault();showPage('suppliers')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="14" height="10" rx="1"></rect><path d="M15 9h4l3 3v4h-7z"></path><circle cx="6" cy="18" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg>Suppliers</a>
 <a href="#" id="nav-inventory" onclick="event.preventDefault();showPage('inventory')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"></path><path d="M3 7l9 4 9-4"></path><path d="M12 11v10"></path></svg>Inventory</a>
 <a href="#" id="nav-purchases" onclick="event.preventDefault();showPage('purchases')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.5 12h11L21 7H6"></path></svg>Purchases</a>
+<a href="#" id="nav-processing" onclick="event.preventDefault();showPage('processing')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect><path d="m9 14 2 2 4-4"></path></svg>Processing</a>
 <a href="#" id="nav-deliveries" onclick="event.preventDefault();showPage('deliveries')" class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.04] dark:hover:text-white"><span class="nav-tick" aria-hidden="true"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Deliveries</a>
 </div>
 </div>
@@ -278,6 +281,7 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 <div class="ms-panel">
 <label><input type="checkbox" data-ms="order" value="New" onchange="msChanged()"> New</label>
 <label><input type="checkbox" data-ms="order" value="Processing" onchange="msChanged()"> Processing</label>
+<label><input type="checkbox" data-ms="order" value="Ready to Ship" onchange="msChanged()"> Ready to Ship</label>
 <label><input type="checkbox" data-ms="order" value="Delivered" onchange="msChanged()"> Delivered</label>
 <label><input type="checkbox" data-ms="order" value="Cancelled" onchange="msChanged()"> Cancelled</label>
 </div>
@@ -425,6 +429,7 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 <section id="page-suppliers" style="display:none"><div id="view-suppliers"></div></section>
 <section id="page-inventory" style="display:none"><div id="view-inventory"></div></section>
 <section id="page-purchases" style="display:none"><div id="view-purchases"></div></section>
+<section id="page-processing" style="display:none"><div id="view-processing"></div></section>
 <section id="page-deliveries" style="display:none"><div id="view-deliveries"></div></section>
 <section id="page-finance" style="display:none"><div id="view-finance"></div></section>
 <section id="page-expenses" style="display:none"><div id="view-expenses"></div></section>
@@ -542,7 +547,7 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9zbFRKyrvpSk53OPRz00MgFpQ3CGCE3T5UyM5MTN5sHSLHSAsRbFBpeuPJg_Mfp8/exec';
 let allOrders = [], filteredOrders = [], currentPage = 1, searchTimeout = null, editingCostOrderId = null;
 const pageSize = 20;
-const VALID_STATUSES = { orderStatus: ['New','Processing','Delivered','Cancelled'], paymentStatus: ['Pending','Paid','Failed'] };
+ const VALID_STATUSES = { orderStatus: ['New','Processing','Ready to Ship','Delivered','Cancelled'], paymentStatus: ['Pending','Paid','Failed'] };
 
 // Products & cost prices are loaded live from the Apps Script Products sheet
 // (dash-products.js). No hardcoded catalog here — if the backend is down the
@@ -656,16 +661,16 @@ function currentRole(){ const u = currentUserObj(); return u ? u.role : null; }
 // The backend enforces these again; this copy only shapes the UI.
 // (Lazy: PAGES is declared later in this file.)
 function rolePages(r){
-    const ops = ['suppliers', 'inventory', 'purchases', 'deliveries'];
+    const ops = ['suppliers', 'inventory', 'purchases', 'deliveries', 'processing'];
     if (r === 'CEO') return PAGES.slice();
     if (r === 'CFO') return PAGES.filter(p => ops.indexOf(p) === -1);
     if (r === 'COO') return PAGES.filter(p => p !== 'finance');
     return [];
 }
 const ROLE_ACTIONS = {
-    CEO: ['orders.edit','orders.delete','finance.verify','products.write','suppliers.write','purchases.write','deliveries.write','expenses.write','settings.secret','users.manage'],
+    CEO: ['orders.edit','orders.delete','orders.pack','finance.verify','products.write','suppliers.write','purchases.write','deliveries.write','expenses.write','settings.secret','users.manage'],
     CFO: ['finance.verify','expenses.write'],
-    COO: ['products.write','suppliers.write','purchases.write','deliveries.write','expenses.write']
+    COO: ['products.write','suppliers.write','purchases.write','deliveries.write','orders.pack','expenses.write']
 };
 function hasPage(p){ const r = currentRole(); if (!r) return false; return rolePages(r).indexOf(p) !== -1; }
 function can(perm){ const r = currentRole(); if (!r) return false; return (ROLE_ACTIONS[r] || []).indexOf(perm) !== -1; }
@@ -1048,10 +1053,11 @@ function uiTable(head, rows, emptyMsg){
         + head.map(h => '<th class="px-4 py-3 font-medium">' + esc(h) + '</th>').join('') + '</tr></thead>'
         + '<tbody class="divide-y divide-zinc-100 dark:divide-white/[0.05]">' + rows + '</tbody></table></div>';
 }
-const PAGES = ['dashboard','orders','products','suppliers','inventory','purchases','deliveries','finance','expenses','activity','health','settings'];
+const PAGES = ['dashboard','orders','processing','products','suppliers','inventory','purchases','deliveries','finance','expenses','activity','health','settings'];
 const PAGE_META = {
     dashboard: { title:'Dashboard',   sub:()=> 'Overview of orders, revenue and stock' },
     orders:    { title:'Orders',      sub:()=> '<span id="headCount">' + allOrders.length + '</span> total' },
+    processing:{ title:'Processing',  sub:()=> 'Pack items &amp; mark orders ready to ship' },
     products:  { title:'Products',    sub:()=> 'Master product list, prices &amp; stock' },
     suppliers: { title:'Suppliers',   sub:()=> 'Supplier database &amp; purchase history' },
     inventory: { title:'Inventory',   sub:()=> 'Required vs available — shortage calculation' },
@@ -1303,6 +1309,7 @@ function debounceSearch(){ clearTimeout(searchTimeout); searchTimeout = setTimeo
 function statusCls(s){ return ({Paid:'bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300',
   Pending:'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
   Failed:'bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300',
+  'Ready to Ship':'bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
   Delivered:'bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300',
   Confirmed:'bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300',
   Rejected:'bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300',
@@ -1318,6 +1325,7 @@ function selHtml(o, field){
 function msgLabel(o){
     if (o.orderStatus === 'Cancelled') return 'Cancelled';
     if (o.orderStatus === 'Shipped' || o.orderStatus === 'Delivered') return 'Feedback';
+    if (o.orderStatus === 'Ready to Ship') return 'Ready ✓';
     if (o.paymentStatus === 'Paid') return 'Paid ✓';
     if (o.orderStatus === 'Processing') return 'Processing';
     return 'Request Pay';
@@ -1570,11 +1578,13 @@ function buildStatusMessage(o){
     const det = detailsBlock(o);
     const cancelled = o.orderStatus === 'Cancelled';
     const delivered = o.orderStatus === 'Shipped' || o.orderStatus === 'Delivered';
+    const ready = o.orderStatus === 'Ready to Ship';
     const processing = o.orderStatus === 'Processing';
     const paid = o.paymentStatus === 'Paid';
 
     if (cancelled) return `Hi ${o.name}, your order of ${o.orderId} was cancelled.\n\n${det}\n\nIf you have any questions, just reply to this message.`;
     if (delivered) return `Hi ${o.name}, your order ${o.orderId} was delivered! 🎉\n\n${det}\n\nPlease give us your feedback — it helps a lot. Thank you for ordering from Makers Era!`;
+    if (ready) return `Hi ${o.name}, your order ${o.orderId} is packed and ready to ship! 📦\nExpected delivery: Tuesday.\n\n${det}`;
     if (processing) return `Hi ${o.name}, your order ${o.orderId} is being processed.\n\nWe are under high volume right now — please cooperate while we process your order. It will be with you soon.\n\n${det}`;
     if (paid) return `Hi ${o.name}, payment received for order ${o.orderId} — thank you! ✅\nExpected delivery: Tuesday.\n\n${det}`;
     return `Hi ${o.name}, we received your order ${o.orderId}!\n\nPlease pay to:\nAccount: Muhammad Bin Junaid\nIBAN: PK77JSBL9999903330034535\nBank: JS Bank / Zindagi\n\nSend the payment screenshot after paying. Thank you!\n\n${det}`;
@@ -1709,7 +1719,7 @@ function showToast(msg, type){
    (overrides the demo version shipped in sable-script.js). */
 function commandPalette(){
     const PAGE_SUBS = {
-        dashboard: 'Overview & KPIs', orders: 'Search, filter & reconcile', products: 'Catalog, stock & pricing',
+        dashboard: 'Overview & KPIs', orders: 'Search, filter & reconcile', processing: 'Packing queue & ready to ship', products: 'Catalog, stock & pricing',
         suppliers: 'Vendor directory', inventory: 'Stock & shortages', purchases: 'Restock orders',
         deliveries: 'Fulfillment log', finance: 'Payments & profit', expenses: 'Operating costs',
         activity: 'Audit trail', health: 'System status', settings: 'Account & preferences'

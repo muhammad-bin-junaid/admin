@@ -317,13 +317,13 @@ function renderInventory(){
         + '<td class="px-4 py-2.5 text-[12px] text-zinc-500">Not in Products — add it via Products → Add Product</td></tr>').join('');
 
     el.innerHTML = uiHead('Inventory', 'Inventory',
-        '<strong>Required</strong> = items in New / Processing orders. <strong>Available</strong> is saved in the Products sheet — it rises when a purchase is received and drops when an order is delivered.')
+        '<strong>Required</strong> = items in New / Processing / Ready to Ship orders. <strong>Available</strong> is saved in the Products sheet — it rises when a purchase is received and drops when an order is delivered.')
         + missingApiBanner(productsErr)
         + '<div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">'
         + uiCard('Products tracked', String(rowsData.length))
         + uiCard('Shortages', String(shortages), shortages ? 'text-red-600' : 'text-accent-600')
         + uiCard('Enough stock', String(enough), 'text-accent-600')
-        + uiCard('Active orders counted', String(allOrders.filter(o => o.orderStatus === 'New' || o.orderStatus === 'Processing').length))
+        + uiCard('Active orders counted', String(allOrders.filter(o => ['New', 'Processing', 'Ready to Ship'].includes(o.orderStatus)).length))
         + '</div>'
         + uiTable(['Product', 'Required', 'Available', 'Shortage', 'Purchase Needed', 'Status'], rows, 'No products yet')
         + (Object.keys(required.unmatched).length
@@ -551,9 +551,9 @@ function deliveryOrders(){
     return allOrders.filter(o => {
         if (dlvrStatus === 'delivered') return o.orderStatus === 'Delivered';
         if (dlvrStatus === 'all') return true;
-        if (dlvrStatus === 'active') return ['New', 'Processing'].includes(o.orderStatus);
+        if (dlvrStatus === 'active') return ['New', 'Processing', 'Ready to Ship'].includes(o.orderStatus);
         if (dlvrStatus === 'undelivered') return o.orderStatus !== 'Delivered' && o.orderStatus !== 'Cancelled';
-        return o.paymentStatus === 'Paid' && ['New', 'Processing'].includes(o.orderStatus); // needs delivery
+        return o.paymentStatus === 'Paid' && ['New', 'Processing', 'Ready to Ship'].includes(o.orderStatus); // needs delivery
     }).filter(o => {
         if (dlvrCampus && String(o.campus) !== dlvrCampus) return false;
         if (dlvrWeek){
@@ -722,7 +722,7 @@ function renderDeliveries(){
         return '<div class="mb-6"><p class="eyebrow mb-2">' + (dlvrWeek ? 'Since Mon · ' : '') + esc(dateLabel) + '</p>' + campusBlocks + '</div>';
     }).join('');
 
-    const needs = allOrders.filter(o => o.paymentStatus === 'Paid' && ['New', 'Processing'].includes(o.orderStatus)).length;
+    const needs = allOrders.filter(o => o.paymentStatus === 'Paid' && ['New', 'Processing', 'Ready to Ship'].includes(o.orderStatus)).length;
 
     const campusOpts = ['<option value="">All universities</option>']
         .concat(campuses.map(c => '<option value="' + esc(c) + '"' + (dlvrCampus === c ? ' selected' : '') + '>' + esc(c) + '</option>')).join('');
@@ -752,7 +752,163 @@ function renderDeliveries(){
         + (groups.length ? body : uiEmpty('Nothing to deliver with these filters'));
 }
 
+// ==================== PROCESSING (packing checklist + ready to ship) ====================
+let procScope = 'paid';
+function setProcScope(v){ procScope = v; renderProcessing(); }
+
+function packStore_(){ return ME_STORE.get('pack', {}); }
+function packGet_(orderId){ return packStore_()[orderId] || {}; }
+function packSet_(orderId, m){
+    const s = packStore_();
+    if (m && Object.keys(m).length) s[orderId] = m; else delete s[orderId];
+    ME_STORE.set('pack', s);
+}
+function procList(){
+    const rank = { 'New': 0, 'Processing': 1, 'Ready to Ship': 2 };
+    return allOrders
+        .filter(o => o.orderStatus === 'New' || o.orderStatus === 'Processing' || o.orderStatus === 'Ready to Ship')
+        .filter(o => procScope === 'all' || o.paymentStatus === 'Paid')
+        .sort((a, b) => (rank[a.orderStatus] - rank[b.orderStatus]) || String(b.timestamp).localeCompare(String(a.timestamp)));
+}
+async function packToggle(orderId, idx, on){
+    if (!can('orders.pack')) return showToast('Your role cannot pack orders', 'error');
+    const o = allOrders.find(x => x.orderId === orderId); if (!o) return;
+    const m = Object.assign({}, packGet_(orderId));
+    if (on) m[idx] = 1; else delete m[idx];
+    packSet_(orderId, m);
+    const items = parseItems(o.itemsText);
+    const all = items.length > 0 && items.every((_, i) => !!m[i]);
+    if (all && (o.orderStatus === 'New' || o.orderStatus === 'Processing') && o.paymentStatus === 'Paid'){
+        await updateStatus(orderId, 'orderStatus', 'Ready to Ship');
+    } else if (!all && o.orderStatus === 'Ready to Ship'){
+        await updateStatus(orderId, 'orderStatus', 'Processing');
+    }
+    renderProcessing();
+}
+
+// hand-rolled Code 128 (set B) — no CDN, works in the print window
+const CODE128_PATTERNS_ = ('212222,222122,222221,121223,121322,131222,122213,122312,132212,221213,221312,231212,112232,122132,122231,113222,123122,123221,223211,221132,221231,213212,223112,312131,311222,321122,321221,312212,322112,322211,212123,212321,232121,111323,131123,131321,112313,132113,132311,211313,231113,231311,112133,112331,132131,113123,113321,133121,313121,211331,231131,213113,213311,213131,311123,311321,331121,312113,312311,332111,314111,221411,431111,111224,111422,121124,121421,141122,141221,112214,112412,122114,122411,142112,142211,241211,221114,413111,241112,134111,111242,121142,121241,114212,124112,124211,411212,421112,421211,212141,214121,412121,111143,111341,131141,114113,114311,411113,411311,113141,114131,311141,411131,211412,211214,211232,2331112').split(',');
+function code128Values_(text){
+    const s = String(text == null ? '' : text);
+    const vals = [104]; // Start B
+    for (let i = 0; i < s.length; i++){
+        const c = s.charCodeAt(i);
+        vals.push(c >= 32 && c <= 126 ? c - 32 : 31); // '?' fallback
+    }
+    let sum = 104;
+    for (let i = 1; i < vals.length; i++) sum += vals[i] * i;
+    vals.push(sum % 103);
+    vals.push(106); // Stop
+    return vals;
+}
+function code128Svg_(text){
+    const h = 40, qz = 10;
+    let x = qz, rects = '';
+    code128Values_(text).forEach(v => {
+        const p = CODE128_PATTERNS_[v];
+        if (!p) return;
+        for (let i = 0; i < p.length; i++){
+            const w = +p[i];
+            if (i % 2 === 0) rects += '<rect x="' + x + '" y="0" width="' + w + '" height="' + h + '"/>';
+            x += w;
+        }
+    });
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (x + qz) + ' ' + (h + 1) + '" preserveAspectRatio="none" role="img" aria-label="Barcode ' + esc(text) + '"><g fill="#000">' + rects + '</g></svg>';
+}
+
+const STICKER_CSS_ = '@page{size:A4 portrait;margin:8mm}*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#000;background:#fff}.toolbar{padding:16px;text-align:center}.toolbar button{padding:10px 20px;border:1px solid #000;background:#fff;color:#000;cursor:pointer;font-weight:bold}.page{width:194mm;height:281mm;margin:12px auto;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:3mm;page-break-after:always;break-after:page}.page:last-child{page-break-after:auto;break-after:auto}.sticker{border:1px dashed #000;padding:3mm;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:#fff;break-inside:avoid}.brand{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;padding-bottom:2mm}.brand-name{font-size:13pt;font-weight:800;letter-spacing:.5px}.brand-sub{font-size:6pt;text-align:right}.order-id{margin-top:2mm;font-size:8pt;font-weight:bold}.ship-label{margin-top:2mm;font-size:7pt;font-weight:bold;letter-spacing:.5px}.customer{margin-top:1mm;font-size:11pt;font-weight:bold;overflow-wrap:anywhere}.details{font-size:7.5pt;line-height:1.4;margin-top:1mm;overflow-wrap:anywhere}.items-title{margin-top:2mm;border-top:1px solid #000;padding-top:1.5mm;font-size:7pt;font-weight:bold}.items{font-size:7.5pt;line-height:1.4;margin-top:1mm;overflow-wrap:anywhere}.bc{margin-top:1.5mm}.bc svg{display:block;width:100%;height:11mm}.bc-cap{font-size:5.5pt;text-align:center;letter-spacing:1px}.bottom{display:flex;align-items:end;justify-content:space-between;gap:2mm;border-top:1px solid #000;padding-top:1.5mm;margin-top:2mm}.thanks{font-size:6pt;font-weight:bold}.qr{width:16mm;height:16mm;object-fit:contain;flex-shrink:0}.qr-caption{font-size:5pt;text-align:center}@media print{.toolbar{display:none}.page{margin:0}}';
+function stickerHtml_(o){
+    const items = parseItems(o.itemsText);
+    const d = parseOrderDate(o.timestamp);
+    return '<div class="sticker">'
+        + '<div>'
+        + '<div class="brand"><div class="brand-name">MAKERS ERA</div><div class="brand-sub">ELECTRONICS<br>&amp; DIY STORE</div></div>'
+        + '<div class="order-id">ORDER: ' + esc(o.orderId) + '</div>'
+        + '<div class="ship-label">SHIP TO</div>'
+        + '<div class="customer">' + esc(o.name) + '</div>'
+        + '<div class="details"><b>Phone:</b> ' + esc(o.phone || '-') + '<br><b>University:</b> ' + esc(o.campus || '-') + '<br><b>Dept/Roll:</b> ' + esc(o.deptRoll || '-') + (d ? '<br><b>Ordered:</b> ' + esc(d.toLocaleDateString('en-GB')) : '') + '</div>'
+        + '<div class="items-title">ORDER DETAILS</div>'
+        + '<div class="items">' + (items.length ? items.map(i => esc(i)).join('<br>') : esc(o.itemsText || '')) + '</div>'
+        + '<div class="bc">' + code128Svg_(o.orderId) + '</div>'
+        + '<div class="bc-cap">' + esc(o.orderId) + '</div>'
+        + '</div>'
+        + '<div class="bottom"><div class="thanks">MAKERS ERA<br>THANK YOU!</div>'
+        + '<div><img class="qr" src="../qr.png" alt="QR" onerror="this.style.display=\'none\'"><div class="qr-caption">SCAN ORDER</div></div></div>'
+        + '</div>';
+}
+function printSticker(orderId){ printStickers([orderId]); }
+function printStickers(ids){
+    const orders = ids.map(id => allOrders.find(o => o.orderId === id)).filter(Boolean);
+    if (!orders.length) return showToast('No orders to print', 'error');
+    const w = window.open('', '_blank');
+    if (!w) return showToast('Pop-up blocked — allow pop-ups to print stickers', 'error');
+    let pages = '';
+    for (let s = 0; s < orders.length; s += 12){
+        pages += '<div class="page">' + orders.slice(s, s + 12).map(stickerHtml_).join('') + '</div>';
+    }
+    w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Stickers — MAKERS ERA</title><style>' + STICKER_CSS_ + '</style></head><body>'
+        + '<div class="toolbar"><button onclick="window.print()">Print / Save as PDF</button><p>Shipping stickers · A4 · 12 per page · ' + orders.length + ' order(s)</p></div>'
+        + '<div id="sheet">' + pages + '</div></body></html>');
+    w.document.close();
+    setTimeout(function(){ try { w.focus(); w.print(); } catch(e){} }, 400);
+}
+
+function renderProcessing(){
+    const el = document.getElementById('view-processing');
+    if (!el) return;
+    if (!getToken()){ el.innerHTML = opsNoToken(); return; }
+
+    const list = procList();
+    const payWaiting = allOrders.filter(o => o.paymentStatus === 'Paid' && (o.orderStatus === 'New' || o.orderStatus === 'Processing')).length;
+    const ready = allOrders.filter(o => o.orderStatus === 'Ready to Ship').length;
+
+    const cards = list.map(o => {
+        const items = parseItems(o.itemsText);
+        const m = packGet_(o.orderId);
+        const n = items.filter((_, i) => !!m[i]).length;
+        const all = items.length > 0 && n === items.length;
+        const pct = items.length ? Math.round(n / items.length * 100) : 0;
+        const rows = items.map((row, i) => {
+            const { name, qty } = itemRowParse_(row);
+            return '<label class="flex items-start gap-2 rounded-lg px-2 py-1.5 text-[13px] ' + (m[i] ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300' : 'text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-white/[0.03]') + '">'
+                + '<input type="checkbox" class="mt-0.5 h-4 w-4 accent-emerald-600"' + (m[i] ? ' checked' : '') + ' onchange="packToggle(\'' + esc(o.orderId) + '\',' + i + ',this.checked)">'
+                + '<span>' + esc(name) + (qty > 1 ? ' <strong>× ' + qty + '</strong>' : '') + '</span></label>';
+        }).join('');
+        return '<div class="mb-4 rounded-xl border ' + (all ? 'border-emerald-300 dark:border-emerald-500/40' : 'border-zinc-200 dark:border-white/[0.07]') + ' bg-white p-4 shadow-card dark:bg-[#1F1B16]">'
+            + '<div class="flex flex-wrap items-center justify-between gap-2">'
+            + '<div class="font-display text-[15px] font-semibold text-zinc-900 dark:text-white">' + esc(o.orderId) + ' <span class="text-[13px] font-normal text-zinc-500">· ' + esc(o.name) + ' · ' + esc(o.campus || '') + '</span></div>'
+            + '<div class="flex flex-wrap items-center gap-1.5">'
+            + '<span class="rounded px-2 py-0.5 text-[11px] font-medium ' + statusCls(o.orderStatus) + '">' + esc(o.orderStatus) + '</span>'
+            + '<span class="rounded px-2 py-0.5 text-[11px] font-medium ' + statusCls(o.paymentStatus) + '">' + esc(o.paymentStatus) + '</span>'
+            + (can('orders.edit') ? '<button class="rounded-md bg-accent-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-accent-600" title="WhatsApp message to customer" onclick="sendOrderMsg(\'' + esc(o.orderId) + '\')">Message</button>' : '')
+            + '<button class="rounded-md bg-zinc-900 px-2 py-1 text-[11px] font-semibold text-white hover:bg-zinc-700 dark:bg-white/10 dark:hover:bg-white/20" title="Print shipping sticker (A4, 12 per page)" onclick="printSticker(\'' + esc(o.orderId) + '\')">Sticker</button>'
+            + '</div></div>'
+            + (o.paymentStatus !== 'Paid' ? '<div class="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-[12px] text-amber-700 dark:border-amber-400/40 dark:bg-amber-400/10 dark:text-amber-200">Payment pending — items can be packed, but the order only auto-marks <strong>Ready to Ship</strong> once paid.</div>' : '')
+            + '<div class="mt-3 grid grid-cols-1 gap-1 sm:grid-cols-2">' + (rows || '<div class="text-[13px] text-zinc-400">No items listed</div>') + '</div>'
+            + '<div class="mt-3 flex items-center gap-3">'
+            + '<div class="h-2 flex-1 overflow-hidden rounded-full bg-zinc-100 dark:bg-white/[0.06]"><div class="h-full rounded-full ' + (all ? 'bg-emerald-500' : 'bg-accent-500') + '" style="width:' + pct + '%"></div></div>'
+            + '<span class="text-[12px] font-medium ' + (all ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-500') + '">' + n + '/' + items.length + ' packed</span>'
+            + '</div></div>';
+    }).join('');
+
+    el.innerHTML = uiHead('Orders', 'Processing',
+        'Tick every item as you pack it — when all items of a <strong>paid</strong> order are ticked, it flips to <strong>Ready to Ship</strong> automatically (untick to send it back to Processing). Progress is saved on this device.')
+        + '<div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">'
+        + uiCard('Paid · to pack', String(payWaiting), payWaiting ? 'text-amber-600' : 'text-accent-600')
+        + uiCard('Ready to Ship', String(ready), 'text-violet-600 dark:text-violet-400')
+        + uiCard('Shown now', String(list.length))
+        + uiCard('Active orders', String(allOrders.filter(o => ['New', 'Processing', 'Ready to Ship'].indexOf(o.orderStatus) !== -1).length))
+        + '</div>'
+        + '<div class="mb-5 flex flex-wrap items-center gap-2">'
+        + '<button onclick="setProcScope(\'paid\')" class="rounded-lg border px-3 py-2 text-sm font-medium ' + (procScope === 'paid' ? 'border-accent-500 bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300' : 'border-zinc-200 bg-white text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300') + '">Paid only</button>'
+        + '<button onclick="setProcScope(\'all\')" class="rounded-lg border px-3 py-2 text-sm font-medium ' + (procScope === 'all' ? 'border-accent-500 bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300' : 'border-zinc-200 bg-white text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300') + '">All orders</button>'
+        + (list.length ? '<button onclick="printStickers(procList().map(function(o){return o.orderId;}))" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 hover:border-accent-400 hover:text-accent-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">Print stickers (' + list.length + ')</button>' : '')
+        + '</div>'
+        + (list.length ? cards : uiEmpty(procScope === 'paid' ? 'No paid orders waiting to be packed' : 'No active orders to pack'));
+}
+
 PAGE_RENDERERS.suppliers = renderSuppliers;
 PAGE_RENDERERS.inventory = renderInventory;
 PAGE_RENDERERS.purchases = renderPurchases;
 PAGE_RENDERERS.deliveries = renderDeliveries;
+PAGE_RENDERERS.processing = renderProcessing;

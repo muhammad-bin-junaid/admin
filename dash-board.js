@@ -494,7 +494,7 @@ function renderDashboardOps(){
     const monthExp = (typeof expensesThisMonth === 'function') ? expensesThisMonth() : 0;
 
     const kpis = '<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Key metrics">'
-        + kpiCard({ title: 'Undelivered', value: String(undelivered.length), note: 'New + Processing + Shipped', icon: iconSvg('pending') })
+        + kpiCard({ title: 'Undelivered', value: String(undelivered.length), note: 'New + Processing + Ready', icon: iconSvg('pending') })
         + kpiCard({ title: 'Delivered', value: String(delivered.length), note: 'all time', icon: iconSvg('delivered') })
         + kpiCard({ title: 'Products short', value: String(shortages.length), note: 'across catalog', icon: iconSvg('alerts') })
         + kpiCard({ title: 'Open purchases', value: String(openPurchases.length), note: 'not yet received', icon: iconSvg('cart') })

@@ -55,7 +55,7 @@ function qtyByProduct_(orderFilter){
     return { byId, unmatched };
 }
 function orderedQtyMap(){ return qtyByProduct_(o => o.orderStatus !== 'Cancelled'); }
-function requiredQtyMap(){ return qtyByProduct_(o => o.orderStatus === 'New' || o.orderStatus === 'Processing'); }
+function requiredQtyMap(){ return qtyByProduct_(o => o.orderStatus === 'New' || o.orderStatus === 'Processing' || o.orderStatus === 'Ready to Ship'); }
 function todayStr(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 
 // ---- page ----
