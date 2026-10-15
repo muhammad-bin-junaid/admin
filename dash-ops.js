@@ -4,7 +4,11 @@ let allPurchases = [], purchasesErr = null, purchasesLoading = false, purchasesI
 let allDeliveries = [], deliveriesErr = null, deliveriesInit = false;
 let supplierFormId = null;     // null = adding
 let supplierDrawerId = null;
-let dlvrCampus = '', dlvrWeek = true, dlvrStatus = 'undelivered';
+// Default view: every PAID order that has not been handed over yet — no date/week cutoff,
+// so nothing gets hidden between delivery runs. Each row carries its order date.
+let dlvrCampus = '', dlvrStatus = 'needs';
+// Distribution = per product per student ticks, saved server-side in the Distribution sheet
+let allDistribution = [], distributionInit = false, distributionErr = null;
 
 function opsNoToken(){ return uiHead('Operations', 'Sign in required', '') + uiEmpty('Sign in to see this page'); }
 
@@ -38,7 +42,16 @@ async function loadDeliveries(){
         if (data && data.success){ allDeliveries = data.deliveries || []; deliveriesInit = true; }
         else deliveriesErr = (data && data.error) || 'Failed to load deliveries';
     } catch(e){ deliveriesErr = 'Connection error: ' + e.message; }
+    await loadDistribution();
     if (activePage === 'deliveries') renderDeliveries();
+}
+async function loadDistribution(){
+    if (!getToken()) return;
+    try {
+        const data = await apiGet('distribution');
+        if (data && data.success){ allDistribution = data.lines || []; distributionErr = null; distributionInit = true; }
+        else distributionErr = (data && data.error) || 'Failed to load distribution';
+    } catch(e){ distributionErr = 'Connection error: ' + e.message; }
 }
 function missingApiBanner(err){
     if (!err) return '';
@@ -269,9 +282,13 @@ function renderSuppliers(){
 }
 
 // ==================== INVENTORY ====================
-function inventoryRows(){
-    const required = requiredQtyMap();
-    return productList().filter(p => p.active !== false).map(p => {
+// orderFilter (optional) narrows which orders count towards "required" — Purchases passes
+// an Order ID range here; Inventory and the ops dashboard always see every order.
+function inventoryRows(orderFilter){
+    const required = requiredQtyMap(orderFilter);
+    // Custom products are Active = false (never on the storefront) but MUST be buyable —
+    // they came from a customer's custom order, so they belong in "What we need to buy".
+    return productList().filter(p => p.active !== false || p.custom === true).map(p => {
         const req = required.byId[p.id] || 0;
         const avail = (p.inventory == null ? null : num(p.inventory));
         const shortage = avail == null ? null : Math.max(0, req - avail);
@@ -361,7 +378,8 @@ function onPurchProductChange(){
     if (supSel && !supSel.dataset.touched && !supSel.value && last && last.supplierId) supSel.value = last.supplierId;
 }
 function exportWhatToBuy(){
-    const needed = inventoryRows().filter(r => (r.shortage == null && r.req > 0) || (r.shortage > 0));
+    const needed = inventoryRows(purchaseOrderFilter_)
+        .filter(r => (r.shortage == null && r.req > 0) || (r.shortage > 0));
     if (!needed.length) return showToast('Nothing to buy right now', 'error');
     const rows = [['Product', 'ID', 'Required', 'Available', 'Shortage', 'Supplier(s)', 'Last supplier', 'Last date', 'Last price', 'Suggested qty', 'Est. cost']];
     needed.forEach(r => {
@@ -447,6 +465,64 @@ async function deletePurchaseRow(id){
         } else showToast((data && data.error) || 'Delete failed', 'error');
     } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
 }
+// ---- Order ID range on Purchases: buy only for a chosen batch of orders -----
+// Two dropdowns (From / To). Empty bound = no limit. Applies ONLY to this page's
+// "What we need to buy" — Inventory and the ops dashboard stay unscoped.
+let purchFromId = '', purchToId = '';
+
+function orderIdCmp_(a, b){
+    const pa = String(a).match(/\d+|\D+/g) || [];
+    const pb = String(b).match(/\d+|\D+/g) || [];
+    const n = Math.max(pa.length, pb.length);
+    for (let i = 0; i < n; i++){
+        const x = pa[i], y = pb[i];
+        if (x === undefined) return -1;
+        if (y === undefined) return 1;
+        const nx = /^\d+$/.test(x), ny = /^\d+$/.test(y);
+        if (nx && ny){
+            const d = parseInt(x, 10) - parseInt(y, 10);
+            if (d) return d < 0 ? -1 : 1;
+        } else if (x !== y) return x < y ? -1 : 1;
+    }
+    return 0;
+}
+function allOrderIds_(){
+    const seen = {}, out = [];
+    allOrders.forEach(o => {
+        const id = String(o.orderId || '').trim();
+        if (id && !seen[id]){ seen[id] = 1; out.push(id); }
+    });
+    return out.sort(orderIdCmp_);
+}
+function purchRangeActive(){ return !!(purchFromId || purchToId); }
+// What Purchases counts: an order only creates demand if it is PAID and still on the
+// books — cancelled, delivered or unpaid orders are never counted (requiredQtyMap adds
+// the "still active" status check on top: New / Processing / Ready to Ship).
+function purchaseCountable_(o){
+    return o.paymentStatus === 'Paid'
+        && o.orderStatus !== 'Cancelled'
+        && o.orderStatus !== 'Delivered';
+}
+function purchaseOrderFilter_(o){
+    if (!purchaseCountable_(o)) return false;
+    if (!purchRangeActive()) return true;
+    const id = String(o.orderId || '').trim();
+    if (!id) return false;
+    if (purchFromId && orderIdCmp_(id, purchFromId) < 0) return false;
+    if (purchToId && orderIdCmp_(id, purchToId) > 0) return false;
+    return true;
+}
+function setPurchRange(which, v){
+    v = String(v || '');
+    if (which === 'from') purchFromId = v; else purchToId = v;
+    // keep the two bounds ordered — moving one past the other drags the other along
+    if (purchFromId && purchToId && orderIdCmp_(purchFromId, purchToId) > 0){
+        if (which === 'from') purchToId = purchFromId; else purchFromId = purchToId;
+    }
+    renderPurchases();
+}
+function clearPurchRange(){ purchFromId = ''; purchToId = ''; renderPurchases(); }
+
 function renderPurchases(){
     const el = document.getElementById('view-purchases');
     if (!el) return;
@@ -462,13 +538,17 @@ function renderPurchases(){
         return;
     }
 
-    // What we need to buy
-    const needed = inventoryRows().filter(r => (r.shortage == null && r.req > 0) || (r.shortage > 0));
+    // What we need to buy — only paid, non-cancelled, non-delivered orders, optionally
+    // narrowed to an Order ID range (From → To dropdowns)
+    const orderScope = purchaseOrderFilter_;
+    const needed = inventoryRows(orderScope).filter(r => (r.shortage == null && r.req > 0) || (r.shortage > 0));
     const needRows = needed.map(r => {
         const last = lastPurchaseForProduct(r.p.id);
         const sups = suppliersForProduct(r.p.id);
         return '<tr class="hover:bg-zinc-50 dark:hover:bg-white/[0.03]">'
-            + '<td class="px-4 py-3 font-medium text-zinc-900 dark:text-white">' + esc(r.p.name) + '<div class="text-[11px] text-zinc-400">#' + r.p.id + '</div></td>'
+            + '<td class="px-4 py-3 font-medium text-zinc-900 dark:text-white">' + esc(r.p.name)
+            + (r.p.custom ? ' <span class="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300" title="Custom order item — hidden from the public shop">custom</span>' : '')
+            + '<div class="text-[11px] text-zinc-400">#' + r.p.id + (r.p.sourceOrder ? ' · from ' + esc(r.p.sourceOrder) : '') + '</div></td>'
             + '<td class="tnum px-4 py-3 text-right">' + r.req + '</td>'
             + '<td class="tnum px-4 py-3 text-right">' + (r.avail == null ? '—' : r.avail) + '</td>'
             + '<td class="tnum px-4 py-3 text-right font-semibold ' + (r.shortage > 0 ? 'text-red-600' : 'text-amber-600') + '">' + (r.shortage == null ? 'stock not set' : r.shortage) + '</td>'
@@ -500,21 +580,52 @@ function renderPurchases(){
         + '</td>'
         + '</tr>').join('');
 
-    const supOptions = allSuppliers.map(s => '<option value="' + esc(s.id) + '">' + esc(s.name) + '</option>').join('');
-    const prodOptions = productList().filter(p => p.active !== false)
+    const supOptions = allSuppliers.map(s => '<option value="' + esc(s.id) + '">' + esc(s.name) + '</option>').join('');    const prodOptions = productList().filter(p => p.active !== false || p.custom === true)
         .map(p => {
             const sups = suppliersForProduct(p.id);
             const suffix = sups.length ? ' — ' + sups.map(s => s.name).join(', ') : '';
-            return '<option value="' + p.id + '">' + esc(p.name) + ' (#' + p.id + ')' + esc(suffix) + '</option>';
+            const customTag = p.custom ? ' [custom]' : '';
+            return '<option value="' + p.id + '">' + esc(p.name) + ' (#' + p.id + ')' + esc(customTag) + esc(suffix) + '</option>';
         }).join('');
 
     const open = allPurchases.filter(p => p.status === 'Ordered').length;
     const received = allPurchases.filter(p => p.status === 'Received').length;
     const totalSpend = allPurchases.reduce((s, p) => s + num(p.total), 0);
 
+    // Custom items still at Rs. 0 — they cannot enter the buy list until priced
+    const unpricedNames = Object.keys(requiredQtyMap(orderScope).unmatched);
+    const unpricedStrip = unpricedNames.length
+        ? '<div class="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] text-amber-800 dark:border-amber-400/40 dark:bg-amber-400/10 dark:text-amber-200">'
+        + '<span><strong>' + unpricedNames.length + ' custom item(s)</strong> in active orders are still unpriced — set their price &amp; cost on the Orders page and they will appear below for buying. ('
+        + esc(unpricedNames.slice(0, 4).join(', ')) + (unpricedNames.length > 4 ? ' +' + (unpricedNames.length - 4) + ' more' : '') + ')</span>'
+        + '<button onclick="showPage(\'orders\')" class="rounded-md bg-amber-500 px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-amber-600">Open Orders</button>'
+        + '</div>'
+        : '';
+
+    // ---- Order ID range picker (From → To) for "What we need to buy" ----
+    const orderIds = allOrderIds_();
+    const idOpts = (sel, blankLabel) => ['<option value="">' + blankLabel + '</option>']
+        .concat(orderIds.map(id => '<option value="' + esc(id) + '"' + (sel === id ? ' selected' : '') + '>' + esc(id) + '</option>')).join('');
+    const inRange = allOrders.filter(purchaseOrderFilter_).length;
+    const skipped = allOrders.length - inRange;
+    const rangeBar = orderIds.length < 2 ? '' :
+        '<div class="mb-3 flex flex-wrap items-center gap-2">'
+        + '<span class="text-[12px] font-semibold text-zinc-500">Order ID range</span>'
+        + '<select onchange="setPurchRange(\'from\', this.value)" title="From — lowest Order ID to buy for" class="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-sm dark:border-white/10 dark:bg-white/[0.04]">' + idOpts(purchFromId, 'From: first') + '</select>'
+        + '<span class="text-zinc-400">→</span>'
+        + '<select onchange="setPurchRange(\'to\', this.value)" title="To — highest Order ID to buy for" class="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-sm dark:border-white/10 dark:bg-white/[0.04]">' + idOpts(purchToId, 'To: last') + '</select>'
+        + (purchRangeActive() ? '<button onclick="clearPurchRange()" class="rounded-lg border border-zinc-200 px-2.5 py-1.5 text-[12px] font-semibold text-zinc-600 hover:bg-zinc-50 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">Clear range</button>' : '')
+        + '<span class="text-[12px] text-zinc-400">' + (purchRangeActive()
+            ? 'Buying for <strong class="text-zinc-600 dark:text-zinc-300">' + esc(purchFromId || 'first') + ' → ' + esc(purchToId || 'last') + '</strong> · ' + inRange + ' of ' + allOrders.length + ' order(s) counted'
+            : inRange + ' of ' + allOrders.length + ' order(s) counted')
+        + (skipped ? ' · ' + skipped + ' skipped (unpaid / cancelled / delivered)' : '')
+        + '</span>'
+        + '</div>';
+
     el.innerHTML = uiHead('Purchases', 'Purchases',
-        'Answers <strong>"what do we need to buy?"</strong> using orders, inventory and supplier history. Receiving a purchase increases stock in the Products sheet.')
+        'Answers <strong>"what do we need to buy?"</strong> using orders, inventory and supplier history. Counts <strong>paid, undelivered, non-cancelled</strong> orders only (optionally narrowed by the Order ID range below). Receiving a purchase increases stock in the Products sheet.')
         + missingApiBanner(purchasesErr)
+        + unpricedStrip
         + '<div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">'
         + uiCard('To buy now', String(needed.length), needed.length ? 'text-red-600' : 'text-accent-600')
         + uiCard('Open purchases', String(open), open ? 'text-amber-600' : '')
@@ -525,8 +636,13 @@ function renderPurchases(){
         + '<p class="eyebrow mb-0">What we need to buy</p>'
         + (needed.length ? '<button onclick="exportWhatToBuy()" class="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-zinc-700 hover:border-accent-400 hover:text-accent-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">Download sheet (CSV)</button>' : '')
         + '</div>'
+        + rangeBar
         + uiTable(['Product', 'Required', 'Inventory', 'Shortage', 'Supplier(s)', 'Last Supplier', 'Last Price', ''], needRows,
-            'Nothing to buy — no shortages right now')
+            inRange === 0
+                ? 'No paid, undelivered orders to buy for — nothing is counted'
+                : purchRangeActive()
+                    ? 'Nothing to buy for Order IDs ' + esc(purchFromId || 'first') + ' → ' + esc(purchToId || 'last')
+                    : 'Nothing to buy — no shortages right now')
         + '</div>'
         + (can('purchases.write') ? '<div class="mb-6 rounded-xl border border-zinc-200 bg-white p-5 shadow-card dark:border-white/[0.07] dark:bg-[#1F1B16]">'
         + '<h3 class="font-display text-base font-semibold">New purchase</h3>'
@@ -547,29 +663,20 @@ function renderPurchases(){
 }
 
 // ==================== DELIVERIES (bulk + individual) ====================
+// Paid + not yet handed over = the queue the COO works through (all dates, forever).
+function isPaidUndelivered(o){
+    return o.paymentStatus === 'Paid' && o.orderStatus !== 'Delivered' && o.orderStatus !== 'Cancelled';
+}
 function deliveryOrders(){
     return allOrders.filter(o => {
         if (dlvrStatus === 'delivered') return o.orderStatus === 'Delivered';
         if (dlvrStatus === 'all') return true;
-        if (dlvrStatus === 'active') return ['New', 'Processing', 'Ready to Ship'].includes(o.orderStatus);
+        if (dlvrStatus === 'active') return ['New', 'Processing', 'Ready to Ship', 'Shipped'].includes(o.orderStatus);
         if (dlvrStatus === 'undelivered') return o.orderStatus !== 'Delivered' && o.orderStatus !== 'Cancelled';
-        return o.paymentStatus === 'Paid' && ['New', 'Processing', 'Ready to Ship'].includes(o.orderStatus); // needs delivery
-    }).filter(o => {
-        if (dlvrCampus && String(o.campus) !== dlvrCampus) return false;
-        if (dlvrWeek){
-            const d = parseOrderDate(o.timestamp);
-            if (!d) return false;
-            const now = new Date();
-            const day = (now.getDay() + 6) % 7; // Monday = 0
-            const thisMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day);
-            const prevMonday = new Date(thisMonday.getFullYear(), thisMonday.getMonth(), thisMonday.getDate() - 7);
-            if (d < prevMonday || d > now) return false;
-        }
-        return true;
-    });
+        return isPaidUndelivered(o); // default: paid, needs delivery
+    }).filter(o => !dlvrCampus || String(o.campus) === dlvrCampus); // no week/date cutoff
 }
 function setDlvrCampus(v){ dlvrCampus = v; renderDeliveries(); }
-function setDlvrWeek(v){ dlvrWeek = v; renderDeliveries(); }
 function setDlvrStatus(v){ dlvrStatus = v; renderDeliveries(); }
 
 function groupDeliveries(list){
@@ -593,52 +700,58 @@ function campusRequirements(orders){
     return Object.keys(byName).map(n => ({ name: n, qty: byName[n] }));
 }
 
-let dlvTargetOrder = null;
-function openDeliverModal(orderId){
-    if (!can('deliveries.write')) return showToast('Your role cannot record deliveries', 'error');
-    const o = allOrders.find(x => x.orderId === orderId); if (!o) return;
-    dlvTargetOrder = orderId;
-    document.getElementById('dlvOrderId').textContent = orderId + ' · ' + o.name;
-    document.getElementById('dlvReceivedBy').value = '';
-    document.getElementById('dlvSignature').value = '';
-    document.getElementById('dlvDate').value = todayStr();
-    const now = new Date();
-    document.getElementById('dlvTime').value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('dlvNotes').value = '';
-    document.getElementById('deliverModal').style.display = 'flex';
-    document.getElementById('dlvReceivedBy').focus();
+// ==================== HAND-OVER TICKS (one checkbox per product line) ====================
+// Delivery and distribution are the same action now: every product of an order has its own
+// tick, saved as a Distribution line server-side. Ticking the last one makes the backend
+// complete the delivery itself — Delivered in the Orders sheet, stock decremented, receipt
+// written — and reports it back in data.orderDelivered.
+function distMap_(){
+    const map = {};
+    allDistribution.forEach(l => { map[distKey_(l.orderId, l.product)] = l; });
+    return map;
 }
-function closeDeliverModal(){ document.getElementById('deliverModal').style.display = 'none'; dlvTargetOrder = null; }
-async function confirmDeliver(){
+// Products of one order merged with any saved ticks. A Delivered order implies every line
+// left the store even if no tick was ever recorded (e.g. marked from the Orders page).
+function orderLines_(o, map){
+    map = map || distMap_();
+    return parseItems(o.itemsText).map(row => {
+        const pr = itemRowParse_(row);
+        if (!pr.name) return null;
+        const rec = map[distKey_(o.orderId, pr.name)] || null;
+        return {
+            name: pr.name, qty: pr.qty, rec: rec,
+            delivered: rec ? !!rec.delivered : o.orderStatus === 'Delivered',
+            collected: !!(rec && rec.collected)
+        };
+    }).filter(Boolean);
+}
+async function tickDistLine(orderId, product, field, on){
     if (!can('deliveries.write')) return showToast('Your role cannot record deliveries', 'error');
-    if (!dlvTargetOrder) return;
-    const params = {
-        orderId: dlvTargetOrder,
-        receivedBy: (document.getElementById('dlvReceivedBy').value || '').trim(),
-        signature: (document.getElementById('dlvSignature').value || '').trim(),
-        date: document.getElementById('dlvDate').value,
-        time: document.getElementById('dlvTime').value,
-        notes: (document.getElementById('dlvNotes').value || '').trim()
-    };
     try {
-        const data = await apiGet('deliver', params);
-        if (data && data.success){
-            const o = allOrders.find(x => x.orderId === params.orderId);
-            if (o) o.orderStatus = 'Delivered';
-            showToast(params.orderId + ' delivered ✓', 'success');
-            logLocal('Order delivered', params.orderId + (params.receivedBy ? ' → ' + params.receivedBy : ''));
-            closeDeliverModal();
+        const data = await apiGet('setDistributionLine', { orderId: orderId, product: product, field: field, value: !!on });
+        if (!(data && data.success)) return showToast((data && data.error) || 'Failed', 'error');
+        saveDistLine_(data.line);
+        const o = allOrders.find(x => x.orderId === orderId);
+        if (data.orderDelivered && o && o.orderStatus !== 'Delivered'){
+            o.orderStatus = 'Delivered';
             renderStats();
-            await loadDeliveries();
-            await loadProducts(); // stock decremented on backend
-            renderDeliveries();
-        } else showToast((data && data.error) || 'Failed', 'error');
+            loadProducts(); // stock is decremented on the backend
+            showToast('Every product ticked — order ' + orderId + ' is Delivered ✓', 'success');
+            logLocal('Order delivered', orderId + ' · all products handed over');
+        } else {
+            const msg = field === 'delivered'
+                ? (on ? 'Handed over ✓ ' + product : 'Tick removed — ' + product)
+                : (on ? 'Marked picked up ✓' : 'Pickup tick removed');
+            showToast(msg, 'success');
+            logLocal(field === 'delivered' ? (on ? 'Item distributed' : 'Distribution reverted') : (on ? 'Item collected' : 'Collection reverted'), orderId + ' · ' + product);
+        }
+        renderDeliveries();
     } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
 }
 
 function exportDeliveriesSheet(){
     // Delivery sheet = paid orders in the current filtered view (Signature column left blank for printing)
-    const rows = deliveryOrders().filter(o => o.paymentStatus === 'Paid');
+    const rows = deliveryOrders().filter(o => o.paymentStatus === 'Paid' && o.orderStatus !== 'Cancelled');
     if (!rows.length) return showToast('No paid orders in this view', 'error');
     const receipts = {};
     allDeliveries.forEach(d => { receipts[d.orderId] = d; });
@@ -662,18 +775,16 @@ function renderDeliveries(){
     if (!el) return;
     if (!getToken()){ el.innerHTML = opsNoToken(); return; }
     if (!deliveriesInit) loadDeliveries();
+    if (productsPending()) loadProducts(); // custom-item "Set price" chips need the catalogue
 
     const list = deliveryOrders();
     const groups = groupDeliveries(list);
     const campuses = [...new Set(allOrders.map(o => String(o.campus || '')).filter(Boolean))].sort();
     const receipts = {};
     allDeliveries.forEach(d => { receipts[d.orderId] = d; });
+    const dmap = distMap_(); // Distribution ticks, looked up per order + product
 
     const now = new Date();
-    const day = (now.getDay() + 6) % 7;
-    const thisMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day);
-    const prevMonday = new Date(thisMonday.getFullYear(), thisMonday.getMonth(), thisMonday.getDate() - 7);
-    const weekLabel = prevMonday.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
     // next Tuesday (deliveries run Tuesdays only)
     const nextTue = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -691,17 +802,47 @@ function renderDeliveries(){
             const rows = orders.map(o => {
                 const delivered = o.orderStatus === 'Delivered';
                 const rec = receipts[o.orderId];
+                const ci = customItemsOf(o);
+                const od = parseOrderDate(o.timestamp);
+                const dateCell = od
+                    ? od.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+                    : String(o.timestamp || '—');
+                const lines = orderLines_(o, dmap);
+                const handed = lines.filter(l => l.delivered).length;
+                const priceBtn = (ci.length && can('products.write'))
+                    ? '<div class="mt-1"><button class="rounded bg-amber-500 px-2 py-0.5 text-[11px] font-semibold text-white hover:bg-amber-600" title="Custom item(s) with no price yet" onclick="openCustomPriceModal(\'' + esc(o.orderId) + '\')">Set price (' + ci.length + ')</button></div>'
+                    : '';
+                // progress chip = how many products have been handed over; ✓ once the order is Delivered
+                const progressCell = delivered
+                    ? '<span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-accent-500 text-[11px] text-white" title="Delivered">✓</span>'
+                    : (lines.length
+                        ? '<span class="tnum text-[12px] font-semibold ' + (handed ? 'text-amber-600' : 'text-zinc-400') + '" title="' + handed + ' of ' + lines.length + ' products handed over">' + handed + '/' + lines.length + '</span>'
+                        : '');
+                // one tick per product: left tick = handed over, right tick (once handed) = picked up
+                const linesCell = lines.length ? lines.map(l => {
+                    const tick = (field, on, cls, title) =>
+                        '<input type="checkbox" class="h-4 w-4 shrink-0 ' + cls + '" title="' + title + '"' + (on ? ' checked' : '')
+                        + (can('deliveries.write') ? '' : ' disabled')
+                        + ' onchange="tickDistLine(\'' + esc(o.orderId) + '\',\'' + esc(l.name) + '\',\'' + field + '\',this.checked)">';
+                    return '<div class="flex items-center gap-2 py-0.5">'
+                        + tick('delivered', l.delivered, 'accent-green-600', 'Handed over')
+                        + '<span class="' + (l.delivered ? 'text-zinc-400 line-through' : 'text-zinc-700 dark:text-zinc-200') + '">' + esc(l.name)
+                        + ' <span class="tnum text-zinc-400">×' + l.qty + '</span></span>'
+                        + (l.delivered
+                            ? '<label class="ml-auto flex shrink-0 cursor-pointer items-center gap-1 text-[11px] ' + (l.collected ? 'text-accent-600' : 'text-zinc-400') + '" title="The student picked it up">'
+                              + tick('collected', l.collected, 'h-3.5 w-3.5 accent-accent-500', 'Picked up') + 'picked up</label>'
+                            : '')
+                        + '</div>';
+                }).join('') : '<span class="text-[12px] text-zinc-400">No products parsed</span>';
+                const unconfirmed = o.confirmStatus !== 'Confirmed'
+                    ? ' <span class="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300" title="Not confirmed yet — set Confirm → Confirmed on the Orders page">unconfirmed</span>'
+                    : '';
                 return '<tr class="hover:bg-zinc-50 dark:hover:bg-white/[0.03]">'
-                    + '<td class="px-4 py-2.5">'
-                    + (delivered
-                        ? '<span class="inline-flex h-4 w-4 items-center justify-center rounded border border-accent-500 bg-accent-500 text-[10px] text-white">✓</span>'
-                        : (can('deliveries.write')
-                            ? '<input type="checkbox" class="h-4 w-4 accent-green-600" onchange="if(this.checked) openDeliverModal(\'' + esc(o.orderId) + '\')">'
-                            : ''))
-                    + '</td>'
-                    + '<td class="px-4 py-2.5 font-medium text-zinc-900 dark:text-white">' + esc(o.orderId) + '</td>'
+                    + '<td class="px-4 py-2.5 text-center align-top">' + progressCell + '</td>'
+                    + '<td class="px-4 py-2.5 font-medium text-zinc-900 dark:text-white">' + esc(o.orderId) + unconfirmed + '</td>'
+                    + '<td class="px-4 py-2.5 whitespace-nowrap text-[12px] text-zinc-600 dark:text-zinc-300" title="' + esc(String(o.timestamp || '')) + '">' + esc(dateCell) + '</td>'
                     + '<td class="px-4 py-2.5">' + esc(o.name) + '<div class="text-[11px] text-zinc-400">' + esc(o.phone || '') + '</div></td>'
-                    + '<td class="px-4 py-2.5 text-[13px] text-zinc-500">' + esc(o.itemsText) + '</td>'
+                    + '<td class="px-4 py-2.5 min-w-[280px]">' + linesCell + priceBtn + '</td>'
                     + '<td class="px-4 py-2.5"><span class="rounded px-2 py-0.5 text-[11px] font-medium ' + statusCls(o.orderStatus) + '">' + esc(o.orderStatus) + '</span></td>'
                     + '<td class="px-4 py-2.5"><span class="rounded px-2 py-0.5 text-[11px] font-medium ' + statusCls(o.paymentStatus) + '">' + esc(o.paymentStatus) + '</span></td>'
                     + '<td class="px-4 py-2.5 text-[12px] text-zinc-500">' + (delivered && rec ? esc(rec.receivedBy || '—') + '<div class="text-[11px] text-zinc-400">' + esc(rec.date) + ' ' + esc(rec.time) + '</div>' : '') + '</td>'
@@ -713,43 +854,77 @@ function renderDeliveries(){
                 + '<div class="flex flex-wrap gap-1.5">' + reqChips + '</div></div>'
                 + '<div class="overflow-x-auto"><table class="w-full text-sm"><thead>'
                 + '<tr class="border-b border-zinc-100 text-[11px] uppercase tracking-wide text-zinc-500 dark:border-white/[0.06]">'
-                + '<th class="px-4 py-2 text-left font-medium"></th><th class="px-4 py-2 text-left font-medium">Order ID</th>'
-                + '<th class="px-4 py-2 text-left font-medium">Customer</th><th class="px-4 py-2 text-left font-medium">Products</th>'
+                + '<th class="px-4 py-2 text-center font-medium">Handed</th><th class="px-4 py-2 text-left font-medium">Order ID</th>'
+                + '<th class="px-4 py-2 text-left font-medium">Date</th><th class="px-4 py-2 text-left font-medium">Customer</th><th class="px-4 py-2 text-left font-medium">Products</th>'
                 + '<th class="px-4 py-2 text-left font-medium">Order Status</th><th class="px-4 py-2 text-left font-medium">Payment</th>'
                 + '<th class="px-4 py-2 text-left font-medium">Received</th></tr></thead>'
                 + '<tbody class="divide-y divide-zinc-100 dark:divide-white/[0.05]">' + rows + '</tbody></table></div></div>';
         }).join('');
-        return '<div class="mb-6"><p class="eyebrow mb-2">' + (dlvrWeek ? 'Since Mon · ' : '') + esc(dateLabel) + '</p>' + campusBlocks + '</div>';
+        return '<div class="mb-6"><p class="eyebrow mb-2">' + esc(dateLabel) + '</p>' + campusBlocks + '</div>';
     }).join('');
 
-    const needs = allOrders.filter(o => o.paymentStatus === 'Paid' && ['New', 'Processing', 'Ready to Ship'].includes(o.orderStatus)).length;
+    const needs = allOrders.filter(isPaidUndelivered).length;
+    const shownLines = list.reduce((acc, o) => acc.concat(orderLines_(o, dmap)), []);
+    const toHand = shownLines.filter(l => !l.delivered).length;              // products still to hand over
+    const awaitingPickup = shownLines.filter(l => l.delivered && !l.collected).length; // handed, not picked up
 
     const campusOpts = ['<option value="">All universities</option>']
         .concat(campuses.map(c => '<option value="' + esc(c) + '"' + (dlvrCampus === c ? ' selected' : '') + '>' + esc(c) + '</option>')).join('');
 
     el.innerHTML = uiHead('Deliveries', 'Deliveries',
-        'Deliveries run <strong>Tuesdays only</strong> — next run <strong>' + esc(tueLabel) + '</strong>. Undelivered orders grouped by <strong>date → university</strong>; tick each order and record who received it.')
+        'Deliveries run <strong>Tuesdays only</strong> — next run <strong>' + esc(tueLabel) + '</strong>. By default: <strong>every paid order not yet delivered</strong>, grouped by <strong>date → university</strong>. Tick each product as you hand it over; when the last product of an order is ticked, the order is <strong>marked Delivered</strong> automatically (stock drops too). The tick marked <strong>picked up</strong> is for when the student collects it later.')
         + missingApiBanner(deliveriesErr)
+        + (distributionErr ? missingApiBanner(distributionErr) : '')
         + '<div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">'
         + uiCard('Needs delivery', String(needs), needs ? 'text-amber-600' : 'text-accent-600')
-        + uiCard('Shown now', String(list.length))
+        + uiCard('Products to hand over', String(toHand), toHand ? 'text-amber-600' : 'text-accent-600')
+        + uiCard('Awaiting pickup', String(awaitingPickup), awaitingPickup ? 'text-amber-600' : '')
         + uiCard('Deliveries recorded', String(allDeliveries.length), 'text-accent-600')
-        + uiCard('Universities', String(new Set(list.map(o => String(o.campus || '')).filter(Boolean)).size))
         + '</div>'
         + '<div class="mb-5 flex flex-wrap items-center gap-2">'
         + '<select onchange="setDlvrCampus(this.value)" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]">' + campusOpts + '</select>'
         + '<select onchange="setDlvrStatus(this.value)" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]">'
-        + '<option value="undelivered"' + (dlvrStatus === 'undelivered' ? ' selected' : '') + '>All undelivered</option>'
         + '<option value="needs"' + (dlvrStatus === 'needs' ? ' selected' : '') + '>Paid · needs delivery</option>'
+        + '<option value="undelivered"' + (dlvrStatus === 'undelivered' ? ' selected' : '') + '>All undelivered</option>'
         + '<option value="active"' + (dlvrStatus === 'active' ? ' selected' : '') + '>All active (any payment)</option>'
         + '<option value="delivered"' + (dlvrStatus === 'delivered' ? ' selected' : '') + '>Delivered</option>'
         + '<option value="all"' + (dlvrStatus === 'all' ? ' selected' : '') + '>All orders</option>'
         + '</select>'
-        + '<button onclick="setDlvrWeek(true)" class="rounded-lg border px-3 py-2 text-sm font-medium ' + (dlvrWeek ? 'border-accent-500 bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300' : 'border-zinc-200 bg-white text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300') + '">Since Mon (' + weekLabel + ')</button>'
-        + '<button onclick="setDlvrWeek(false)" class="rounded-lg border px-3 py-2 text-sm font-medium ' + (!dlvrWeek ? 'border-accent-500 bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300' : 'border-zinc-200 bg-white text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300') + '">All dates</button>'
         + '<button onclick="exportDeliveriesSheet()" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 hover:border-accent-400 hover:text-accent-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">Download delivery sheet (CSV)</button>'
+        + '<button onclick="exportDistribution()" class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 hover:border-accent-400 hover:text-accent-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">Download product ticks (CSV)</button>'
         + '</div>'
         + (groups.length ? body : uiEmpty('Nothing to deliver with these filters'));
+}
+
+// ==================== DISTRIBUTION TICKS (storage helpers) ====================
+// Every product line carries two ticks: handed over (Delivered) and picked up (Collected).
+// Both live in the Distribution sheet, so CEO and COO always share one state — the render
+// and the tick handlers sit with the Deliveries table above (tickDistLine).
+function distKey_(orderId, product){ return String(orderId) + '::' + String(product).toLowerCase(); }
+function saveDistLine_(line){
+    const key = distKey_(line.orderId, line.product);
+    const i = allDistribution.findIndex(l => distKey_(l.orderId, l.product) === key);
+    if (i >= 0) allDistribution[i] = line; else allDistribution.push(line);
+}
+
+function exportDistribution(){
+    // one row per product line of the orders currently in view (derived state, so an order
+    // delivered wholesale still reports its products as handed over)
+    const dmap = distMap_();
+    const rows = [];
+    deliveryOrders().forEach(o => orderLines_(o, dmap).forEach(l => rows.push({ o: o, l: l })));
+    if (!rows.length) return showToast('Nothing in this view', 'error');
+    const data = [['Campus', 'OrderID', 'Student', 'Phone', 'Dept/Roll', 'Product', 'Qty',
+        'Delivered', 'DeliveredAt', 'DeliveredBy', 'Collected', 'CollectedAt', 'CollectedBy', 'Notes']];
+    rows.forEach(r => data.push([
+        r.o.campus || '', r.o.orderId, r.o.name, r.o.phone || '', r.o.deptRoll || '',
+        r.l.name, r.l.qty,
+        r.l.delivered ? 'Yes' : 'No', r.l.rec ? r.l.rec.deliveredAt || '' : '', r.l.rec ? r.l.rec.deliveredBy || '' : '',
+        r.l.collected ? 'Yes' : 'No', r.l.rec ? r.l.rec.collectedAt || '' : '', r.l.rec ? r.l.rec.collectedBy || '' : '',
+        r.l.rec ? r.l.rec.notes || '' : ''
+    ]));
+    sableDownloadCsv('distribution.csv', data);
+    showToast(rows.length + ' product line(s) exported (CSV)', 'success');
 }
 
 // ==================== PROCESSING (packing checklist + ready to ship) ====================

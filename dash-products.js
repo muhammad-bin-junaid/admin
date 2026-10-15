@@ -55,7 +55,12 @@ function qtyByProduct_(orderFilter){
     return { byId, unmatched };
 }
 function orderedQtyMap(){ return qtyByProduct_(o => o.orderStatus !== 'Cancelled'); }
-function requiredQtyMap(){ return qtyByProduct_(o => o.orderStatus === 'New' || o.orderStatus === 'Processing' || o.orderStatus === 'Ready to Ship'); }
+// qty for orders passing the filter (extraFilter lets a page narrow it further — e.g.
+// Purchases scopes "What we need to buy" to a chosen Order ID range)
+function requiredQtyMap(extraFilter){
+    const active = o => o.orderStatus === 'New' || o.orderStatus === 'Processing' || o.orderStatus === 'Ready to Ship';
+    return qtyByProduct_(extraFilter ? (o => active(o) && extraFilter(o)) : active);
+}
 function todayStr(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 
 // ---- page ----
@@ -208,8 +213,10 @@ function renderProducts(){
         return '<tr class="border-b border-zinc-100 dark:border-white/[0.04]">'
             + '<td class="px-4 py-3"><div class="flex items-center gap-2.5">'
             + (p.image ? '<img src="' + esc(shopImg(p.image)) + '" alt="" class="h-8 w-8 shrink-0 rounded-md border border-zinc-100 object-cover dark:border-white/[0.06]" onerror="this.remove()">' : '')
-            + '<div><div class="font-medium text-zinc-800 dark:text-zinc-100">' + esc(p.name) + '</div>'
-            + '<div class="text-[11px] text-zinc-400">#' + p.id + ' · ' + esc(p.unit || 'pcs') + (p.active ? '' : ' · <span class="text-amber-600">Inactive</span>') + '</div></div></div></td>'
+            + '<div><div class="font-medium text-zinc-800 dark:text-zinc-100">' + esc(p.name)
+            + (p.custom ? ' <span class="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300" title="Created from a customer\'s custom order — never shown on the public shop">custom</span>' : '')
+            + '</div>'
+            + '<div class="text-[11px] text-zinc-400">#' + p.id + ' · ' + esc(p.unit || 'pcs') + (p.active ? '' : ' · <span class="text-amber-600">Inactive</span>') + (p.sourceOrder ? ' · from ' + esc(p.sourceOrder) : '') + '</div></div></div></td>'
             + '<td class="px-4 py-3 tnum">' + rs(p.price) + '</td>'
             + '<td class="px-4 py-3">' + (writable
                 ? '<input type="number" min="0" step="1" class="cost-input" id="pc-' + p.id + '" value="' + num(p.cost) + '" onchange="saveProductCost(' + p.id + ', this.value)">'
@@ -242,7 +249,7 @@ function renderProducts(){
         + uiTable(['Product', 'Selling Price', 'Cost Price', 'Current Inventory', 'Ordered Qty', 'Reorder Level', 'Status', ''], rows,
             'No products yet — backend returned none')
         + '<div class="mt-4 rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-500 dark:border-white/[0.07] dark:bg-[#1F1B16] dark:text-zinc-400">'
-        + '<strong class="text-zinc-700 dark:text-zinc-200">Custom orders</strong> (unknown items / IDs not in this list) get their cost set per order from the Orders page (Cost button).<br>'
+        + '<strong class="text-zinc-700 dark:text-zinc-200">Custom orders</strong> — free-text items a customer types into the cart start at Rs. 0. Price them from the Orders page (Set price button): they become a hidden <em>custom</em> product like the ones above, appear in Purchases → What we need to buy, and update the customer\'s subtotal and total. Their per-order cost can still be overridden with the Cost button on the Orders page.<br>'
         + '<strong class="text-zinc-700 dark:text-zinc-200">Website link:</strong> name, price, description, image and details shown on the storefront are read live from this sheet — edit them here (Edit button) and the website picks them up on its next load.'
         + '</div>';
 }

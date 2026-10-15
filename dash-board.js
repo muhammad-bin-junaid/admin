@@ -49,10 +49,13 @@ function periodExpenses(b){
     }, 0);
 }
 
+// Cancelled orders never happened — excluded from every money/pending count below.
+function notCancelled_(o){ return o.orderStatus !== 'Cancelled'; }
+
 function periodStats(days, back){
     const b = periodBounds(days, back);
     const list = allOrders.filter(o => orderInPeriod(o, b));
-    const paid = list.filter(o => o.paymentStatus === 'Paid');
+    const paid = list.filter(o => o.paymentStatus === 'Paid' && notCancelled_(o));
     const revenue = paid.reduce((s, o) => s + num(o.total), 0);
     const margin = paid.reduce((s, o) => s + profitOf(o), 0);
     const exp = periodExpenses(b);
@@ -81,9 +84,9 @@ function dailySeries(days, metric){
         const d = parseOrderDate(o.timestamp);
         const k = dayKey(d);
         if (!(k in map)) return;
-        if (metric === 'revenue'){ if (o.paymentStatus === 'Paid') map[k] += num(o.total); }
+        if (metric === 'revenue'){ if (o.paymentStatus === 'Paid' && notCancelled_(o)) map[k] += num(o.total); }
         else if (metric === 'orders') map[k] += 1;
-        else if (metric === 'profit'){ if (o.paymentStatus === 'Paid') map[k] += profitOf(o); }
+        else if (metric === 'profit'){ if (o.paymentStatus === 'Paid' && notCancelled_(o)) map[k] += profitOf(o); }
         else if (metric === 'delivered'){ if (o.orderStatus === 'Delivered' || o.orderStatus === 'Shipped') map[k] += 1; }
     });
     return { labels: labels, values: labels.map(d => map[dayKey(d)]) };
@@ -288,10 +291,10 @@ function monthlySeries(){
         const year = d.getFullYear(), month = d.getMonth();
         if (year === thisYear){
             ordersCount.this[month]++;
-            if (o.paymentStatus === 'Paid') revenue.this[month] += num(o.total);
+            if (o.paymentStatus === 'Paid' && notCancelled_(o)) revenue.this[month] += num(o.total);
         } else if (year === prevYear){
             ordersCount.prev[month]++;
-            if (o.paymentStatus === 'Paid') revenue.prev[month] += num(o.total);
+            if (o.paymentStatus === 'Paid' && notCancelled_(o)) revenue.prev[month] += num(o.total);
         }
     });
     return { ordersCount, revenue, thisYear, prevYear };
@@ -434,7 +437,7 @@ function renderDashboardFinance(){
 
     const cur = periodStats(dashRange, false);
     const prev = periodStats(dashRange, true);
-    const pending = allOrders.filter(o => o.paymentStatus !== 'Paid');
+    const pending = allOrders.filter(o => o.paymentStatus !== 'Paid' && notCancelled_(o));
     const pendingAmount = pending.reduce((s, o) => s + num(o.total), 0);
 
     const kpis = '<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Key metrics">'

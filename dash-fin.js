@@ -42,8 +42,10 @@ function renderFinance(){
     if (!finActivity) loadFinActivity();
 
     const totalOrders = allOrders.length;
-    const paidOrders = allOrders.filter(o => o.paymentStatus === 'Paid');
-    const pending = allOrders.filter(o => o.paymentStatus !== 'Paid');
+    // Cancelled orders never happened — they must not count as paid money or pending money.
+    const live = allOrders.filter(o => o.orderStatus !== 'Cancelled');
+    const paidOrders = live.filter(o => o.paymentStatus === 'Paid');
+    const pending = live.filter(o => o.paymentStatus !== 'Paid');
     const paidAmount = paidOrders.reduce((s, o) => s + num(o.total), 0);
     const pendingAmount = pending.reduce((s, o) => s + num(o.total), 0);
 

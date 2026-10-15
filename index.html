@@ -104,7 +104,7 @@ html.dark .gate-ghost{background:transparent;border-color:rgba(255,255,255,.1);c
 [id$="Modal"]{background:rgba(0,0,0,.5);overflow-y:auto;overscroll-behavior:contain}
 [id$="Modal"]>div{display:flex;flex-direction:column;max-height:calc(100vh - 2rem)}
 [id$="Modal"]>div>*{flex-shrink:0}
-#costModal>div>div:nth-child(2),#productModal>div>div:nth-child(2),#postModal>div>div:nth-child(2),#projectModal>div>div:nth-child(2),#deliverModal>div>div:nth-child(2){flex:1 1 auto;min-height:0;overflow-y:auto}
+#costModal>div>div:nth-child(2),#productModal>div>div:nth-child(2),#postModal>div>div:nth-child(2),#projectModal>div>div:nth-child(2),#customPriceModal>div>div:nth-child(2){flex:1 1 auto;min-height:0;overflow-y:auto}
 .max-h-\[92vh\]{max-height:92vh}
 .max-h-\[46vh\]{max-height:46vh}
 .min-h-\[240px\]{min-height:240px}
@@ -449,11 +449,12 @@ html.dark .rules-list li.is-current p{color:#FAFAF9}
 <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Profit</th>
 <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Order</th>
 <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Payment</th>
+<th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Confirm</th>
 <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Actions</th>
 </tr>
 </thead>
 <tbody id="ordersBody">
-<tr><td colspan="9" class="px-4 py-8 text-center text-zinc-500">Loading orders…</td></tr>
+<tr><td colspan="10" class="px-4 py-8 text-center text-zinc-500">Loading orders…</td></tr>
 </tbody>
 </table>
 </div>
@@ -768,26 +769,19 @@ html.dark .rules-list li.is-current p{color:#FAFAF9}
 </div>
 </div>
 
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" id="deliverModal" style="display:none">
-<div class="w-full max-w-md rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]">
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" id="customPriceModal" style="display:none">
+<div class="flex max-h-[86vh] w-full max-w-lg flex-col rounded-xl border border-zinc-200 bg-white shadow-pop dark:border-white/[0.08] dark:bg-[#262019]">
 <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-4 dark:border-white/[0.06]">
-<h3 class="font-display text-base font-semibold">Mark Delivered</h3>
-<button onclick="closeDeliverModal()" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-xl leading-none">&times;</button>
+<h3 class="font-display text-base font-semibold">Price custom item(s)</h3>
+<button onclick="closeCustomPriceModal()" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-xl leading-none">&times;</button>
 </div>
 <div class="space-y-3 px-5 py-4 text-sm">
-<p class="text-[13px] text-zinc-500">Order <strong id="dlvOrderId"></strong> — the tick only applies to this order.</p>
-<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Received by</label><input type="text" id="dlvReceivedBy" placeholder="Customer / rep name" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
-<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Signature (typed name)</label><input type="text" id="dlvSignature" placeholder="Person signing" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
-<div class="grid grid-cols-2 gap-3">
-<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Date</label><input type="date" id="dlvDate" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
-<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Time</label><input type="time" id="dlvTime" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
-</div>
-<div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Notes</label><input type="text" id="dlvNotes" placeholder="Optional" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"></div>
-<p class="text-[12px] text-zinc-500">Saves a receipt to the Deliveries sheet, sets the order to Delivered and reduces stock.</p>
+<p class="text-[13px] leading-5 text-zinc-500">Order <strong id="cpiOrderId"></strong> — these items are not in the catalogue, so they are still worth Rs. 0. Set what the customer pays and what it costs us: the <strong>subtotal, total and profit</strong> update immediately, and the item shows up in <strong>Purchases → What we need to buy</strong> (hidden from the public shop).</p>
+<div id="cpiRows"></div>
 </div>
 <div class="flex justify-end gap-2 border-t border-zinc-100 px-5 py-3 dark:border-white/[0.06]">
-<button onclick="closeDeliverModal()" class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300">Cancel</button>
-<button onclick="confirmDeliver()" class="rounded-lg bg-accent-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-accent-600">Confirm delivered</button>
+<button onclick="closeCustomPriceModal()" class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300">Cancel</button>
+<button onclick="saveCustomPrice()" id="cpiSaveBtn" class="rounded-lg bg-accent-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-accent-600">Save prices</button>
 </div>
 </div>
 </div>
@@ -826,7 +820,7 @@ html.dark .rules-list li.is-current p{color:#FAFAF9}
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9zbFRKyrvpSk53OPRz00MgFpQ3CGCE3T5UyM5MTN5sHSLHSAsRbFBpeuPJg_Mfp8/exec';
 let allOrders = [], filteredOrders = [], currentPage = 1, searchTimeout = null, editingCostOrderId = null;
 const pageSize = 20;
- const VALID_STATUSES = { orderStatus: ['New','Processing','Ready to Ship','Delivered','Cancelled'], paymentStatus: ['Pending','Paid','Failed'] };
+ const VALID_STATUSES = { orderStatus: ['New','Processing','Ready to Ship','Shipped','Delivered','Cancelled'], paymentStatus: ['Pending','Paid','Failed'], confirmStatus: ['Pending','Confirmed','Rejected'] };
 
 // Products & cost prices are loaded live from the Apps Script Products sheet
 // (dash-products.js). No hardcoded catalog here — if the backend is down the
@@ -884,6 +878,24 @@ function matchProductByName_(name){
         if (sub) return sub;
     }
     return null;
+}
+// Custom order items: free-text lines the customer typed that are not in the catalogue yet.
+// They are unpriced (Rs. 0), so they are excluded from the order total until the CEO/COO
+// confirms a price + cost — which turns them into a hidden product (see priceCustomItem).
+function customItemsOf(o){
+    const out = [];
+    // Nothing looks "custom" until the catalogue is loaded — otherwise every order would
+    // flash a Set price button while products are still fetching.
+    if (typeof productsLoaded !== 'undefined' && !productsLoaded){
+        if (typeof loadProducts === 'function') loadProducts();
+        return out;
+    }
+    parseItems(o.itemsText).forEach(row => {
+        const parsed = itemParse_(row);
+        if (!parsed.name) return;
+        if (!matchProductByName_(parsed.name)) out.push({ name: parsed.name, qty: parsed.qty });
+    });
+    return out;
 }
 function effectiveCost(o){
     const raw = o.costPrice;
@@ -949,7 +961,10 @@ function rolePages(r){
 const ROLE_ACTIONS = {
     CEO: ['orders.edit','orders.delete','orders.pack','finance.verify','products.write','content.write','suppliers.write','purchases.write','deliveries.write','expenses.write','settings.secret','users.manage'],
     CFO: ['finance.verify','expenses.write'],
-    COO: ['products.write','content.write','suppliers.write','purchases.write','deliveries.write','orders.pack','expenses.write']
+    // COO gets orders.edit to confirm students, drive the packing flow and mark orders
+    // Delivered from the Orders page — the backend still rejects paymentStatus changes
+    // and any orderStatus outside Processing / Ready to Ship / Delivered.
+    COO: ['orders.edit','products.write','content.write','suppliers.write','purchases.write','deliveries.write','orders.pack','expenses.write']
 };
 function hasPage(p){ const r = currentRole(); if (!r) return false; return rolePages(r).indexOf(p) !== -1; }
 function can(perm){ const r = currentRole(); if (!r) return false; return (ROLE_ACTIONS[r] || []).indexOf(perm) !== -1; }
@@ -1553,7 +1568,7 @@ function clearToken(){
 async function loadOrders(){
     const token = getToken(); if (!token) return;
     try {
-        document.getElementById('ordersBody').innerHTML = '<tr><td colspan="9" class="px-4 py-8 text-center text-zinc-500">Loading…</td></tr>';
+        document.getElementById('ordersBody').innerHTML = '<tr><td colspan="10" class="px-4 py-8 text-center text-zinc-500">Loading…</td></tr>';
         const data = await apiGet('orders');
         if (data.success){
             allOrders = data.orders || [];
@@ -1566,14 +1581,17 @@ async function loadOrders(){
 }
 
 function renderStats(){
-    const paid = allOrders.filter(o => o.paymentStatus === 'Paid');
+    // Cancelled orders never happened: they must not show up as Paid / Pending or add to
+    // revenue & profit. (Total Orders stays the raw count, Delivered already excludes them.)
+    const live = allOrders.filter(o => o.orderStatus !== 'Cancelled');
+    const paid = live.filter(o => o.paymentStatus === 'Paid');
     const revenue = paid.reduce((s,o) => s + num(o.total), 0);
     const profit = paid.reduce((s,o) => s + profitOf(o), 0);
     document.getElementById('statTotal').textContent = allOrders.length;
     document.getElementById('statPaid').textContent = paid.length;
     document.getElementById('statRevenue').textContent = 'Rs. ' + revenue.toLocaleString();
     document.getElementById('statProfit').textContent = 'Rs. ' + profit.toLocaleString();
-    document.getElementById('statPending').textContent = allOrders.filter(o => o.paymentStatus === 'Pending').length;
+    document.getElementById('statPending').textContent = live.filter(o => o.paymentStatus === 'Pending').length;
     document.getElementById('statDelivered').textContent = allOrders.filter(o => o.orderStatus === 'Delivered' || o.orderStatus === 'Shipped').length;
     document.getElementById('navCount').textContent = allOrders.length;
     renderBell();
@@ -1633,7 +1651,7 @@ function renderTable(){
     const tbody = document.getElementById('ordersBody');
     const mob = document.getElementById('mobileList');
     if (!rows.length){
-        tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-8 text-center text-zinc-500">No orders found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" class="px-4 py-8 text-center text-zinc-500">No orders found</td></tr>';
         mob.innerHTML = '<p class="px-4 py-6 text-center text-sm text-zinc-500">No orders found</p>';
         return;
     }
@@ -1643,21 +1661,26 @@ function renderTable(){
         const items = parseItems(o.itemsText);
         const preview = items.slice(0,2).join(', ') + (items.length>2 ? ` +${items.length-2} more` : '');
         const prof = profitOf(o);
+        const ci = customItemsOf(o);
+        const priceBtn = (can('products.write') && ci.length)
+            ? `<button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-amber-600" title="Custom item(s) not in the catalogue — set the price and cost" onclick="openCustomPriceModal('${esc(o.orderId)}')">Set price (${ci.length})</button>`
+            : '';
         return `<tr class="border-b border-zinc-100 transition-colors hover:bg-zinc-50 dark:border-white/[0.04] dark:hover:bg-white/[0.02]">
 <td class="px-4 py-3"><button class="text-zinc-400 hover:text-accent-500" onclick="toggleExpand(${gi})" aria-label="Expand" id="expBtn-${gi}">▶</button></td>
 <td class="px-4 py-3 font-medium text-zinc-800 dark:text-zinc-100">${esc(o.orderId)}</td>
 <td class="px-4 py-3">${esc(o.name)}<br><span class="text-[12px] text-zinc-400">${esc(o.phone)}</span></td>
-<td class="max-w-[220px] truncate px-4 py-3 text-zinc-500" title="${esc(o.itemsText)}">${esc(preview)}</td>
+<td class="max-w-[220px] truncate px-4 py-3 text-zinc-500" title="${esc(o.itemsText)}">${esc(preview)}${ci.length ? `<span class="ml-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300" title="Custom item(s) awaiting a price">${ci.length} custom</span>` : ''}</td>
 <td class="px-4 py-3 font-semibold tnum">${rs(o.total)}</td>
 <td class="px-4 py-3 font-medium tnum ${prof>=0?'text-accent-600':'text-red-500'}">${rs(prof)}</td>
 <td class="px-4 py-3">${selHtml(o,'orderStatus')}</td>
 <td class="px-4 py-3">${selHtml(o,'paymentStatus')}</td>
-<td class="px-4 py-3"><div class="flex flex-wrap gap-1.5">${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-accent-600" title="WhatsApp message to customer" onclick="sendOrderMsg('${esc(o.orderId)}')">${msgLabel(o)}</button>
+<td class="px-4 py-3">${selHtml(o,'confirmStatus')}</td>
+<td class="px-4 py-3"><div class="flex flex-wrap gap-1.5">${priceBtn}${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-accent-600" title="WhatsApp message to customer" onclick="sendOrderMsg('${esc(o.orderId)}')">${msgLabel(o)}</button>
 <button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-amber-600" onclick="openCostModal('${esc(o.orderId)}')">Cost</button>` : ''}${can('orders.delete') ? `<button class="rounded-md border border-red-200 px-2 py-1 text-[11px] font-semibold text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:hover:bg-red-500/10" title="Delete order (moves to bin)" onclick="askDeleteOrder('${esc(o.orderId)}')">🗑</button>` : ''}</div></td></tr>
-<tr id="expanded-${gi}" style="display:none"><td colspan="9" class="bg-zinc-50 px-6 py-5 dark:bg-white/[0.02]">
+<tr id="expanded-${gi}" style="display:none"><td colspan="10" class="bg-zinc-50 px-6 py-5 dark:bg-white/[0.02]">
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
 <div class="text-sm font-semibold">${esc(o.orderId)} · ${esc(o.name)}</div>
-${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-accent-600" onclick="sendOrderMsg('${esc(o.orderId)}')">Message customer (${esc(o.phone)})</button>` : ''}
+${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-accent-600" onclick="sendOrderMsg('${esc(o.orderId)}')">Message customer (${esc(o.phone)})</button>` : ''}${priceBtn}
 </div>
 <div class="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
 <div><span class="detail-lbl">Date</span>${esc(o.timestamp)}</div>
@@ -1675,7 +1698,7 @@ ${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-3 py-1.5 text
 </div>
 <div class="mt-4">
 <span class="detail-lbl">Items (${items.length})</span>
-<div class="mt-1 flex flex-wrap gap-1.5">${items.map(it=>`<span class="rounded bg-zinc-100 px-2 py-0.5 text-[12px] text-zinc-600 dark:bg-white/[0.06] dark:text-zinc-300">${esc(it)}</span>`).join('')}</div>
+<div class="mt-1 flex flex-wrap gap-1.5">${items.map(it=>{ const nm = itemParse_(it).name; const isCustom = !!nm && !matchProductByName_(nm); return `<span class="rounded px-2 py-0.5 text-[12px] ${isCustom ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300' : 'bg-zinc-100 text-zinc-600 dark:bg-white/[0.06] dark:text-zinc-300'}">${esc(it)}${isCustom ? ' · custom' : ''}</span>`; }).join('')}</div>
 </div>
 ${o.notes?`<div class="mt-3 text-[13px] text-zinc-500"><span class="detail-lbl">Notes</span>${esc(o.notes)}</div>`:''}
 ${can('orders.edit') ? `<div class="mt-4 flex items-center gap-2 border-t border-zinc-200 pt-3 dark:border-white/10">
@@ -1688,6 +1711,10 @@ ${can('orders.edit') ? `<div class="mt-4 flex items-center gap-2 border-t border
     mob.innerHTML = rows.map(o => {
         const items = parseItems(o.itemsText);
         const prof = profitOf(o);
+        const ci = customItemsOf(o);
+        const priceBtn = (can('products.write') && ci.length)
+            ? `<button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white" onclick="openCustomPriceModal('${esc(o.orderId)}')">Set price (${ci.length})</button>`
+            : '';
         return `<div class="px-4 py-3.5">
 <div class="flex items-baseline justify-between gap-2">
 <span class="font-medium text-zinc-800 dark:text-zinc-100">${esc(o.name)}</span>
@@ -1697,10 +1724,10 @@ ${can('orders.edit') ? `<div class="mt-4 flex items-center gap-2 border-t border
 <span class="${prof>=0?'text-accent-600':'text-red-500'}">Profit ${rs(prof)}</span>
 <span class="ml-auto rounded-full px-2 py-0.5 text-[11px] font-medium ${statusCls(o.paymentStatus)}">${esc(o.paymentStatus)}</span></div>
 <div class="mt-2 truncate text-[12px] text-zinc-400">${esc(items.join('; '))}</div>
-<div class="mt-2 flex flex-wrap gap-1.5">${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-2 py-1 text-[11px] font-semibold text-white" onclick="sendOrderMsg('${esc(o.orderId)}')">${msgLabel(o)}</button>
+<div class="mt-2 flex flex-wrap gap-1.5">${priceBtn}${can('orders.edit') ? `<button class="rounded-md bg-accent-500 px-2 py-1 text-[11px] font-semibold text-white" onclick="sendOrderMsg('${esc(o.orderId)}')">${msgLabel(o)}</button>
 <button class="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white" onclick="openCostModal('${esc(o.orderId)}')">Cost</button>` : ''}${can('orders.delete') ? `<button class="rounded-md border border-red-200 px-2 py-1 text-[11px] font-semibold text-red-600 dark:border-red-500/30" onclick="askDeleteOrder('${esc(o.orderId)}')">🗑 Delete</button>` : ''}</div>
 <div class="mt-2 flex flex-wrap gap-1.5 text-[11px]">
-${selHtml(o,'orderStatus')}${selHtml(o,'paymentStatus')}
+${selHtml(o,'orderStatus')}${selHtml(o,'paymentStatus')}${selHtml(o,'confirmStatus')}
 </div></div>`;
     }).join('');
 }
@@ -1727,7 +1754,7 @@ function changePage(p){
     currentPage = p; renderTable(); renderPagination();
     window.scrollTo({top:0, behavior:'smooth'});
 }
-function showError(msg){ document.getElementById('ordersBody').innerHTML = `<tr><td colspan="9" class="px-4 py-8 text-center text-red-500">${esc(msg)}</td></tr>`; }
+function showError(msg){ document.getElementById('ordersBody').innerHTML = `<tr><td colspan="10" class="px-4 py-8 text-center text-red-500">${esc(msg)}</td></tr>`; }
 
 function syncSelects(orderId, field, value){
     document.querySelectorAll(`select[data-order="${orderId}"][data-field="${field}"]`).forEach(s => {
@@ -1743,6 +1770,9 @@ async function updateStatus(orderId, field, value){
         if (data.success){
             const o = allOrders.find(x => x.orderId === orderId);
             if (o) o[field] = value;
+            // Delivered wholesale → the per-product ticks on the Deliveries page are stamped
+            // server-side too, so refresh them (or that page would still show them unticked)
+            if (field === 'orderStatus' && value === 'Delivered' && typeof loadDistribution === 'function') loadDistribution();
             syncSelects(orderId, field, value);
             renderStats();
             renderTable(); // refresh message button label (depends on status)
@@ -1936,6 +1966,68 @@ async function saveInlineCost(orderId, costStr){
             renderStats(); applyFilters(); showToast('Cost updated', 'success');
         } else showToast(data.error || 'Failed', 'error');
     } catch(e){ showToast('Error: ' + e.message, 'error'); }
+}
+
+// ==================== CUSTOM ORDER ITEMS (price + cost confirmation) ====================
+let customPriceOrderId = null;
+function openCustomPriceModal(orderId){
+    if (!can('products.write')) return showToast('Your role cannot price custom items', 'error');
+    const o = allOrders.find(x => x.orderId === orderId); if (!o) return;
+    const items = customItemsOf(o);
+    if (!items.length) return showToast('No unpriced custom items in this order', 'success');
+    customPriceOrderId = orderId;
+    document.getElementById('cpiOrderId').textContent = o.orderId + ' · ' + o.name;
+    document.getElementById('cpiRows').innerHTML = items.map((it, i) => `
+      <div class="mb-3 rounded-lg border border-amber-200 bg-amber-50/60 p-3 last:mb-0 dark:border-amber-400/30 dark:bg-amber-400/10">
+        <div class="mb-2 flex items-center justify-between gap-2">
+          <span class="text-[13px] font-semibold text-zinc-800 dark:text-zinc-100">${esc(it.name)}</span>
+          <span class="rounded bg-white px-1.5 py-0.5 text-[11px] text-zinc-500 dark:bg-white/10">× ${it.qty}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Selling price (Rs.) *</label>
+          <input type="number" min="0" step="1" data-cpi-price="${i}" placeholder="0" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"></div>
+          <div><label class="mb-1 block text-[12px] font-medium text-zinc-500">Cost price (Rs.) *</label>
+          <input type="number" min="0" step="1" data-cpi-cost="${i}" placeholder="0" class="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"></div>
+        </div>
+      </div>`).join('');
+    document.getElementById('customPriceModal').style.display = 'flex';
+    const first = document.querySelector('[data-cpi-price="0"]'); if (first) first.focus();
+}
+function closeCustomPriceModal(){ document.getElementById('customPriceModal').style.display = 'none'; customPriceOrderId = null; }
+async function saveCustomPrice(){
+    if (!can('products.write')) return showToast('Your role cannot price custom items', 'error');
+    const o = allOrders.find(x => x.orderId === customPriceOrderId); if (!o) return;
+    const items = customItemsOf(o);
+    const val = (kind, i) => { const el = document.querySelector(`[data-cpi-${kind}="${i}"]`); return el ? parseFloat(el.value) : NaN; };
+    for (let i = 0; i < items.length; i++){
+        const price = val('price', i), cost = val('cost', i);
+        if (isNaN(price) || price < 0) return showToast('Enter a selling price for ' + items[i].name, 'error');
+        if (isNaN(cost) || cost < 0) return showToast('Enter a cost price for ' + items[i].name, 'error');
+    }
+    const btn = document.getElementById('cpiSaveBtn');
+    if (btn){ btn.disabled = true; btn.textContent = 'Saving…'; }
+    let updated = null, failed = false;
+    try {
+        for (let i = 0; i < items.length && !failed; i++){
+            const data = await apiGet('priceCustomItem', {
+                orderId: o.orderId, itemName: items[i].name,
+                price: val('price', i), cost: val('cost', i)
+            });
+            if (data && data.success) updated = data.order;
+            else { failed = true; showToast((data && data.error) || 'Save failed', 'error'); }
+        }
+    } catch(e){ failed = true; showToast('Connection error: ' + e.message, 'error'); }
+    if (btn){ btn.disabled = false; btn.textContent = 'Save prices'; }
+    if (failed || !updated) return;
+    const idx = allOrders.findIndex(x => x.orderId === o.orderId);
+    if (idx >= 0) allOrders[idx] = updated;
+    closeCustomPriceModal();
+    renderStats();
+    applyFilters();
+    if (typeof loadProducts === 'function') loadProducts();      // new hidden product(s) for Purchases
+    refreshActivePage();
+    showToast('Custom item priced — subtotal, total and profit updated ✓', 'success');
+    logLocal('Custom item priced', o.orderId);
 }
 
 // ==================== SETTINGS: ENDPOINT ====================
