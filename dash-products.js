@@ -171,14 +171,15 @@ async function saveProductForm(){
 
 async function syncWebsiteCatalog(){
     if (currentRole() !== 'CEO') return showToast('Only the CEO can sync the catalog', 'error');
-    if (!confirm('Sync name, price, description, image and details from the website catalog into the Products sheet?\n\nExisting cost, inventory, reorder level and status are kept.')) return;
+    if (!confirm('Sync name, price, description, image and details from the website catalog into the Products sheet?\n\nExisting cost, inventory, reorder level and status are kept.\nRows that are really custom-order items (hidden) are adopted into the catalog: flag cleared, set Active, catalog cost.')) return;
     try {
         const data = await apiGet('syncCatalog');
         if (data && data.success){
             if (data.products) masterProducts = data.products;
             if (data.costs) Object.assign(productCosts, data.costs);
-            showToast('Catalog synced: ' + data.added + ' added, ' + data.updated + ' updated', 'success');
-            logLocal('Catalog sync', data.added + ' added, ' + data.updated + ' updated');
+            const adoptedNote = data.adopted ? ', ' + data.adopted + ' custom row(s) adopted into the catalog' : '';
+            showToast('Catalog synced: ' + data.added + ' added, ' + data.updated + ' updated' + adoptedNote, 'success');
+            logLocal('Catalog sync', data.added + ' added, ' + data.updated + ' updated' + adoptedNote);
             renderProducts();
         } else showToast((data && data.error) || 'Sync failed', 'error');
     } catch(e){ showToast('Connection error: ' + e.message, 'error'); }
